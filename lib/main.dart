@@ -7,7 +7,6 @@ void main() {
   runApp(const MainApp());
 }
 
-//TODO add quill and make it work
 //TODO use fuzzy to search data
 
 class MainApp extends StatelessWidget {
@@ -19,7 +18,7 @@ class MainApp extends StatelessWidget {
       home: Scaffold(
         body: Container(
           color: Colors.black,
-          child: const Row(
+          child: Row(
             children: [
               Flexible(fit: FlexFit.tight, flex: 2, child: Menu()),
               Flexible(fit: FlexFit.tight, flex: 3, child: NoteList()),

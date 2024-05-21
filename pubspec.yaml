@@ -9,7 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_quill: ^9.3.11
   gap: ^3.0.1
+  uuid: ^4.4.0
 
 dev_dependencies:
   flutter_test:

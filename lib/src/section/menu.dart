@@ -12,15 +12,17 @@ class Menu extends StatelessWidget {
       color: Colors.blue,
       child: Column(
         children: [
+          //TODO mobile when user click on show whole search page
           Container(
             color: Colors.green,
+            margin: EdgeInsets.symmetric(horizontal: 10),
             child: const TextField(
                 decoration: InputDecoration.collapsed(
                     hintText: 'Search', fillColor: Colors.black)),
           ),
           const Gap(10),
-          MenuButton(onPress: () {}, icon: const Icon(Icons.search), label: 'ddd'),
-          MenuButton(onPress: () {}, icon: const Icon(Icons.add), label: 'New Note'),
+          MenuButton(
+              onPress: () {}, icon: const Icon(Icons.add), label: 'New Note'),
           const Gap(10),
           Expanded(
             child: Container(

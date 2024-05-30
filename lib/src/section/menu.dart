@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
+import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/widget/menu_button.dart';
 
 class Menu extends StatelessWidget {
@@ -15,14 +17,18 @@ class Menu extends StatelessWidget {
           //TODO mobile when user click on show whole search page
           Container(
             color: Colors.green,
-            margin: EdgeInsets.symmetric(horizontal: 10),
+            margin: const EdgeInsets.symmetric(horizontal: 10),
             child: const TextField(
                 decoration: InputDecoration.collapsed(
                     hintText: 'Search', fillColor: Colors.black)),
           ),
           const Gap(10),
           MenuButton(
-              onPress: () {}, icon: const Icon(Icons.add), label: 'New Note'),
+              onPress: () {
+                context.read<AppProvider>().setNoteSelected(id: 0);
+              },
+              icon: const Icon(Icons.add),
+              label: 'New Note'),
           const Gap(10),
           Expanded(
             child: Container(

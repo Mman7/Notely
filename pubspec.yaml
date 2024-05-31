@@ -19,6 +19,8 @@ dependencies:
 
   path: any
   intl: any
+  flutter_screenutil: ^5.9.1
+  sidebarx: ^0.17.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

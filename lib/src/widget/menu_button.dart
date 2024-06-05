@@ -11,12 +11,16 @@ class MenuButton extends StatelessWidget {
   final VoidCallback onPress;
   final Icon icon;
   final String label;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      child:
-          TextButton.icon(onPressed: onPress, icon: icon, label: Text(label)),
+      child: TextButton.icon(
+        onPressed: onPress,
+        icon: icon,
+        label: Text(label),
+      ),
     );
   }
 }

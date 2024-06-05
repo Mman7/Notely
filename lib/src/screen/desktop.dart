@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:sidebarx/sidebarx.dart';
 import 'package:syncnote/src/section/notelist.dart';
 import 'package:syncnote/src/section/noteview.dart';
@@ -19,14 +20,18 @@ class _DesktopLayoutState extends State<DesktopLayout> {
   @override
   Widget build(BuildContext context) {
     sidebarXController.addListener(() => setState(() {}));
-    //TODO: add smooth trasition when sidebar extended
+    final screenwidth = ScreenUtil().screenWidth;
+    var normalSize = screenwidth / 20;
+    var extendedSize = screenwidth / 8.5;
 
     return Row(
       children: [
-        Flexible(
-            fit: FlexFit.tight,
-            flex: sidebarXController.extended ? 3 : 1,
-            child: SideBar(sidebarXController: sidebarXController)),
+        AnimatedContainer(
+          width: sidebarXController.extended ? extendedSize : normalSize,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          child: SideBar(sidebarXController: sidebarXController),
+        ),
         const Flexible(flex: 6, child: NoteList()),
         const Flexible(flex: 15, child: NoteView())
       ],

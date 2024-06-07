@@ -15,8 +15,7 @@ class DesktopLayout extends StatefulWidget {
 }
 
 class _DesktopLayoutState extends State<DesktopLayout> {
-  SidebarXController sidebarXController = SidebarXController(selectedIndex: 0);
-
+  SidebarXController sidebarXController = SidebarXController(selectedIndex: 2);
   @override
   Widget build(BuildContext context) {
     sidebarXController.addListener(() => setState(() {}));
@@ -32,7 +31,11 @@ class _DesktopLayoutState extends State<DesktopLayout> {
           curve: Curves.easeInOut,
           child: SideBar(sidebarXController: sidebarXController),
         ),
-        const Flexible(flex: 6, child: NoteList()),
+        Flexible(
+            flex: 6,
+            child: NoteList(
+              sidebarController: sidebarXController,
+            )),
         const Flexible(flex: 15, child: NoteView())
       ],
     );

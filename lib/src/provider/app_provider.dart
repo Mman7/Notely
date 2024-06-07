@@ -6,6 +6,12 @@ class AppProvider extends ChangeNotifier {
   final noteBox = objectbox.store.box<Note>();
   List noteList = [];
   Note? noteSelected;
+  bool searchMode = false;
+
+  setSearchMode({value}) {
+    searchMode = value;
+    notifyListeners();
+  }
 
   setNoteSelected({id}) {
     if (id == 0) {
@@ -17,10 +23,6 @@ class AppProvider extends ChangeNotifier {
 
     var note = noteBox.get(id);
     noteSelected = note;
-
-    debugPrint(noteSelected.toString());
-    debugPrint(noteSelected?.content);
-    debugPrint(noteSelected?.title);
     notifyListeners();
   }
 

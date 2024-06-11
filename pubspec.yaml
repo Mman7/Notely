@@ -21,6 +21,7 @@ dependencies:
   intl: any
   flutter_screenutil: ^5.9.1
   sidebarx: ^0.17.1
+  flutter_animate: ^4.5.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

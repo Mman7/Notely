@@ -40,49 +40,51 @@ class _NoteListState extends State<NoteList> {
       });
     });
 
-    return Container(
-      color: hexToColor('EAF3FC'),
-      child: Column(
-        children: [
-          searchMode
-              ? SearchHeader(
-                  searchController: searchController,
-                  sidebarXController: widget.sidebarController,
-                )
-              : ListHeader(itemList: itemList),
-          //list body
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(2),
-              child: ListView.builder(
-                  itemCount: searchController.text == ''
-                      ? itemList.length
-                      : searchItems.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(vertical: 2),
-                      child: Builder(builder: (context) {
-                        if (searchController.text == '') {
-                          return NotePreviewItem(
-                              id: itemList[index].id,
-                              date: itemList[index].dateCreated,
-                              title: itemList[index].title,
-                              content: itemList[index].previewContent,
-                              hadPreviewIMG: itemList[index].includePic);
-                        } else {
-                          return NotePreviewItem(
-                              id: searchItems[index].id,
-                              date: searchItems[index].dateCreated,
-                              title: searchItems[index].title,
-                              content: searchItems[index].previewContent,
-                              hadPreviewIMG: searchItems[index].includePic);
-                        }
-                      }),
-                    );
-                  }),
+    return ClipRRect(
+      child: Container(
+        color: hexToColor('EAF3FC'),
+        child: Column(
+          children: [
+            searchMode
+                ? SearchHeader(
+                    searchController: searchController,
+                    sidebarXController: widget.sidebarController,
+                  )
+                : ListHeader(itemList: itemList),
+            //list body
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                child: ListView.builder(
+                    itemCount: searchController.text == ''
+                        ? itemList.length
+                        : searchItems.length,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 2),
+                        child: Builder(builder: (context) {
+                          if (searchController.text == '') {
+                            return NotePreviewItem(
+                                id: itemList[index].id,
+                                date: itemList[index].dateCreated,
+                                title: itemList[index].title,
+                                content: itemList[index].previewContent,
+                                hadPreviewIMG: itemList[index].includePic);
+                          } else {
+                            return NotePreviewItem(
+                                id: searchItems[index].id,
+                                date: searchItems[index].dateCreated,
+                                title: searchItems[index].title,
+                                content: searchItems[index].previewContent,
+                                hadPreviewIMG: searchItems[index].includePic);
+                          }
+                        }),
+                      );
+                    }),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -98,24 +100,39 @@ class ListHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    titleController() {
+      final listMode = context.watch<AppProvider>().listMode;
+
+      switch (listMode) {
+        case 'bookmarks':
+          return 'BookMarks';
+        case 'notebooks':
+          return 'NoteBooks';
+        case 'tags':
+          return 'Tags';
+        default:
+          return 'All Notes';
+      }
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
       margin: const EdgeInsets.only(bottom: 3.5),
       decoration: BoxDecoration(color: Colors.white, boxShadow: [
         BoxShadow(
           color: hexToColor('42526E').withOpacity(0.3),
-          spreadRadius: 1,
-          blurRadius: 30,
-          offset: const Offset(0, 0), // changes position of shadow
+          spreadRadius: 3,
+          blurRadius: 25,
+          offset: const Offset(0, 2), // changes position of shadow
         ),
       ]),
       child: Column(
         children: [
-          const Align(
+          Align(
             alignment: Alignment.topLeft,
             child: Text(
-              'All notes',
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+              titleController(),
+              style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
             ),
           ),
           Align(

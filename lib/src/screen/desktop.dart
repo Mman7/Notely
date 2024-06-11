@@ -1,8 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:sidebarx/sidebarx.dart';
+import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/section/notelist.dart';
 import 'package:syncnote/src/section/noteview.dart';
 import 'package:syncnote/src/section/sidebar.dart';
@@ -16,9 +17,10 @@ class DesktopLayout extends StatefulWidget {
 
 class _DesktopLayoutState extends State<DesktopLayout> {
   SidebarXController sidebarXController = SidebarXController(selectedIndex: 2);
+
   @override
   Widget build(BuildContext context) {
-    sidebarXController.addListener(() => setState(() {}));
+    var isExtended = context.watch<AppProvider>().isSidebarExtended;
     final screenwidth = ScreenUtil().screenWidth;
     var normalSize = screenwidth / 20;
     var extendedSize = screenwidth / 8.5;
@@ -26,10 +28,10 @@ class _DesktopLayoutState extends State<DesktopLayout> {
     return Row(
       children: [
         AnimatedContainer(
-          width: sidebarXController.extended ? extendedSize : normalSize,
+          width: isExtended ? extendedSize : normalSize,
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
-          child: SideBar(sidebarXController: sidebarXController),
+          child: const SideBar(),
         ),
         Flexible(
             flex: 6,

@@ -3,8 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
 
-//TODO hold press drop down menu
-
 class NotePreviewItem extends StatelessWidget {
   const NotePreviewItem(
       {super.key,
@@ -33,7 +31,7 @@ class NotePreviewItem extends StatelessWidget {
 
     return Material(
       borderRadius: const BorderRadius.all(Radius.circular(7.5)),
-      color: isSelected ? Colors.white : Colors.white60,
+      color: isSelected ? Colors.white : Colors.white54,
       // color: Colors.white,
       child: InkWell(
         hoverColor: Colors.white,
@@ -41,7 +39,9 @@ class NotePreviewItem extends StatelessWidget {
         child: ListTile(
             title: Text(
               title,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: isSelected ? Colors.black : Colors.black54),
             ),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

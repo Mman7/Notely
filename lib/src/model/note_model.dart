@@ -8,11 +8,12 @@ class Note {
       required this.previewContent,
       required this.title,
       required this.content,
-      this.category,
+      this.tag,
       this.isBookmark = false,
       required this.dateCreated,
       this.includePic = false});
   @Id()
+  //TODO implement tag,notebook system
   int id;
   String uuid;
   String previewContent;
@@ -20,7 +21,10 @@ class Note {
   String content;
   bool isBookmark;
   bool includePic;
-  String? category;
+
+  /// these two
+  String? tag;
+  String? notebook;
   DateTime dateCreated;
   // var lastModified;
 

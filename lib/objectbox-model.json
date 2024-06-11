@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:3472751663052211731",
-      "lastPropertyId": "10:2370610704186196335",
+      "lastPropertyId": "12:8538116728784453377",
       "name": "Note",
       "properties": [
         {
@@ -35,11 +35,6 @@
           "type": 1
         },
         {
-          "id": "6:3554903239812527647",
-          "name": "category",
-          "type": 9
-        },
-        {
           "id": "7:318723143211764557",
           "name": "dateCreated",
           "type": 10
@@ -53,6 +48,16 @@
           "id": "10:2370610704186196335",
           "name": "includePic",
           "type": 1
+        },
+        {
+          "id": "11:2382916142957779532",
+          "name": "tag",
+          "type": 9
+        },
+        {
+          "id": "12:8538116728784453377",
+          "name": "notebook",
+          "type": 9
         }
       ],
       "relations": []
@@ -67,7 +72,8 @@
   "retiredEntityUids": [],
   "retiredIndexUids": [],
   "retiredPropertyUids": [
-    3746548991287989143
+    3746548991287989143,
+    3554903239812527647
   ],
   "retiredRelationUids": [],
   "version": 1

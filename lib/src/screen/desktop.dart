@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:sidebarx/sidebarx.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/section/notelist.dart';
 import 'package:syncnote/src/section/noteview.dart';
@@ -16,8 +15,6 @@ class DesktopLayout extends StatefulWidget {
 }
 
 class _DesktopLayoutState extends State<DesktopLayout> {
-  SidebarXController sidebarXController = SidebarXController(selectedIndex: 2);
-
   @override
   Widget build(BuildContext context) {
     var isExtended = context.watch<AppProvider>().isSidebarExtended;
@@ -33,11 +30,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
           curve: Curves.easeInOut,
           child: const SideBar(),
         ),
-        Flexible(
-            flex: 6,
-            child: NoteList(
-              sidebarController: sidebarXController,
-            )),
+        Flexible(flex: 6, child: NoteList()),
         const Flexible(flex: 15, child: NoteView())
       ],
     );

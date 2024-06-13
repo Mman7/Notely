@@ -137,10 +137,15 @@ obx_int.ModelDefinition getObjectBoxModel() {
           object.id = id;
         },
         objectToFB: (Note object, fb.Builder fbb) {
-          final contentOffset = fbb.writeString(object.content);
-          final uuidOffset = fbb.writeString(object.uuid);
-          final titleOffset = fbb.writeString(object.title);
-          final previewContentOffset = fbb.writeString(object.previewContent);
+          final contentOffset =
+              object.content == null ? null : fbb.writeString(object.content!);
+          final uuidOffset =
+              object.uuid == null ? null : fbb.writeString(object.uuid!);
+          final titleOffset =
+              object.title == null ? null : fbb.writeString(object.title!);
+          final previewContentOffset = object.previewContent == null
+              ? null
+              : fbb.writeString(object.previewContent!);
           final tagOffset =
               object.tag == null ? null : fbb.writeString(object.tag!);
           final notebookOffset = object.notebook == null
@@ -152,7 +157,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           fbb.addOffset(2, uuidOffset);
           fbb.addOffset(3, titleOffset);
           fbb.addBool(4, object.isBookmark);
-          fbb.addInt64(6, object.dateCreated.millisecondsSinceEpoch);
+          fbb.addInt64(6, object.dateCreated?.millisecondsSinceEpoch);
           fbb.addOffset(8, previewContentOffset);
           fbb.addBool(9, object.includePic);
           fbb.addOffset(10, tagOffset);
@@ -163,25 +168,28 @@ obx_int.ModelDefinition getObjectBoxModel() {
         objectFromFB: (obx.Store store, ByteData fbData) {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
+          final dateCreatedValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 16);
           final idParam =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
           final uuidParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGet(buffer, rootOffset, 8, '');
+              .vTableGetNullable(buffer, rootOffset, 8);
           final previewContentParam =
               const fb.StringReader(asciiOptimization: true)
-                  .vTableGet(buffer, rootOffset, 20, '');
+                  .vTableGetNullable(buffer, rootOffset, 20);
           final titleParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGet(buffer, rootOffset, 10, '');
+              .vTableGetNullable(buffer, rootOffset, 10);
           final contentParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGet(buffer, rootOffset, 6, '');
+              .vTableGetNullable(buffer, rootOffset, 6);
           final tagParam = const fb.StringReader(asciiOptimization: true)
               .vTableGetNullable(buffer, rootOffset, 24);
           final isBookmarkParam =
-              const fb.BoolReader().vTableGet(buffer, rootOffset, 12, false);
-          final dateCreatedParam = DateTime.fromMillisecondsSinceEpoch(
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 16, 0));
+              const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 12);
+          final dateCreatedParam = dateCreatedValue == null
+              ? null
+              : DateTime.fromMillisecondsSinceEpoch(dateCreatedValue);
           final includePicParam =
-              const fb.BoolReader().vTableGet(buffer, rootOffset, 22, false);
+              const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 22);
           final object = Note(
               id: idParam,
               uuid: uuidParam,

@@ -4,29 +4,32 @@ import 'package:provider/provider.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
 
 class CustomTextButton extends StatelessWidget {
-  CustomTextButton(
-      {super.key,
-      this.showText = true,
-      required this.icon,
-      required this.text,
-      required this.onPressed,
-      this.isSelected});
-  bool showText;
-  bool? isSelected = false;
-  IconData icon;
-  String text;
-  VoidCallback onPressed;
+  const CustomTextButton({
+    super.key,
+    this.showText = true,
+    required this.icon,
+    required this.text,
+    required this.onPressed,
+    this.specialBtn = false,
+  });
+  final bool showText;
+  final IconData icon;
+  final String text;
+  final VoidCallback onPressed;
+  final bool specialBtn;
 
   @override
   Widget build(BuildContext context) {
     var isExtended = context.read<AppProvider>().isSidebarExtended;
 
-    /// this prevent text rebuild
+    /// this function prevent text rebuild
     isExtendedText() {
       Widget textWidget = Expanded(
         child: Text(
           text,
-          style: const TextStyle(fontWeight: FontWeight.w500),
+          style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: specialBtn ? Colors.white : Colors.black),
         ).animate().slideX(begin: 10, end: 0, curve: Curves.bounceIn),
       );
 
@@ -48,14 +51,22 @@ class CustomTextButton extends StatelessWidget {
       height: 35,
       margin: const EdgeInsets.symmetric(vertical: 5),
       child: Material(
+        borderRadius: BorderRadius.circular(7.5),
+        color: specialBtn ? Colors.redAccent : Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(7.5),
           onTap: onPressed,
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 5),
             child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [Icon(icon), showText ? isExtendedText() : Container()],
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  color: specialBtn ? Colors.white : Colors.black,
+                ),
+                showText ? isExtendedText() : Container()
+              ],
             ),
           ),
         ),

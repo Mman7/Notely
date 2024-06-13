@@ -4,28 +4,28 @@ import 'package:objectbox/objectbox.dart';
 class Note {
   Note(
       {this.id = 0,
-      required this.uuid,
-      required this.previewContent,
-      required this.title,
-      required this.content,
+      this.uuid,
+      this.previewContent,
+      this.title,
+      this.content,
       this.tag,
       this.isBookmark = false,
-      required this.dateCreated,
+      this.dateCreated,
       this.includePic = false});
   @Id()
   //TODO implement tag,notebook system
   int id;
-  String uuid;
-  String previewContent;
-  String title;
-  String content;
-  bool isBookmark;
-  bool includePic;
+  String? uuid;
+  String? previewContent;
+  String? title;
+  String? content;
+  bool? isBookmark;
+  bool? includePic;
+  DateTime? dateCreated;
 
   /// these two
   String? tag;
   String? notebook;
-  DateTime dateCreated;
   // var lastModified;
 
   static saveToDataBase({note}) {}

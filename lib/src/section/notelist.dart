@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
-import 'package:sidebarx/sidebarx.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/widget/note_preview_item.dart';
 
 class NoteList extends StatefulWidget {
-  const NoteList({super.key, required this.sidebarController});
+  const NoteList({
+    super.key,
+  });
 
-  final SidebarXController sidebarController;
   @override
   State<NoteList> createState() => _NoteListState();
 }
@@ -48,7 +48,6 @@ class _NoteListState extends State<NoteList> {
             searchMode
                 ? SearchHeader(
                     searchController: searchController,
-                    sidebarXController: widget.sidebarController,
                   )
                 : ListHeader(itemList: itemList),
             //list body
@@ -151,13 +150,9 @@ class ListHeader extends StatelessWidget {
 }
 
 class SearchHeader extends StatelessWidget {
-  const SearchHeader(
-      {super.key,
-      required this.sidebarXController,
-      required this.searchController});
+  const SearchHeader({super.key, required this.searchController});
 
   final TextEditingController searchController;
-  final SidebarXController sidebarXController;
 
   @override
   Widget build(BuildContext context) {
@@ -167,7 +162,6 @@ class SearchHeader extends StatelessWidget {
           children: [
             IconButton(
                 onPressed: () {
-                  sidebarXController.selectIndex(3);
                   context.read<AppProvider>().setSearchMode(value: false);
                 },
                 icon: const Icon(Icons.arrow_back)),

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:syncnote/src/provider/app_provider.dart';
 
-class ListItem extends StatelessWidget {
-  const ListItem({
-    super.key,
-  });
-  //TODO this text this on pressed
+class ExpansionListItem extends StatelessWidget {
+  const ExpansionListItem({super.key, required this.title});
+  final String title;
+  //TODO style this
   @override
   Widget build(BuildContext context) {
     return TextButton(
@@ -13,8 +14,10 @@ class ListItem extends StatelessWidget {
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(0)),
           )),
-      onPressed: () {},
-      child: const Text('Private'),
+      onPressed: () {
+        context.read<AppProvider>().setNoteBookSelect(value: title);
+      },
+      child: Text(title),
     );
   }
 }

@@ -11,19 +11,18 @@ class CustomExpansionList extends StatelessWidget {
       required this.createBtnCallBack,
       required this.icon,
       required this.text,
-      required this.setToggle,
+      required this.setExpandedToggle,
       required this.isExpanded});
 
   final IconData icon;
   final String text;
   final bool isExpanded;
-  final VoidCallback setToggle;
+  final VoidCallback setExpandedToggle;
   final VoidCallback createBtnCallBack;
   final List list;
 
   @override
   Widget build(BuildContext context) {
-    //TODO get notebooks
     return Container(
       color: Colors.green,
       child: Column(children: [
@@ -32,7 +31,10 @@ class CustomExpansionList extends StatelessWidget {
             text: text,
             onPressed: () {
               context.read<AppProvider>().changeSidebarExtended(value: true);
-              setToggle();
+              context
+                  .read<AppProvider>()
+                  .setListMode(value: text.replaceAll(' ', ''));
+              setExpandedToggle();
             }),
         isExpanded
             ? Column(
@@ -41,14 +43,16 @@ class CustomExpansionList extends StatelessWidget {
                     shrinkWrap: true,
                     itemCount: list.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return ListItem();
+                      return ExpansionListItem(
+                        title: list[index].title,
+                      );
                     },
                   ),
                   SizedBox(
                     width: double.infinity,
                     child: IconButton(
                       onPressed: () => createBtnCallBack(),
-                      icon: Icon(Icons.add_circle_outlined),
+                      icon: const Icon(Icons.add_circle_outlined),
                       style: ButtonStyle(
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(

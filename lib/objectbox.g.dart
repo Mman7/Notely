@@ -21,65 +21,6 @@ export 'package:objectbox/objectbox.dart'; // so that callers only have to impor
 
 final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
-      id: const obx_int.IdUid(1, 3472751663052211731),
-      name: 'Note',
-      lastPropertyId: const obx_int.IdUid(12, 8538116728784453377),
-      flags: 0,
-      properties: <obx_int.ModelProperty>[
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(1, 3223730262280662396),
-            name: 'id',
-            type: 6,
-            flags: 1),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(2, 804997602003466515),
-            name: 'content',
-            type: 9,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(3, 2255952006371592749),
-            name: 'uuid',
-            type: 9,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(4, 4440773303607715772),
-            name: 'title',
-            type: 9,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(5, 7891999565617989967),
-            name: 'isBookmark',
-            type: 1,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(7, 318723143211764557),
-            name: 'dateCreated',
-            type: 10,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(9, 2934411921304287526),
-            name: 'previewContent',
-            type: 9,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(10, 2370610704186196335),
-            name: 'includePic',
-            type: 1,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(11, 2382916142957779532),
-            name: 'tag',
-            type: 9,
-            flags: 0),
-        obx_int.ModelProperty(
-            id: const obx_int.IdUid(12, 8538116728784453377),
-            name: 'notebook',
-            type: 9,
-            flags: 0)
-      ],
-      relations: <obx_int.ModelRelation>[],
-      backlinks: <obx_int.ModelBacklink>[]),
-  obx_int.ModelEntity(
       id: const obx_int.IdUid(3, 798849588595128635),
       name: 'Notebook',
       lastPropertyId: const obx_int.IdUid(3, 4479470878023695645),
@@ -94,10 +35,59 @@ final _entities = <obx_int.ModelEntity>[
             id: const obx_int.IdUid(2, 4081382284707450781),
             name: 'title',
             type: 9,
+            flags: 0)
+      ],
+      relations: <obx_int.ModelRelation>[],
+      backlinks: <obx_int.ModelBacklink>[]),
+  obx_int.ModelEntity(
+      id: const obx_int.IdUid(5, 4271254259516459972),
+      name: 'Note',
+      lastPropertyId: const obx_int.IdUid(11, 7527307426686352931),
+      flags: 0,
+      properties: <obx_int.ModelProperty>[
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(1, 7929171824297164452),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(2, 3048908310242877530),
+            name: 'uuid',
+            type: 9,
             flags: 0),
         obx_int.ModelProperty(
-            id: const obx_int.IdUid(3, 4479470878023695645),
-            name: 'noteListid',
+            id: const obx_int.IdUid(3, 8811746142163413985),
+            name: 'previewContent',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 6524839013607695808),
+            name: 'title',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(5, 5316681461974377569),
+            name: 'content',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(6, 6019034536151155963),
+            name: 'isBookmark',
+            type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(7, 6209204083061683773),
+            name: 'includePic',
+            type: 1,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(8, 6821778788273882308),
+            name: 'dateCreated',
+            type: 10,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(11, 7527307426686352931),
+            name: 'notebook',
             type: 30,
             flags: 0)
       ],
@@ -140,17 +130,44 @@ Future<obx.Store> openStore(
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
       entities: _entities,
-      lastEntityId: const obx_int.IdUid(3, 798849588595128635),
+      lastEntityId: const obx_int.IdUid(5, 4271254259516459972),
       lastIndexId: const obx_int.IdUid(0, 0),
       lastRelationId: const obx_int.IdUid(0, 0),
       lastSequenceId: const obx_int.IdUid(0, 0),
-      retiredEntityUids: const [3783086095446467721],
+      retiredEntityUids: const [
+        3783086095446467721,
+        3472751663052211731,
+        7148833971392364869
+      ],
       retiredIndexUids: const [],
       retiredPropertyUids: const [
         3746548991287989143,
         3554903239812527647,
         1563845634396877680,
-        8646504964849126209
+        8646504964849126209,
+        4479470878023695645,
+        3223730262280662396,
+        804997602003466515,
+        2255952006371592749,
+        4440773303607715772,
+        7891999565617989967,
+        318723143211764557,
+        2934411921304287526,
+        2370610704186196335,
+        2382916142957779532,
+        8538116728784453377,
+        7826337761453954687,
+        1603524207106424051,
+        3880866559083599098,
+        6612643472357328315,
+        2712647120158568224,
+        1317573008996102148,
+        150050851376199891,
+        5168289259717824277,
+        6069513165378626507,
+        1966642670325292921,
+        3110496900558503241,
+        1549105256777534732
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -158,85 +175,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
       version: 1);
 
   final bindings = <Type, obx_int.EntityDefinition>{
-    Note: obx_int.EntityDefinition<Note>(
-        model: _entities[0],
-        toOneRelations: (Note object) => [],
-        toManyRelations: (Note object) => {},
-        getId: (Note object) => object.id,
-        setId: (Note object, int id) {
-          object.id = id;
-        },
-        objectToFB: (Note object, fb.Builder fbb) {
-          final contentOffset =
-              object.content == null ? null : fbb.writeString(object.content!);
-          final uuidOffset =
-              object.uuid == null ? null : fbb.writeString(object.uuid!);
-          final titleOffset =
-              object.title == null ? null : fbb.writeString(object.title!);
-          final previewContentOffset = object.previewContent == null
-              ? null
-              : fbb.writeString(object.previewContent!);
-          final tagOffset =
-              object.tag == null ? null : fbb.writeString(object.tag!);
-          final notebookOffset = object.notebook == null
-              ? null
-              : fbb.writeString(object.notebook!);
-          fbb.startTable(13);
-          fbb.addInt64(0, object.id);
-          fbb.addOffset(1, contentOffset);
-          fbb.addOffset(2, uuidOffset);
-          fbb.addOffset(3, titleOffset);
-          fbb.addBool(4, object.isBookmark);
-          fbb.addInt64(6, object.dateCreated?.millisecondsSinceEpoch);
-          fbb.addOffset(8, previewContentOffset);
-          fbb.addBool(9, object.includePic);
-          fbb.addOffset(10, tagOffset);
-          fbb.addOffset(11, notebookOffset);
-          fbb.finish(fbb.endTable());
-          return object.id;
-        },
-        objectFromFB: (obx.Store store, ByteData fbData) {
-          final buffer = fb.BufferContext(fbData);
-          final rootOffset = buffer.derefObject(0);
-          final dateCreatedValue =
-              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 16);
-          final idParam =
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
-          final uuidParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGetNullable(buffer, rootOffset, 8);
-          final previewContentParam =
-              const fb.StringReader(asciiOptimization: true)
-                  .vTableGetNullable(buffer, rootOffset, 20);
-          final titleParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGetNullable(buffer, rootOffset, 10);
-          final contentParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGetNullable(buffer, rootOffset, 6);
-          final tagParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGetNullable(buffer, rootOffset, 24);
-          final isBookmarkParam =
-              const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 12);
-          final dateCreatedParam = dateCreatedValue == null
-              ? null
-              : DateTime.fromMillisecondsSinceEpoch(dateCreatedValue);
-          final includePicParam =
-              const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 22);
-          final object = Note(
-              id: idParam,
-              uuid: uuidParam,
-              previewContent: previewContentParam,
-              title: titleParam,
-              content: contentParam,
-              tag: tagParam,
-              isBookmark: isBookmarkParam,
-              dateCreated: dateCreatedParam,
-              includePic: includePicParam)
-            ..notebook = const fb.StringReader(asciiOptimization: true)
-                .vTableGetNullable(buffer, rootOffset, 26);
-
-          return object;
-        }),
     Notebook: obx_int.EntityDefinition<Notebook>(
-        model: _entities[1],
+        model: _entities[0],
         toOneRelations: (Notebook object) => [],
         toManyRelations: (Notebook object) => {},
         getId: (Notebook object) => object.id,
@@ -244,17 +184,10 @@ obx_int.ModelDefinition getObjectBoxModel() {
           object.id = id;
         },
         objectToFB: (Notebook object, fb.Builder fbb) {
-          final titleOffset =
-              object.title == null ? null : fbb.writeString(object.title!);
-          final noteListidOffset = object.noteListid == null
-              ? null
-              : fbb.writeList(object.noteListid!
-                  .map(fbb.writeString)
-                  .toList(growable: false));
+          final titleOffset = fbb.writeString(object.title);
           fbb.startTable(4);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, titleOffset);
-          fbb.addOffset(2, noteListidOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -263,13 +196,85 @@ obx_int.ModelDefinition getObjectBoxModel() {
           final rootOffset = buffer.derefObject(0);
           final idParam =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
-          final object = Notebook(id: idParam)
-            ..title = const fb.StringReader(asciiOptimization: true)
-                .vTableGetNullable(buffer, rootOffset, 6)
-            ..noteListid = const fb.ListReader<String>(
-                    fb.StringReader(asciiOptimization: true),
-                    lazy: false)
-                .vTableGetNullable(buffer, rootOffset, 8);
+          final titleParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGet(buffer, rootOffset, 6, '');
+          final object = Notebook(id: idParam, title: titleParam);
+
+          return object;
+        }),
+    Note: obx_int.EntityDefinition<Note>(
+        model: _entities[1],
+        toOneRelations: (Note object) => [],
+        toManyRelations: (Note object) => {},
+        getId: (Note object) => object.id,
+        setId: (Note object, int id) {
+          object.id = id;
+        },
+        objectToFB: (Note object, fb.Builder fbb) {
+          final uuidOffset =
+              object.uuid == null ? null : fbb.writeString(object.uuid!);
+          final previewContentOffset = object.previewContent == null
+              ? null
+              : fbb.writeString(object.previewContent!);
+          final titleOffset =
+              object.title == null ? null : fbb.writeString(object.title!);
+          final contentOffset =
+              object.content == null ? null : fbb.writeString(object.content!);
+          final notebookOffset = object.notebook == null
+              ? null
+              : fbb.writeList(object.notebook!
+                  .map(fbb.writeString)
+                  .toList(growable: false));
+          fbb.startTable(12);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, uuidOffset);
+          fbb.addOffset(2, previewContentOffset);
+          fbb.addOffset(3, titleOffset);
+          fbb.addOffset(4, contentOffset);
+          fbb.addBool(5, object.isBookmark);
+          fbb.addBool(6, object.includePic);
+          fbb.addInt64(7, object.dateCreated?.millisecondsSinceEpoch);
+          fbb.addOffset(10, notebookOffset);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (obx.Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final dateCreatedValue =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 18);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final uuidParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 6);
+          final previewContentParam =
+              const fb.StringReader(asciiOptimization: true)
+                  .vTableGetNullable(buffer, rootOffset, 8);
+          final titleParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 10);
+          final contentParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 12);
+          final notebookParam = const fb.ListReader<String>(
+                  fb.StringReader(asciiOptimization: true),
+                  lazy: false)
+              .vTableGetNullable(buffer, rootOffset, 24);
+          final isBookmarkParam =
+              const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 14);
+          final dateCreatedParam = dateCreatedValue == null
+              ? null
+              : DateTime.fromMillisecondsSinceEpoch(dateCreatedValue);
+          final includePicParam =
+              const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 16);
+          final object = Note(
+              id: idParam,
+              uuid: uuidParam,
+              previewContent: previewContentParam,
+              title: titleParam,
+              content: contentParam,
+              notebook: notebookParam,
+              isBookmark: isBookmarkParam,
+              dateCreated: dateCreatedParam,
+              includePic: includePicParam);
 
           return object;
         })
@@ -278,57 +283,50 @@ obx_int.ModelDefinition getObjectBoxModel() {
   return obx_int.ModelDefinition(model, bindings);
 }
 
-/// [Note] entity fields to define ObjectBox queries.
-class Note_ {
-  /// See [Note.id].
-  static final id = obx.QueryIntegerProperty<Note>(_entities[0].properties[0]);
-
-  /// See [Note.content].
-  static final content =
-      obx.QueryStringProperty<Note>(_entities[0].properties[1]);
-
-  /// See [Note.uuid].
-  static final uuid = obx.QueryStringProperty<Note>(_entities[0].properties[2]);
-
-  /// See [Note.title].
-  static final title =
-      obx.QueryStringProperty<Note>(_entities[0].properties[3]);
-
-  /// See [Note.isBookmark].
-  static final isBookmark =
-      obx.QueryBooleanProperty<Note>(_entities[0].properties[4]);
-
-  /// See [Note.dateCreated].
-  static final dateCreated =
-      obx.QueryDateProperty<Note>(_entities[0].properties[5]);
-
-  /// See [Note.previewContent].
-  static final previewContent =
-      obx.QueryStringProperty<Note>(_entities[0].properties[6]);
-
-  /// See [Note.includePic].
-  static final includePic =
-      obx.QueryBooleanProperty<Note>(_entities[0].properties[7]);
-
-  /// See [Note.tag].
-  static final tag = obx.QueryStringProperty<Note>(_entities[0].properties[8]);
-
-  /// See [Note.notebook].
-  static final notebook =
-      obx.QueryStringProperty<Note>(_entities[0].properties[9]);
-}
-
 /// [Notebook] entity fields to define ObjectBox queries.
 class Notebook_ {
   /// See [Notebook.id].
   static final id =
-      obx.QueryIntegerProperty<Notebook>(_entities[1].properties[0]);
+      obx.QueryIntegerProperty<Notebook>(_entities[0].properties[0]);
 
   /// See [Notebook.title].
   static final title =
-      obx.QueryStringProperty<Notebook>(_entities[1].properties[1]);
+      obx.QueryStringProperty<Notebook>(_entities[0].properties[1]);
+}
 
-  /// See [Notebook.noteListid].
-  static final noteListid =
-      obx.QueryStringVectorProperty<Notebook>(_entities[1].properties[2]);
+/// [Note] entity fields to define ObjectBox queries.
+class Note_ {
+  /// See [Note.id].
+  static final id = obx.QueryIntegerProperty<Note>(_entities[1].properties[0]);
+
+  /// See [Note.uuid].
+  static final uuid = obx.QueryStringProperty<Note>(_entities[1].properties[1]);
+
+  /// See [Note.previewContent].
+  static final previewContent =
+      obx.QueryStringProperty<Note>(_entities[1].properties[2]);
+
+  /// See [Note.title].
+  static final title =
+      obx.QueryStringProperty<Note>(_entities[1].properties[3]);
+
+  /// See [Note.content].
+  static final content =
+      obx.QueryStringProperty<Note>(_entities[1].properties[4]);
+
+  /// See [Note.isBookmark].
+  static final isBookmark =
+      obx.QueryBooleanProperty<Note>(_entities[1].properties[5]);
+
+  /// See [Note.includePic].
+  static final includePic =
+      obx.QueryBooleanProperty<Note>(_entities[1].properties[6]);
+
+  /// See [Note.dateCreated].
+  static final dateCreated =
+      obx.QueryDateProperty<Note>(_entities[1].properties[7]);
+
+  /// See [Note.notebook].
+  static final notebook =
+      obx.QueryStringVectorProperty<Note>(_entities[1].properties[8]);
 }

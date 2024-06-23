@@ -1,5 +1,7 @@
 class Mode {
-  static const String bookmarks = 'bookmarks';
-  static const String notebook = 'notebook';
-  static const String tags = 'tags';
+  static const String bookmarks = 'Bookmarks';
+  static const String allnotes = 'All Notes';
+  static const String tags = 'Tags';
+  static const String search = 'Search';
+  static const String noteBook = 'Note Book';
 }

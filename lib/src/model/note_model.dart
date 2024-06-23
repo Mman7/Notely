@@ -8,12 +8,11 @@ class Note {
       this.previewContent,
       this.title,
       this.content,
-      this.tag,
+      this.notebook,
       this.isBookmark = false,
       this.dateCreated,
       this.includePic = false});
   @Id()
-  //TODO implement tag,notebook system
   int id;
   String? uuid;
   String? previewContent;
@@ -24,11 +23,6 @@ class Note {
   DateTime? dateCreated;
 
   /// these two
-  String? tag;
-  String? notebook;
-  // var lastModified;
-
-  static saveToDataBase({note}) {}
-
-  static saveData() {}
+  List<String>? notebook;
+  // var lastMo`dified;
 }

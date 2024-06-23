@@ -1,13 +1,12 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:syncnote/myobjectbox.dart';
+import 'package:syncnote/src/model/mode_model.dart';
+import 'package:syncnote/src/model/notebooks_model.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/widget/custom_expansion_list.dart';
 import 'package:syncnote/src/widget/custom_text_button.dart';
-
-//*do this first TODO: implement function with sidebar
 
 class SideBar extends StatefulWidget {
   const SideBar({super.key});
@@ -52,12 +51,9 @@ class _SideBarState extends State<SideBar> {
 
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-      ),
+      decoration: const BoxDecoration(color: Colors.white, border: null),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,6 +62,8 @@ class _SideBarState extends State<SideBar> {
                 icon: Icons.search,
                 text: ' Search',
                 onPressed: () {
+                  appProvider.setListMode(value: Mode.search);
+                  appProvider.clearNoteBookSelect();
                   appProvider.setSearchMode(value: true);
                 },
               ),
@@ -79,6 +77,7 @@ class _SideBarState extends State<SideBar> {
                 text: ' New Note',
                 onPressed: () {
                   appProvider.setSearchMode(value: false);
+                  appProvider.clearNoteBookSelect();
                   appProvider.setNoteSelected(id: 0);
                 },
               ),
@@ -87,37 +86,30 @@ class _SideBarState extends State<SideBar> {
                 text: ' All Notes',
                 onPressed: () {
                   appProvider.setSearchMode(value: false);
-                  appProvider.setListMode(value: 'allnotes');
+                  appProvider.setListMode(value: Mode.allnotes);
+                  appProvider.clearNoteBookSelect();
                 },
               ),
               CustomTextButton(
                 icon: Icons.bookmark,
                 text: ' Bookmarks',
                 onPressed: () {
-                  appProvider.setListMode(value: 'bookmarks');
+                  appProvider.setListMode(value: Mode.bookmarks);
+                  appProvider.clearNoteBookSelect();
                 },
               ),
 
               //add colour
               CustomExpansionList(
-                setToggle: () =>
-                    setNoteBookExpanded(value: !noteBookisExpanded),
-                list: [],
+                setExpandedToggle: () {
+                  setNoteBookExpanded(value: !noteBookisExpanded);
+                  appProvider.clearNoteBookSelect();
+                },
+                list: context.watch<AppProvider>().noteBooks,
                 createBtnCallBack: () => showD(context),
                 isExpanded: noteBookisExpanded,
                 icon: Icons.menu_book,
                 text: ' Notebooks',
-              ),
-
-              CustomExpansionList(
-                list: [],
-                createBtnCallBack: () => showD(context),
-                setToggle: () {
-                  setTagsExpanded(value: !tagsIsExpanded);
-                },
-                isExpanded: tagsIsExpanded,
-                icon: Icons.menu_book,
-                text: ' Tags',
               ),
             ],
           ),
@@ -145,7 +137,6 @@ class _SideBarState extends State<SideBar> {
         context: context,
         builder: (context) => SimpleDialog(children: [
               Container(
-                // TODO :content fit
                 padding:
                     const EdgeInsets.symmetric(horizontal: 50, vertical: 30),
                 width: ScreenUtil().screenWidth / 2,
@@ -165,7 +156,12 @@ class _SideBarState extends State<SideBar> {
                         TextButton.icon(
                             label: const Text('Create'),
                             onPressed: () {
-                              print(textEditController.text);
+                              final editorText = textEditController.text;
+                              final noteBookBox =
+                                  objectbox.store.box<Notebook>();
+                              noteBookBox.put(Notebook(title: editorText));
+                              Navigator.of(context).pop();
+                              context.read<AppProvider>().refreshNoteBook();
                             },
                             icon: const Icon(Icons.check_circle)),
                         TextButton.icon(

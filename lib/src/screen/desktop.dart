@@ -30,7 +30,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
           curve: Curves.easeInOut,
           child: const SideBar(),
         ),
-        Flexible(flex: 6, child: NoteList()),
+        const Flexible(flex: 6, child: NoteList()),
         const Flexible(flex: 15, child: NoteView())
       ],
     );

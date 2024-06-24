@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
@@ -7,7 +9,15 @@ import 'package:syncnote/src/utils/myobjectbox.dart';
 import 'myobjectbox.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-//TODO use fuzzy to search data
+class MyCustomScrollBehavior extends MaterialScrollBehavior {
+  // Override behavior methods like buildOverscrollIndicator and buildScrollbar
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+        PointerDeviceKind.touch,
+        PointerDeviceKind.mouse,
+        // etc.
+      };
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,10 +50,12 @@ class _MainAppState extends State<MainApp> {
           final screenwidth = ScreenUtil().screenWidth;
           var isMobile = screenwidth < 490;
           var isDesktop = screenwidth > 1080;
-          print(screenwidth);
+          debugPrint(screenwidth.toString());
 
           return MaterialApp(
+            scrollBehavior: MyCustomScrollBehavior(),
             home: Scaffold(
+              //TODO add drawer for mobile
               // drawer: SideBar(
               //   sidebarXController: sidebarXController,
               // ),

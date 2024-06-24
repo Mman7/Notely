@@ -101,25 +101,28 @@ class _NoteListState extends State<NoteList> {
                             case Mode.search:
                               if (searchController.text == '') {
                                 return NotePreviewItem(
-                                    id: itemList[index].id,
-                                    date: itemList[index].dateCreated,
-                                    title: itemList[index].title,
-                                    content: itemList[index].previewContent,
-                                    hadPreviewIMG: itemList[index].includePic);
-                              }
-                              return NotePreviewItem(
-                                  id: searchItems[index].id,
-                                  date: searchItems[index].dateCreated,
-                                  title: searchItems[index].title,
-                                  content: searchItems[index].previewContent,
-                                  hadPreviewIMG: searchItems[index].includePic);
-                            default:
-                              return NotePreviewItem(
                                   id: itemList[index].id,
                                   date: itemList[index].dateCreated,
                                   title: itemList[index].title,
                                   content: itemList[index].previewContent,
-                                  hadPreviewIMG: itemList[index].includePic);
+                                  bookmarked: itemList[index].isBookmark,
+                                );
+                              }
+                              return NotePreviewItem(
+                                id: searchItems[index].id,
+                                date: searchItems[index].dateCreated,
+                                title: searchItems[index].title,
+                                content: searchItems[index].previewContent,
+                                bookmarked: searchItems[index].isBookmark,
+                              );
+                            default:
+                              return NotePreviewItem(
+                                id: itemList[index].id,
+                                date: itemList[index].dateCreated,
+                                title: itemList[index].title,
+                                content: itemList[index].previewContent,
+                                bookmarked: itemList[index].isBookmark,
+                              );
                           }
                         }),
                       );

@@ -23,11 +23,6 @@ class NotePreviewItem extends StatelessWidget {
   Widget build(BuildContext context) {
     var isSelected = id == context.read<AppProvider>().noteSelected?.id;
 
-    //TODO preview pic function
-    // var pic = hadPreviewIMG
-    //     ? const Icon(Icons.ac_unit_rounded, color: Colors.red)
-    //     : const Icon(Icons.ac_unit_rounded, color: Colors.blue);
-
     return Material(
       borderRadius: const BorderRadius.all(Radius.circular(7.5)),
       color: isSelected ? Colors.white : Colors.white54,

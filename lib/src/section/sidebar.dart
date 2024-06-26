@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:syncnote/myobjectbox.dart';
@@ -9,8 +11,8 @@ import 'package:syncnote/src/widget/custom_expansion_list.dart';
 import 'package:syncnote/src/widget/custom_text_button.dart';
 
 class SideBar extends StatefulWidget {
-  const SideBar({super.key});
-
+  SideBar({super.key, required this.aniContoller});
+  AnimationController aniContoller;
   @override
   State<SideBar> createState() => _SideBarState();
 }
@@ -51,11 +53,12 @@ class _SideBarState extends State<SideBar> {
 
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(color: Colors.white, border: null),
+      decoration: BoxDecoration(color: hexToColor('#313866'), border: null),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
+          Flex(
+            direction: Axis.vertical,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomTextButton(
@@ -68,7 +71,7 @@ class _SideBarState extends State<SideBar> {
                 },
               ),
               CustomTextButton(
-                bgColor: Colors.redAccent,
+                bgColor: hexToColor('#50409A'),
                 btnColor: Colors.white,
                 textColor: Colors.white,
                 margin: const EdgeInsets.all(7.5),
@@ -83,6 +86,8 @@ class _SideBarState extends State<SideBar> {
               ),
               CustomTextButton(
                 icon: Icons.book,
+                btnColor: Colors.white,
+                textColor: Colors.white,
                 text: ' All Notes',
                 onPressed: () {
                   appProvider.setSearchMode(value: false);
@@ -92,6 +97,8 @@ class _SideBarState extends State<SideBar> {
               ),
               CustomTextButton(
                 icon: Icons.bookmark,
+                btnColor: Colors.white,
+                textColor: Colors.white,
                 text: ' Bookmarks',
                 onPressed: () {
                   appProvider.setListMode(value: Mode.bookmarks);
@@ -118,13 +125,31 @@ class _SideBarState extends State<SideBar> {
           SizedBox(
             width: double.infinity,
             child: Material(
+                color: Colors.transparent,
                 child: InkWell(
                     onTap: () {
-                      context.read<AppProvider>().changeSidebarExtended();
+                      print(widget.aniContoller.status);
+                      print(context.read<AppProvider>().isSidebarExtended);
                       setNoteBookExpanded(value: false);
+                      if (context.read<AppProvider>().isSidebarExtended) {
+                        context.read<AppProvider>().changeSidebarExtended();
+                        widget.aniContoller.reverse();
+                      } else {
+                        widget.aniContoller.forward();
+                        widget.aniContoller.addStatusListener((status) {
+                          if (status == AnimationStatus.completed) {
+                            context
+                                .read<AppProvider>()
+                                .changeSidebarExtended(value: true);
+                          }
+                        });
+                      }
                       setTagsExpanded(value: false);
                     },
-                    child: Icon(openIcon()))),
+                    child: Icon(
+                      openIcon(),
+                      color: Colors.white,
+                    ))),
           )
         ],
       ),

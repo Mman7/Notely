@@ -56,11 +56,13 @@ class _NoteListState extends State<NoteList> {
           return list;
 
         case Mode.bookmarks:
-          return itemList
+          var a = itemList
               .where(
                 (element) => element.isBookmark == true,
               )
               .toList();
+
+          return a;
 
         case Mode.search:
           if (searchController.text == '') return itemList;
@@ -98,6 +100,15 @@ class _NoteListState extends State<NoteList> {
                         margin: const EdgeInsets.symmetric(vertical: 2),
                         child: Builder(builder: (context) {
                           switch (listmode) {
+                            case Mode.bookmarks:
+                              final bookmarkedList = listModeSwitcher();
+                              return NotePreviewItem(
+                                id: bookmarkedList[index].id,
+                                date: bookmarkedList[index].dateCreated,
+                                title: bookmarkedList[index].title,
+                                content: bookmarkedList[index].previewContent,
+                                bookmarked: bookmarkedList[index].isBookmark,
+                              );
                             case Mode.search:
                               if (searchController.text == '') {
                                 return NotePreviewItem(

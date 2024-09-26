@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:syncnote/myobjectbox.dart';
 import 'package:syncnote/objectbox.g.dart';
 import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/model/notebooks_model.dart';
 
-class Database extends ChangeNotifier {
+class Database {
   final noteBox = objectbox.store.box<Note>();
   final noteBookBox = objectbox.store.box<Notebook>();
 

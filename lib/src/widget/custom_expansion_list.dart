@@ -11,24 +11,73 @@ class CustomExpansionList extends StatelessWidget {
       required this.createBtnCallBack,
       required this.icon,
       required this.text,
+      required this.animationStatus,
       required this.setExpandedToggle,
       required this.isExpanded});
 
   final IconData icon;
   final String text;
   final bool isExpanded;
+  final AnimationStatus animationStatus;
   final VoidCallback setExpandedToggle;
   final VoidCallback createBtnCallBack;
   final List list;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.green,
-      child: Column(children: [
+    var expandedColumn = Column(
+      children: [
+        ListView.separated(
+          separatorBuilder: (context, index) => const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 1),
+            child: Divider(),
+          ),
+          shrinkWrap: true,
+          itemCount: list.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+              child: ExpansionListItem(
+                title: list[index].title,
+              ),
+            );
+          },
+        ),
+        SizedBox(
+          width: double.infinity,
+          child: IconButton(
+            onPressed: () => createBtnCallBack(),
+            color: Colors.white,
+            icon: const Icon(Icons.add_circle_outlined),
+            style: ButtonStyle(
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+            ))),
+          ),
+        ),
+        SizedBox(
+          width: double.infinity,
+          child: IconButton(
+            style: ButtonStyle(
+                shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(0),
+            ))),
+            onPressed: () => setExpandedToggle(),
+            icon: const Icon(Icons.arrow_drop_up),
+            color: Colors.white,
+          ),
+        )
+      ],
+    );
+    return Column(
+      children: [
         CustomTextButton(
             icon: icon,
             text: text,
+            btnColor: Colors.white,
+            textColor: Colors.white,
             onPressed: () {
               context.read<AppProvider>().changeSidebarExtended(value: true);
               context
@@ -36,35 +85,14 @@ class CustomExpansionList extends StatelessWidget {
                   .setListMode(value: text.replaceAll(' ', ''));
               setExpandedToggle();
             }),
-        isExpanded
-            ? Column(
-                children: [
-                  ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: list.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return ExpansionListItem(
-                        title: list[index].title,
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    width: double.infinity,
-                    child: IconButton(
-                      onPressed: () => createBtnCallBack(),
-                      icon: const Icon(Icons.add_circle_outlined),
-                      style: ButtonStyle(
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(0),
-                      ))),
-                    ),
-                  )
-                ],
+        isExpanded && animationStatus == AnimationStatus.completed
+            ? expandedColumn
+            : IconButton(
+                onPressed: () => setExpandedToggle(),
+                icon: const Icon(Icons.arrow_drop_down),
+                color: Colors.white,
               )
-            : Container()
-      ]),
+      ],
     );
   }
 }

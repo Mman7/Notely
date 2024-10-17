@@ -3,9 +3,8 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  irondash_engine_context
   objectbox_flutter_libs
-  super_native_extensions
+  rive_common
   url_launcher_windows
 )
 

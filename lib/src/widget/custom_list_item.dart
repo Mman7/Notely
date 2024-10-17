@@ -17,7 +17,10 @@ class ExpansionListItem extends StatelessWidget {
       onPressed: () {
         context.read<AppProvider>().setNoteBookSelect(value: title);
       },
-      child: Text(title),
+      child: Text(
+        title,
+        style: const TextStyle(color: Colors.white70),
+      ),
     );
   }
 }

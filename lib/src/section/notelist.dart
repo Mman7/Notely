@@ -3,7 +3,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 import 'package:syncnote/src/model/mode_model.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
-import 'package:syncnote/src/provider/database_provider.dart';
+import 'package:syncnote/src/modules/local-database.dart';
 import 'package:syncnote/src/widget/custom_popup_menuitem.dart';
 import 'package:syncnote/src/widget/note_preview_item.dart';
 
@@ -81,16 +81,20 @@ class _NoteListState extends State<NoteList> {
         ),
         child: Column(
           children: [
-            searchMode
-                ? SearchHeader(
-                    searchController: searchController,
-                  )
-                : ListHeader(
-                    itemList: itemList,
-                    list: listModeSwitcher(),
-                  ),
+            Expanded(
+              flex: 2,
+              child: searchMode
+                  ? SearchHeader(
+                      searchController: searchController,
+                    )
+                  : ListHeader(
+                      itemList: itemList,
+                      list: listModeSwitcher(),
+                    ),
+            ),
             //list body
             Expanded(
+              flex: 12,
               child: Container(
                 padding: const EdgeInsets.all(2),
                 child: ListView.builder(
@@ -178,9 +182,7 @@ class ListHeader extends StatelessWidget {
     );
 
     return Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: 15,
-        ),
+        alignment: Alignment.center,
         margin: const EdgeInsets.only(bottom: 3.5),
         decoration:
             BoxDecoration(color: Colors.white, border: null, boxShadow: [
@@ -218,18 +220,23 @@ class SearchHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         padding: const EdgeInsets.fromLTRB(0, 5, 15, 5),
+        color: Colors.white,
         child: Row(
           children: [
             IconButton(
-                onPressed: () {
-                  context.read<AppProvider>().setSearchMode(value: false);
-                  context.read<AppProvider>().setListMode(value: Mode.allnotes);
-                },
-                icon: const Icon(Icons.arrow_back)),
+              onPressed: () {
+                context.read<AppProvider>().setSearchMode(value: false);
+                context.read<AppProvider>().setListMode(value: Mode.allnotes);
+              },
+              icon: const Icon(Icons.arrow_back),
+              style: ButtonStyle(
+                  iconColor: WidgetStatePropertyAll(hexToColor('#50409A'))),
+            ),
             Expanded(
               child: TextField(
                 controller: searchController,
                 decoration: const InputDecoration(
+                  hintText: 'Search somethings here',
                   prefixIcon: Icon(Icons.search),
                 ),
               ),

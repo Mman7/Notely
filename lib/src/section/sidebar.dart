@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,8 +10,8 @@ import 'package:syncnote/src/widget/custom_expansion_list.dart';
 import 'package:syncnote/src/widget/custom_text_button.dart';
 
 class SideBar extends StatefulWidget {
-  SideBar({super.key, required this.aniContoller});
-  AnimationController aniContoller;
+  const SideBar({super.key, required this.aniContoller});
+  final AnimationController aniContoller;
   @override
   State<SideBar> createState() => _SideBarState();
 }
@@ -62,8 +61,11 @@ class _SideBarState extends State<SideBar> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomTextButton(
+                animationStatus: widget.aniContoller.status,
                 icon: Icons.search,
                 text: ' Search',
+                btnColor: Colors.white,
+                textColor: Colors.white,
                 onPressed: () {
                   appProvider.setListMode(value: Mode.search);
                   appProvider.clearNoteBookSelect();
@@ -71,6 +73,7 @@ class _SideBarState extends State<SideBar> {
                 },
               ),
               CustomTextButton(
+                animationStatus: widget.aniContoller.status,
                 bgColor: hexToColor('#50409A'),
                 btnColor: Colors.white,
                 textColor: Colors.white,
@@ -85,6 +88,7 @@ class _SideBarState extends State<SideBar> {
                 },
               ),
               CustomTextButton(
+                animationStatus: widget.aniContoller.status,
                 icon: Icons.book,
                 btnColor: Colors.white,
                 textColor: Colors.white,
@@ -96,6 +100,7 @@ class _SideBarState extends State<SideBar> {
                 },
               ),
               CustomTextButton(
+                animationStatus: widget.aniContoller.status,
                 icon: Icons.bookmark,
                 btnColor: Colors.white,
                 textColor: Colors.white,
@@ -106,14 +111,16 @@ class _SideBarState extends State<SideBar> {
                 },
               ),
 
-              //add colour
+              //add BACKGROUND colour
               CustomExpansionList(
+                animationStatus: widget.aniContoller.status,
                 setExpandedToggle: () {
                   setNoteBookExpanded(value: !noteBookisExpanded);
                   appProvider.clearNoteBookSelect();
+                  appProvider.changeSidebarExtended(value: true);
                 },
                 list: context.watch<AppProvider>().noteBooks,
-                createBtnCallBack: () => showD(context),
+                createBtnCallBack: () => showCreateNoteBookDialog(context),
                 isExpanded: noteBookisExpanded,
                 icon: Icons.menu_book,
                 text: ' Notebooks',
@@ -128,23 +135,13 @@ class _SideBarState extends State<SideBar> {
                 color: Colors.transparent,
                 child: InkWell(
                     onTap: () {
-                      print(widget.aniContoller.status);
-                      print(context.read<AppProvider>().isSidebarExtended);
+                      // close note book expand
                       setNoteBookExpanded(value: false);
-                      if (context.read<AppProvider>().isSidebarExtended) {
-                        context.read<AppProvider>().changeSidebarExtended();
-                        widget.aniContoller.reverse();
+                      if (appProvider.isSidebarExtended) {
+                        appProvider.changeSidebarExtended();
                       } else {
-                        widget.aniContoller.forward();
-                        widget.aniContoller.addStatusListener((status) {
-                          if (status == AnimationStatus.completed) {
-                            context
-                                .read<AppProvider>()
-                                .changeSidebarExtended(value: true);
-                          }
-                        });
+                        appProvider.changeSidebarExtended();
                       }
-                      setTagsExpanded(value: false);
                     },
                     child: Icon(
                       openIcon(),
@@ -156,16 +153,16 @@ class _SideBarState extends State<SideBar> {
     );
   }
 
-  void showD(BuildContext context) {
+  void showCreateNoteBookDialog(BuildContext context) {
     showDialog(
-        barrierDismissible: false,
+        barrierDismissible: true,
         context: context,
         builder: (context) => SimpleDialog(children: [
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 50, vertical: 30),
-                width: ScreenUtil().screenWidth / 2,
-                height: ScreenUtil().screenHeight / 2,
+                width: ScreenUtil().screenWidth / 3,
+                height: ScreenUtil().screenHeight / 3,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [

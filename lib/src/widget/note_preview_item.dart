@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
@@ -21,7 +22,7 @@ class NotePreviewItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var isSelected = id == context.read<AppProvider>().noteSelected?.id;
+    final isSelected = id == context.read<AppProvider>().noteSelected?.id;
 
     return Material(
       borderRadius: const BorderRadius.all(Radius.circular(7.5)),
@@ -32,11 +33,11 @@ class NotePreviewItem extends StatelessWidget {
         child: Stack(
           children: [
             if (bookmarked)
-              const Align(
+              Align(
                 alignment: Alignment.topRight,
                 child: Icon(
                   Icons.bookmark,
-                  color: Colors.red,
+                  color: hexToColor('#964EC2'),
                 ),
               ),
             ListTile(

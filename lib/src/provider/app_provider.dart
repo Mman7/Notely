@@ -5,7 +5,7 @@ import 'package:syncnote/myobjectbox.dart';
 import 'package:syncnote/src/model/mode_model.dart';
 import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/model/notebooks_model.dart';
-import 'package:syncnote/src/provider/database_provider.dart';
+import 'package:syncnote/src/modules/local-database.dart';
 
 class AppProvider extends ChangeNotifier {
   final noteBox = objectbox.store.box<Note>();

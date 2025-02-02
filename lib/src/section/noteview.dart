@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:syncnote/myobjectbox.dart';
 import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
-import 'package:syncnote/src/provider/database_provider.dart';
+import 'package:syncnote/src/modules/local-database.dart';
 import 'package:syncnote/src/widget/custom_popup_menuitem.dart';
 import 'package:uuid/uuid.dart';
 

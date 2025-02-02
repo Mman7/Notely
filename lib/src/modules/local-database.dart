@@ -18,12 +18,13 @@ class Database {
   }
 
   getSpecificNoteBook({required id}) {
+    // prevent first launch value equals to null
+    if (noteBookBox.getAll().isEmpty) return;
     String noteBooktitle = objectbox.store.box<Notebook>().get(id)!.title;
     final query =
         noteBox.query(Note_.notebook.containsElement(noteBooktitle)).build();
     final noteBookData = query.find();
-    print(noteBookData);
-    // print('$noteBookData from appp');
+    return noteBookData;
   }
 
   saveNote({required Note note}) {

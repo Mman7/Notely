@@ -61,7 +61,6 @@ class _SideBarState extends State<SideBar> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomTextButton(
-                animationStatus: widget.aniContoller.status,
                 icon: Icons.search,
                 text: ' Search',
                 btnColor: Colors.white,
@@ -73,7 +72,6 @@ class _SideBarState extends State<SideBar> {
                 },
               ),
               CustomTextButton(
-                animationStatus: widget.aniContoller.status,
                 bgColor: hexToColor('#50409A'),
                 btnColor: Colors.white,
                 textColor: Colors.white,
@@ -88,7 +86,6 @@ class _SideBarState extends State<SideBar> {
                 },
               ),
               CustomTextButton(
-                animationStatus: widget.aniContoller.status,
                 icon: Icons.book,
                 btnColor: Colors.white,
                 textColor: Colors.white,
@@ -100,7 +97,6 @@ class _SideBarState extends State<SideBar> {
                 },
               ),
               CustomTextButton(
-                animationStatus: widget.aniContoller.status,
                 icon: Icons.bookmark,
                 btnColor: Colors.white,
                 textColor: Colors.white,
@@ -110,20 +106,21 @@ class _SideBarState extends State<SideBar> {
                   appProvider.clearNoteBookSelect();
                 },
               ),
-
-              //add BACKGROUND colour
-              CustomExpansionList(
-                animationStatus: widget.aniContoller.status,
-                setExpandedToggle: () {
-                  setNoteBookExpanded(value: !noteBookisExpanded);
-                  appProvider.clearNoteBookSelect();
-                  appProvider.changeSidebarExtended(value: true);
-                },
-                list: context.watch<AppProvider>().noteBooks,
-                createBtnCallBack: () => showCreateNoteBookDialog(context),
-                isExpanded: noteBookisExpanded,
-                icon: Icons.menu_book,
-                text: ' Notebooks',
+              // Notebook Button
+              Container(
+                color: Colors.black12,
+                child: CustomExpansionList(
+                  animationStatus: widget.aniContoller.status,
+                  setExpandedToggle: () {
+                    setNoteBookExpanded(value: !noteBookisExpanded);
+                    appProvider.changeSidebarExtended(value: true);
+                  },
+                  list: context.watch<AppProvider>().noteBooks,
+                  createBtnCallBack: () => showCreateNoteBookDialog(context),
+                  isExpanded: noteBookisExpanded,
+                  icon: Icons.menu_book,
+                  text: ' Notebooks',
+                ),
               ),
             ],
           ),

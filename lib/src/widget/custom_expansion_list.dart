@@ -25,6 +25,7 @@ class CustomExpansionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ////
     var expandedColumn = Column(
       children: [
         ListView.separated(
@@ -43,6 +44,7 @@ class CustomExpansionList extends StatelessWidget {
             );
           },
         ),
+        /////
         SizedBox(
           width: double.infinity,
           child: IconButton(
@@ -85,13 +87,22 @@ class CustomExpansionList extends StatelessWidget {
                   .setListMode(value: text.replaceAll(' ', ''));
               setExpandedToggle();
             }),
-        isExpanded && animationStatus == AnimationStatus.completed
-            ? expandedColumn
-            : IconButton(
-                onPressed: () => setExpandedToggle(),
-                icon: const Icon(Icons.arrow_drop_down),
-                color: Colors.white,
-              )
+        if (isExpanded && animationStatus == AnimationStatus.completed)
+          expandedColumn
+        else
+          SizedBox(
+            width: double.infinity,
+            child: IconButton(
+              style: ButtonStyle(
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(0),
+              ))),
+              onPressed: () => setExpandedToggle(),
+              icon: const Icon(Icons.arrow_drop_down),
+              color: Colors.white,
+            ),
+          ),
       ],
     );
   }

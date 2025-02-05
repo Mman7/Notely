@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:syncnote/src/theme.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/screen/desktop.dart';
 import 'package:syncnote/src/screen/mobile.dart';
@@ -54,11 +55,10 @@ class _MainAppState extends State<MainApp> {
 
           return MaterialApp(
             scrollBehavior: MyCustomScrollBehavior(),
+            theme: myTheme,
             home: Scaffold(
               //TODO add drawer for mobile
-              // drawer: SideBar(
-              //   sidebarXController: sidebarXController,
-              // ),
+
               body: Container(
                 color: Colors.black,
                 child: Builder(

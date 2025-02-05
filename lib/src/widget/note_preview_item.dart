@@ -23,43 +23,46 @@ class NotePreviewItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isSelected = id == context.read<AppProvider>().noteSelected?.id;
-
-    return Material(
-      borderRadius: const BorderRadius.all(Radius.circular(7.5)),
-      color: isSelected ? Colors.white : Colors.white54,
-      child: InkWell(
-        hoverColor: Colors.white,
-        onTap: () => context.read<AppProvider>().setNoteSelected(id: id),
-        child: Stack(
-          children: [
-            if (bookmarked)
-              Align(
-                alignment: Alignment.topRight,
-                child: Icon(
-                  Icons.bookmark,
-                  color: hexToColor('#964EC2'),
+    //TODO prevent title overtext
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 5),
+      child: Material(
+        borderRadius: const BorderRadius.all(Radius.circular(7.5)),
+        color: isSelected ? Colors.white : Colors.white54,
+        child: InkWell(
+          hoverColor: Colors.white,
+          onTap: () => context.read<AppProvider>().setNoteSelected(id: id),
+          child: Stack(
+            children: [
+              if (bookmarked)
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Icon(
+                    Icons.bookmark,
+                    color: hexToColor('#964EC2'),
+                  ),
+                ),
+              ListTile(
+                title: Text(
+                  title,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isSelected ? Colors.black : Colors.black54),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      content,
+                      style: const TextStyle(
+                          color: Colors.black54, fontWeight: FontWeight.w400),
+                    ),
+                    Text(DateFormat('yyyy-MM-dd – kk:mm').format(date))
+                  ],
                 ),
               ),
-            ListTile(
-              title: Text(
-                title,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: isSelected ? Colors.black : Colors.black54),
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    content,
-                    style: const TextStyle(
-                        color: Colors.black54, fontWeight: FontWeight.w400),
-                  ),
-                  Text(DateFormat('yyyy-MM-dd – kk:mm').format(date))
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

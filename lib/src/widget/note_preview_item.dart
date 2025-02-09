@@ -25,7 +25,7 @@ class NotePreviewItem extends StatelessWidget {
     final isSelected = id == context.read<AppProvider>().noteSelected?.id;
     //TODO prevent title overtext
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 5),
+      margin: EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
       child: Material(
         borderRadius: const BorderRadius.all(Radius.circular(7.5)),
         color: isSelected ? Colors.white : Colors.white54,
@@ -45,6 +45,7 @@ class NotePreviewItem extends StatelessWidget {
               ListTile(
                 title: Text(
                   title,
+                  maxLines: 1,
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: isSelected ? Colors.black : Colors.black54),
@@ -54,6 +55,7 @@ class NotePreviewItem extends StatelessWidget {
                   children: [
                     Text(
                       content,
+                      maxLines: 2,
                       style: const TextStyle(
                           color: Colors.black54, fontWeight: FontWeight.w400),
                     ),

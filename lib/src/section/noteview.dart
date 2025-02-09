@@ -133,19 +133,20 @@ class _NoteViewState extends State<NoteView> {
                                     if (note != null)
                                       CustomPopupMenuItem(
                                           icon: Icons.delete,
-                                          onTap: () => deleteNote(id: note.id),
+                                          onTap: () => Database()
+                                              .removeNote(id: note.id),
                                           text: 'Delete Note'),
-                                    if (note?.isBookmark == true)
+                                    if (note != null)
                                       CustomPopupMenuItem(
                                           icon: Icons.bookmark_add,
-                                          onTap: () => unsetBookmarked(),
-                                          text: 'Remove from Bookmarked'),
-                                    if (note?.isBookmark == false)
-                                      CustomPopupMenuItem(
-                                          icon: Icons.bookmark_add,
-                                          onTap: () =>
-                                              setBookmarked(note: note),
-                                          text: 'Add to Bookmark'),
+                                          onTap: () {
+                                            Database().toggleBookMarked(
+                                                noteId: note.id);
+                                            context
+                                                .read<AppProvider>()
+                                                .refresh();
+                                          },
+                                          text: 'Add to Bookmarked'),
                                     CustomPopupMenuItem(
                                         icon: Icons.menu_book,
                                         onTap: () =>
@@ -381,8 +382,9 @@ class _NoteViewState extends State<NoteView> {
           return Container(
             margin: const EdgeInsets.symmetric(vertical: 30, horizontal: 300),
             decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 57, 35, 35),
-                borderRadius: BorderRadius.circular(20)),
+              borderRadius: BorderRadius.circular(20),
+              color: Colors.white,
+            ),
             child: ListView.builder(
                 itemCount: noteBooks.length,
                 itemBuilder: (ctx, index) {
@@ -410,37 +412,13 @@ class _NoteViewState extends State<NoteView> {
                         Navigator.of(context).pop();
                         // TODO add toast
                       },
-                      child: Text(noteBooks[index].title));
+                      child: Text(
+                        noteBooks[index].title,
+                        style: TextStyle(color: Colors.black),
+                      ));
                 }),
           );
         });
-  }
-
-  void setBookmarked({required Note? note}) {
-    if (note == null) return;
-    note.isBookmark = true;
-    Database().saveNote(note: note);
-    context.read<AppProvider>().refresh();
-    debugPrint('bookmarked');
-  }
-
-  unsetBookmarked() {
-    var noteSelected = context.read<AppProvider>().noteSelected;
-    if (noteSelected == null) return;
-
-    final noteBox = objectbox.store.box<Note>();
-
-    noteSelected.isBookmark = false;
-
-    //Update Data
-    noteBox.put(noteSelected);
-    context.read<AppProvider>().refresh();
-    debugPrint('unBookmarked');
-  }
-
-  void deleteNote({required id}) {
-    Database().removeNote(id: id);
-    context.read<AppProvider>().refresh();
   }
 
   String shortPlainText(String text) {

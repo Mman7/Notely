@@ -7,6 +7,12 @@ class Database {
   final noteBox = objectbox.store.box<Note>();
   final noteBookBox = objectbox.store.box<Notebook>();
 
+  getNote({required int id}) {
+    if (id == null) return;
+    var note = noteBox.get(id);
+    return note;
+  }
+
   getAllNote() {
     final notes = noteBox.getAll();
     return notes;
@@ -17,25 +23,32 @@ class Database {
     return noteBookList;
   }
 
-  getSpecificNoteBook({required id}) {
+  getSpecificNoteBook({required int id}) {
     // prevent first launch value equals to null
     if (noteBookBox.getAll().isEmpty) return;
     String noteBooktitle = objectbox.store.box<Notebook>().get(id)!.title;
     final query =
         noteBox.query(Note_.notebook.containsElement(noteBooktitle)).build();
     final noteBookData = query.find();
+
     return noteBookData;
+  }
+
+  toggleBookMarked({required int noteId}) {
+    final Note note = getNote(id: noteId);
+    note.isBookmark = !note.isBookmark!;
+    saveNote(note: note);
   }
 
   saveNote({required Note note}) {
     noteBox.put(note);
   }
 
-  removeNote({id}) {
+  removeNote({required id}) {
     noteBox.remove(id);
   }
 
-  removeNoteBook({id}) {
+  removeNoteBook({required id}) {
     noteBookBox.remove(id);
   }
 }

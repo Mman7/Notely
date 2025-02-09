@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +11,6 @@ import 'package:syncnote/src/widget/custom_popup_menuitem.dart';
 import 'package:uuid/uuid.dart';
 
 //TODO mobile if user editing show bottom sticky TOOLBAR
-//TODO finish tool bar style
 
 class NoteView extends StatefulWidget {
   const NoteView({
@@ -24,6 +24,8 @@ class NoteView extends StatefulWidget {
 class _NoteViewState extends State<NoteView> {
   final QuillController _controller = QuillController.basic();
   final titleController = TextEditingController();
+  final scrollController = ScrollController();
+
   @override
   void dispose() {
     // Clean up the controller when the widget is removed from the
@@ -33,25 +35,45 @@ class _NoteViewState extends State<NoteView> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    Note? note = context.watch<AppProvider>().noteSelected;
+  void clearUndoRedoHistory() {
+    // Reset the controller's document to a new empty document or a default content
+    _controller.document = Document.fromJson([
+      {"insert": "\n"},
+    ]);
+    setState(() {}); // Trigger UI update
+  }
 
+  void getData() {
+    Note? note = context.read<AppProvider>().noteSelected;
     if (note != null) {
-      // set title
-      titleController.text = note.title!;
-      // set content
-      var rawData = jsonDecode(note.content!);
-      _controller.document = Document.fromJson(rawData);
+      setState(() {
+        // set Title
+        titleController.text = note.title!;
+        // set content
+        final rawData = jsonDecode(note.content!);
+        _controller.document = Document.fromJson(rawData);
+      });
 
       debugPrint('note selected ${note.id.toString()}');
     }
 
     if (note == null) {
       // clean content and title
+      clearUndoRedoHistory();
       titleController.clear();
       _controller.clear();
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    getData();
+    super.didChangeDependencies();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Note? note = context.watch<AppProvider>().noteSelected;
     final firstToolbarBtnClr = Colors.white;
     final secondToolbarBtnClr = Colors.black;
 
@@ -76,24 +98,22 @@ class _NoteViewState extends State<NoteView> {
                         children: [
                           Row(
                             children: [
-                              QuillToolbarHistoryButton(
-                                options: QuillToolbarHistoryButtonOptions(
-                                    iconTheme: QuillIconTheme(
-                                        iconButtonUnselectedData:
-                                            IconButtonData(
-                                                color: firstToolbarBtnClr))),
-                                isUndo: true,
-                                controller: _controller,
-                              ),
-                              QuillToolbarHistoryButton(
-                                options: QuillToolbarHistoryButtonOptions(
-                                    iconTheme: QuillIconTheme(
-                                        iconButtonUnselectedData:
-                                            IconButtonData(
-                                                color: firstToolbarBtnClr))),
-                                isUndo: false,
-                                controller: _controller,
-                              ),
+                              IconButton(
+                                  color: Colors.white,
+                                  onPressed: () {
+                                    if (_controller.hasUndo) {
+                                      _controller.undo();
+                                    }
+                                  },
+                                  icon: Icon(Icons.keyboard_arrow_left)),
+                              IconButton(
+                                  color: Colors.white,
+                                  onPressed: () {
+                                    if (_controller.hasRedo) {
+                                      _controller.redo();
+                                    }
+                                  },
+                                  icon: Icon(Icons.keyboard_arrow_right))
                             ],
                           ),
                           Row(
@@ -150,150 +170,172 @@ class _NoteViewState extends State<NoteView> {
                     locale: Locale('en'),
                   ),
                 ),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      QuillToolbarFontFamilyButton(controller: _controller),
-                      QuillToolbarFontSizeButton(controller: _controller),
-                      QuillToolbarSelectHeaderStyleDropdownButton(
-                          controller: _controller),
-                      QuillToolbarToggleStyleButton(
-                        options: QuillToolbarToggleStyleButtonOptions(
-                            iconTheme: QuillIconTheme(
-                                iconButtonUnselectedData: IconButtonData(
-                                    color: secondToolbarBtnClr))),
-                        controller: _controller,
-                        attribute: Attribute.bold,
+                child: Listener(
+                    onPointerSignal: (event) {
+                      if (event is PointerScrollEvent) {
+                        final scrollDireation = event.scrollDelta.dy;
+                        final offset = scrollController.offset;
+                        final positionPixel = scrollController.position.pixels;
+
+                        final maxScrollExtent =
+                            scrollController.position.maxScrollExtent;
+                        final minScrollExtent =
+                            scrollController.position.minScrollExtent;
+
+                        if (scrollDireation > 0) {
+                          if (offset >= maxScrollExtent) return;
+                          scrollController.jumpTo(positionPixel + 20);
+                        } else {
+                          if (offset <= minScrollExtent) return;
+                          scrollController.jumpTo(positionPixel - 20);
+                        }
+                      }
+                    },
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          QuillToolbarFontFamilyButton(controller: _controller),
+                          QuillToolbarFontSizeButton(controller: _controller),
+                          QuillToolbarSelectHeaderStyleDropdownButton(
+                              controller: _controller),
+                          QuillToolbarToggleStyleButton(
+                            options: QuillToolbarToggleStyleButtonOptions(
+                                iconTheme: QuillIconTheme(
+                                    iconButtonUnselectedData: IconButtonData(
+                                        color: secondToolbarBtnClr))),
+                            controller: _controller,
+                            attribute: Attribute.bold,
+                          ),
+                          QuillToolbarToggleStyleButton(
+                            options: QuillToolbarToggleStyleButtonOptions(
+                                iconTheme: QuillIconTheme(
+                                    iconButtonUnselectedData: IconButtonData(
+                                        color: secondToolbarBtnClr))),
+                            controller: _controller,
+                            attribute: Attribute.italic,
+                          ),
+                          QuillToolbarToggleStyleButton(
+                            options: QuillToolbarToggleStyleButtonOptions(
+                                iconTheme: QuillIconTheme(
+                                    iconButtonUnselectedData: IconButtonData(
+                                        color: secondToolbarBtnClr))),
+                            controller: _controller,
+                            attribute: Attribute.underline,
+                          ),
+                          QuillToolbarClearFormatButton(
+                            options: QuillToolbarToggleStyleButtonOptions(
+                                iconTheme: QuillIconTheme(
+                                    iconButtonUnselectedData: IconButtonData(
+                                        color: secondToolbarBtnClr))),
+                            controller: _controller,
+                          ),
+                          VerticalDivider(
+                            endIndent: 10,
+                            indent: 10,
+                          ),
+                          QuillToolbarColorButton(
+                            options: QuillToolbarColorButtonOptions(
+                                iconTheme: QuillIconTheme(
+                                    iconButtonUnselectedData: IconButtonData(
+                                        color: secondToolbarBtnClr))),
+                            controller: _controller,
+                            isBackground: false,
+                          ),
+                          QuillToolbarColorButton(
+                            options: QuillToolbarColorButtonOptions(
+                                iconTheme: QuillIconTheme(
+                                    iconButtonUnselectedData: IconButtonData(
+                                        color: secondToolbarBtnClr))),
+                            controller: _controller,
+                            isBackground: true,
+                          ),
+                          VerticalDivider(
+                            endIndent: 10,
+                            indent: 10,
+                          ),
+                          QuillToolbarToggleCheckListButton(
+                            options: QuillToolbarToggleCheckListButtonOptions(
+                                iconTheme: QuillIconTheme(
+                                    iconButtonUnselectedData: IconButtonData(
+                                        color: secondToolbarBtnClr))),
+                            controller: _controller,
+                          ),
+                          QuillToolbarToggleStyleButton(
+                            options: QuillToolbarToggleStyleButtonOptions(
+                                iconTheme: QuillIconTheme(
+                                    iconButtonUnselectedData: IconButtonData(
+                                        color: secondToolbarBtnClr))),
+                            controller: _controller,
+                            attribute: Attribute.ol,
+                          ),
+                          QuillToolbarToggleStyleButton(
+                            options: QuillToolbarToggleStyleButtonOptions(
+                                iconTheme: QuillIconTheme(
+                                    iconButtonUnselectedData: IconButtonData(
+                                        color: secondToolbarBtnClr))),
+                            controller: _controller,
+                            attribute: Attribute.ul,
+                          ),
+                          QuillToolbarToggleStyleButton(
+                            options: QuillToolbarToggleStyleButtonOptions(
+                                iconTheme: QuillIconTheme(
+                                    iconButtonUnselectedData: IconButtonData(
+                                        color: secondToolbarBtnClr))),
+                            controller: _controller,
+                            attribute: Attribute.inlineCode,
+                          ),
+                          const VerticalDivider(
+                            endIndent: 10,
+                            indent: 10,
+                          ),
+                          QuillToolbarToggleStyleButton(
+                            options: QuillToolbarToggleStyleButtonOptions(
+                                iconTheme: QuillIconTheme(
+                                    iconButtonUnselectedData: IconButtonData(
+                                        color: secondToolbarBtnClr))),
+                            controller: _controller,
+                            attribute: Attribute.blockQuote,
+                          ),
+                          QuillToolbarIndentButton(
+                            options: QuillToolbarIndentButtonOptions(
+                                iconTheme: QuillIconTheme(
+                                    iconButtonUnselectedData: IconButtonData(
+                                        color: secondToolbarBtnClr))),
+                            controller: _controller,
+                            isIncrease: true,
+                          ),
+                          QuillToolbarIndentButton(
+                            options: QuillToolbarIndentButtonOptions(
+                                iconTheme: QuillIconTheme(
+                                    iconButtonUnselectedData: IconButtonData(
+                                        color: secondToolbarBtnClr))),
+                            controller: _controller,
+                            isIncrease: false,
+                          ),
+                          const VerticalDivider(
+                            endIndent: 10,
+                            indent: 10,
+                          ),
+                          QuillToolbarLinkStyleButton(
+                            options: QuillToolbarLinkStyleButtonOptions(
+                                iconTheme: QuillIconTheme(
+                                    iconButtonUnselectedData: IconButtonData(
+                                        color: secondToolbarBtnClr))),
+                            controller: _controller,
+                          ),
+                          QuillToolbarSearchButton(
+                            options: QuillToolbarSearchButtonOptions(
+                                iconTheme: QuillIconTheme(
+                                    iconButtonUnselectedData: IconButtonData(
+                                        color: secondToolbarBtnClr))),
+                            controller: _controller,
+                          ),
+                          // QuillToolbar
+                        ],
                       ),
-                      QuillToolbarToggleStyleButton(
-                        options: QuillToolbarToggleStyleButtonOptions(
-                            iconTheme: QuillIconTheme(
-                                iconButtonUnselectedData: IconButtonData(
-                                    color: secondToolbarBtnClr))),
-                        controller: _controller,
-                        attribute: Attribute.italic,
-                      ),
-                      QuillToolbarToggleStyleButton(
-                        options: QuillToolbarToggleStyleButtonOptions(
-                            iconTheme: QuillIconTheme(
-                                iconButtonUnselectedData: IconButtonData(
-                                    color: secondToolbarBtnClr))),
-                        controller: _controller,
-                        attribute: Attribute.underline,
-                      ),
-                      QuillToolbarClearFormatButton(
-                        options: QuillToolbarToggleStyleButtonOptions(
-                            iconTheme: QuillIconTheme(
-                                iconButtonUnselectedData: IconButtonData(
-                                    color: secondToolbarBtnClr))),
-                        controller: _controller,
-                      ),
-                      VerticalDivider(
-                        endIndent: 10,
-                        indent: 10,
-                      ),
-                      QuillToolbarColorButton(
-                        options: QuillToolbarColorButtonOptions(
-                            iconTheme: QuillIconTheme(
-                                iconButtonUnselectedData: IconButtonData(
-                                    color: secondToolbarBtnClr))),
-                        controller: _controller,
-                        isBackground: false,
-                      ),
-                      QuillToolbarColorButton(
-                        options: QuillToolbarColorButtonOptions(
-                            iconTheme: QuillIconTheme(
-                                iconButtonUnselectedData: IconButtonData(
-                                    color: secondToolbarBtnClr))),
-                        controller: _controller,
-                        isBackground: true,
-                      ),
-                      VerticalDivider(
-                        endIndent: 10,
-                        indent: 10,
-                      ),
-                      QuillToolbarToggleCheckListButton(
-                        options: QuillToolbarToggleCheckListButtonOptions(
-                            iconTheme: QuillIconTheme(
-                                iconButtonUnselectedData: IconButtonData(
-                                    color: secondToolbarBtnClr))),
-                        controller: _controller,
-                      ),
-                      QuillToolbarToggleStyleButton(
-                        options: QuillToolbarToggleStyleButtonOptions(
-                            iconTheme: QuillIconTheme(
-                                iconButtonUnselectedData: IconButtonData(
-                                    color: secondToolbarBtnClr))),
-                        controller: _controller,
-                        attribute: Attribute.ol,
-                      ),
-                      QuillToolbarToggleStyleButton(
-                        options: QuillToolbarToggleStyleButtonOptions(
-                            iconTheme: QuillIconTheme(
-                                iconButtonUnselectedData: IconButtonData(
-                                    color: secondToolbarBtnClr))),
-                        controller: _controller,
-                        attribute: Attribute.ul,
-                      ),
-                      QuillToolbarToggleStyleButton(
-                        options: QuillToolbarToggleStyleButtonOptions(
-                            iconTheme: QuillIconTheme(
-                                iconButtonUnselectedData: IconButtonData(
-                                    color: secondToolbarBtnClr))),
-                        controller: _controller,
-                        attribute: Attribute.inlineCode,
-                      ),
-                      const VerticalDivider(
-                        endIndent: 10,
-                        indent: 10,
-                      ),
-                      QuillToolbarToggleStyleButton(
-                        options: QuillToolbarToggleStyleButtonOptions(
-                            iconTheme: QuillIconTheme(
-                                iconButtonUnselectedData: IconButtonData(
-                                    color: secondToolbarBtnClr))),
-                        controller: _controller,
-                        attribute: Attribute.blockQuote,
-                      ),
-                      QuillToolbarIndentButton(
-                        options: QuillToolbarIndentButtonOptions(
-                            iconTheme: QuillIconTheme(
-                                iconButtonUnselectedData: IconButtonData(
-                                    color: secondToolbarBtnClr))),
-                        controller: _controller,
-                        isIncrease: true,
-                      ),
-                      QuillToolbarIndentButton(
-                        options: QuillToolbarIndentButtonOptions(
-                            iconTheme: QuillIconTheme(
-                                iconButtonUnselectedData: IconButtonData(
-                                    color: secondToolbarBtnClr))),
-                        controller: _controller,
-                        isIncrease: false,
-                      ),
-                      const VerticalDivider(
-                        endIndent: 10,
-                        indent: 10,
-                      ),
-                      QuillToolbarLinkStyleButton(
-                        options: QuillToolbarLinkStyleButtonOptions(
-                            iconTheme: QuillIconTheme(
-                                iconButtonUnselectedData: IconButtonData(
-                                    color: secondToolbarBtnClr))),
-                        controller: _controller,
-                      ),
-                      QuillToolbarSearchButton(
-                        options: QuillToolbarSearchButtonOptions(
-                            iconTheme: QuillIconTheme(
-                                iconButtonUnselectedData: IconButtonData(
-                                    color: secondToolbarBtnClr))),
-                        controller: _controller,
-                      ),
-                      // QuillToolbar
-                    ],
-                  ),
-                ),
+                    )),
               ),
             ),
           ),
@@ -314,7 +356,7 @@ class _NoteViewState extends State<NoteView> {
                   child: QuillEditor.basic(
                     controller: _controller,
                     configurations: QuillEditorConfigurations(
-                      placeholder: 'type something here',
+                      placeholder: 'Write down your note',
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       sharedConfigurations: const QuillSharedConfigurations(
                         locale: Locale('en'),
@@ -366,7 +408,7 @@ class _NoteViewState extends State<NoteView> {
                         if (note == null) return;
                         Database().saveNote(note: note);
                         Navigator.of(context).pop();
-                        //TODO add toast
+                        // TODO add toast
                       },
                       child: Text(noteBooks[index].title));
                 }),

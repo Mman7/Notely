@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:syncnote/src/model/note_model.dart';
+import 'package:syncnote/src/modules/local-database.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
+import 'package:syncnote/src/widget/custom_popup_menuitem.dart';
 
 class NotePreviewItem extends StatelessWidget {
   const NotePreviewItem({
@@ -23,7 +26,6 @@ class NotePreviewItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isSelected = id == context.read<AppProvider>().noteSelected?.id;
-    //TODO prevent title overtext
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
       child: Material(
@@ -43,6 +45,31 @@ class NotePreviewItem extends StatelessWidget {
                   ),
                 ),
               ListTile(
+                trailing: PopupMenuButton(
+                  itemBuilder: (context) {
+                    Note note = Database().getNote(id: id);
+                    return [
+                      CustomPopupMenuItem(
+                        text: note.isBookmark!
+                            ? 'Remove from Bookmark'
+                            : 'Add to Bookmark',
+                        icon: Icons.menu_book_rounded,
+                        onTap: () {
+                          Database().toggleBookMarked(noteId: id);
+                          context.read<AppProvider>().refresh();
+                        },
+                      ),
+                      CustomPopupMenuItem(
+                        text: 'Delete Note',
+                        icon: Icons.menu_book_rounded,
+                        onTap: () {
+                          Database().removeNote(id: id);
+                          context.read<AppProvider>().refresh();
+                        },
+                      ),
+                    ];
+                  },
+                ),
                 title: Text(
                   title,
                   maxLines: 1,

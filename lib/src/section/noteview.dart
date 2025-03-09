@@ -3,11 +3,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
-import 'package:syncnote/myobjectbox.dart';
 import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/modules/local-database.dart';
 import 'package:syncnote/src/widget/custom_popup_menuitem.dart';
+import 'package:toastification/toastification.dart';
 import 'package:uuid/uuid.dart';
 
 //TODO mobile if user editing show bottom sticky TOOLBAR
@@ -98,22 +98,28 @@ class _NoteViewState extends State<NoteView> {
                         children: [
                           Row(
                             children: [
-                              IconButton(
-                                  color: Colors.white,
-                                  onPressed: () {
-                                    if (_controller.hasUndo) {
-                                      _controller.undo();
-                                    }
-                                  },
-                                  icon: Icon(Icons.keyboard_arrow_left)),
-                              IconButton(
-                                  color: Colors.white,
-                                  onPressed: () {
-                                    if (_controller.hasRedo) {
-                                      _controller.redo();
-                                    }
-                                  },
-                                  icon: Icon(Icons.keyboard_arrow_right))
+                              Tooltip(
+                                message: 'Undo',
+                                child: IconButton(
+                                    color: Colors.white,
+                                    onPressed: () {
+                                      if (_controller.hasUndo) {
+                                        _controller.undo();
+                                      }
+                                    },
+                                    icon: Icon(Icons.keyboard_arrow_left)),
+                              ),
+                              Tooltip(
+                                message: 'Redo',
+                                child: IconButton(
+                                    color: Colors.white,
+                                    onPressed: () {
+                                      if (_controller.hasRedo) {
+                                        _controller.redo();
+                                      }
+                                    },
+                                    icon: Icon(Icons.keyboard_arrow_right)),
+                              )
                             ],
                           ),
                           Row(
@@ -132,12 +138,6 @@ class _NoteViewState extends State<NoteView> {
                                   itemBuilder: (BuildContext context) => [
                                     if (note != null)
                                       CustomPopupMenuItem(
-                                          icon: Icons.delete,
-                                          onTap: () => Database()
-                                              .removeNote(id: note.id),
-                                          text: 'Delete Note'),
-                                    if (note != null)
-                                      CustomPopupMenuItem(
                                           icon: Icons.bookmark_add,
                                           onTap: () {
                                             Database().toggleBookMarked(
@@ -152,6 +152,12 @@ class _NoteViewState extends State<NoteView> {
                                         onTap: () =>
                                             showNoteBookOptions(context, note),
                                         text: 'Add to Notebook'),
+                                    if (note != null)
+                                      CustomPopupMenuItem(
+                                          icon: Icons.delete,
+                                          onTap: () => Database()
+                                              .removeNote(id: note.id),
+                                          text: 'Delete Note'),
                                   ],
                                 ),
                               ),
@@ -373,7 +379,6 @@ class _NoteViewState extends State<NoteView> {
     );
   }
 
-  // add this to tag
   Future<dynamic> showNoteBookOptions(BuildContext context, Note? note) {
     return showDialog(
         context: context,
@@ -391,7 +396,14 @@ class _NoteViewState extends State<NoteView> {
                   return TextButton(
                       onPressed: () {
                         final noteBookTitle = noteBooks[index].title;
-
+                        toastification.show(
+                          type: ToastificationType.success,
+                          style: ToastificationStyle.minimal,
+                          context:
+                              context, // optional if you use ToastificationWrapper
+                          title: Text('Successfull add to $noteBookTitle'),
+                          autoCloseDuration: const Duration(seconds: 3),
+                        );
                         // prevent null
                         if (note?.notebook != null &&
                             note!.notebook!.contains(noteBookTitle)) {

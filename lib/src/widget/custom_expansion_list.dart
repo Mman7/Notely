@@ -31,7 +31,9 @@ class CustomExpansionList extends StatelessWidget {
         ListView.separated(
           separatorBuilder: (context, index) => const Padding(
             padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 1),
-            child: Divider(),
+            child: Divider(
+              color: Colors.white,
+            ),
           ),
           shrinkWrap: true,
           itemCount: list.length,

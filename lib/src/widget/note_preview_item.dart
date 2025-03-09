@@ -6,6 +6,7 @@ import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/modules/local-database.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/widget/custom_popup_menuitem.dart';
+import 'package:toastification/toastification.dart';
 
 class NotePreviewItem extends StatelessWidget {
   const NotePreviewItem({
@@ -57,6 +58,73 @@ class NotePreviewItem extends StatelessWidget {
                         onTap: () {
                           Database().toggleBookMarked(noteId: id);
                           context.read<AppProvider>().refresh();
+                        },
+                      ),
+                      CustomPopupMenuItem(
+                        text: 'Add to Notebook',
+                        icon: Icons.menu_book,
+                        onTap: () {
+                          final noteBooks =
+                              context.read<AppProvider>().noteBooks;
+                          showDialog(
+                              context: context,
+                              builder: (ctx) {
+                                return Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      vertical: 30, horizontal: 300),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: Colors.white,
+                                  ),
+                                  color: Colors.white,
+                                  child: ListView.builder(
+                                      itemCount: noteBooks.length,
+                                      itemBuilder: (ctx, index) {
+                                        return TextButton(
+                                            onPressed: () {
+                                              final noteBookTitle =
+                                                  noteBooks[index].title;
+                                              toastification.show(
+                                                type:
+                                                    ToastificationType.success,
+                                                style:
+                                                    ToastificationStyle.minimal,
+                                                context:
+                                                    context, // optional if you use ToastificationWrapper
+                                                title: Text(
+                                                    'Successfull add to $noteBookTitle'),
+                                                autoCloseDuration:
+                                                    const Duration(seconds: 3),
+                                              );
+                                              // prevent null
+                                              if (note.notebook != null &&
+                                                  note.notebook!.contains(
+                                                      noteBookTitle)) {
+                                                Navigator.of(context).pop();
+                                                return;
+                                              }
+
+                                              if (note.notebook != null) {
+                                                // if notebook had list add to list
+                                                note.notebook
+                                                    ?.add(noteBookTitle);
+                                              } else {
+                                                // else create a list
+                                                note.notebook = [
+                                                  noteBookTitle
+                                                ];
+                                              }
+                                              Database().saveNote(note: note);
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text(
+                                              noteBooks[index].title,
+                                              style: TextStyle(
+                                                  color: Colors.black),
+                                            ));
+                                      }),
+                                );
+                              });
                         },
                       ),
                       CustomPopupMenuItem(

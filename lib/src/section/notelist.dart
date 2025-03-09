@@ -183,7 +183,6 @@ class ListHeader extends StatelessWidget {
 
     return Container(
         alignment: Alignment.center,
-        margin: const EdgeInsets.only(bottom: 3.5),
         decoration:
             BoxDecoration(color: Colors.white, border: null, boxShadow: [
           BoxShadow(
@@ -194,11 +193,15 @@ class ListHeader extends StatelessWidget {
           ),
         ]),
         child: ListTile(
-            title: Text(
-              listMode == Mode.noteBook && noteBookSelected != null
-                  ? noteBookSelected.title
-                  : listMode,
-              style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+            title: Container(
+              color: Colors.red,
+              child: Text(
+                listMode == Mode.noteBook && noteBookSelected != null
+                    ? noteBookSelected.title
+                    : listMode,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+              ),
             ),
             subtitle: Text(
               'Total Notes ${list.length}',

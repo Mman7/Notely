@@ -1,3 +1,4 @@
+// ignore: file_names
 import 'package:syncnote/myobjectbox.dart';
 import 'package:syncnote/objectbox.g.dart';
 import 'package:syncnote/src/model/note_model.dart';
@@ -8,8 +9,7 @@ class Database {
   final noteBookBox = objectbox.store.box<Notebook>();
 
   getNote({required int id}) {
-    if (id == null) return;
-    var note = noteBox.get(id);
+    final note = noteBox.get(id);
     return note;
   }
 

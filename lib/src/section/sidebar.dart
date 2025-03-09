@@ -9,6 +9,8 @@ import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/widget/custom_expansion_list.dart';
 import 'package:syncnote/src/widget/custom_text_button.dart';
 
+import '../modules/socket.dart';
+
 class SideBar extends StatefulWidget {
   const SideBar({super.key, required this.aniContoller});
   final AnimationController aniContoller;
@@ -75,7 +77,7 @@ class _SideBarState extends State<SideBar> {
                 bgColor: hexToColor('#50409A'),
                 btnColor: Colors.white,
                 textColor: Colors.white,
-                margin: const EdgeInsets.all(7.5),
+                margin: const EdgeInsets.all(3),
                 borderRadiusValue: BorderRadius.circular(8.5),
                 icon: Icons.add_circle_rounded,
                 text: ' New Note',
@@ -126,24 +128,43 @@ class _SideBarState extends State<SideBar> {
           ),
 
           // close expanded button
-          SizedBox(
-            width: double.infinity,
-            child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                    onTap: () {
-                      // close note book expand
-                      setNoteBookExpanded(value: false);
-                      if (appProvider.isSidebarExtended) {
-                        appProvider.changeSidebarExtended();
-                      } else {
-                        appProvider.changeSidebarExtended();
-                      }
-                    },
-                    child: Icon(
-                      openIcon(),
-                      color: Colors.white,
-                    ))),
+          Column(
+            children: [
+              // transfer Buton
+              IconButton(
+                onPressed: () {
+                  SocketService().sendMsg();
+                },
+                icon: Icon(Icons.directions_bike_outlined),
+                color: Colors.white,
+              ),
+              IconButton(
+                onPressed: () {
+                  SocketService().startSocket();
+                },
+                icon: Icon(Icons.screen_share),
+                color: Colors.white,
+              ),
+              SizedBox(
+                width: double.infinity,
+                child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                        onTap: () {
+                          // close note book expand
+                          setNoteBookExpanded(value: false);
+                          if (appProvider.isSidebarExtended) {
+                            appProvider.changeSidebarExtended();
+                          } else {
+                            appProvider.changeSidebarExtended();
+                          }
+                        },
+                        child: Icon(
+                          openIcon(),
+                          color: Colors.white,
+                        ))),
+              ),
+            ],
           )
         ],
       ),
@@ -176,6 +197,7 @@ class _SideBarState extends State<SideBar> {
                             label: const Text('Create'),
                             onPressed: () {
                               final editorText = textEditController.text;
+                              if (editorText.isEmpty) return;
                               final noteBookBox =
                                   objectbox.store.box<Notebook>();
                               noteBookBox.put(Notebook(title: editorText));

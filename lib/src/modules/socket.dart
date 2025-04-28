@@ -1,60 +1,60 @@
-import 'dart:convert';
 import 'dart:io';
 
+//telnet actually connnected to server and can send text?? or key i pressed
+
+class SocketClient {
+  String indexRequest = 'GET / HTTP/1.1\nConnection: close\n\n';
+  conenct() {
+    Socket.connect('localhost', 4567).then((socket) {
+      print('cli Connected to: '
+          '${socket.remoteAddress.address}:${socket.remotePort}');
+
+      socket.writeln(indexRequest);
+      socket.listen(
+        (data) {
+          print(new String.fromCharCodes(data).trim());
+        },
+      );
+    });
+  }
+}
+
 class SocketService {
-  // transfer via udp or tcp, udp can transfer data without ip address
-  startSocket() async {
-    // Bind the server to any local address and a port
-    final server = await RawDatagramSocket.bind('127.0.0.1', 8080);
-    print('Server started, waiting for broadcast...');
+  Socket? socket;
+  main() {
+    ServerSocket.bind(InternetAddress.anyIPv4, 4567)
+        .then((ServerSocket server) {
+      print(server.address.address);
+      server.listen((client) {
+        client.write('someone connect to server');
+        client.write(client.address);
 
-    server.listen((event) {
-      if (event == RawSocketEvent.read) {
-        Datagram? dg = server.receive();
-        if (dg != null) {
-          String receivedMessage = utf8.decode(dg.data);
-          print('Received broadcast from ${dg.address.address}:${dg.port}');
-
-          if (receivedMessage == 'DISCOVER_SERVER') {
-            // Respond with the server IP address
-            String response = 'SERVER_IP: ${server.address.address}';
-            server.send(utf8.encode(response), dg.address, dg.port);
-          }
-        }
-      }
+        client.listen((data) {
+          print('got data this is server');
+          print(new String.fromCharCodes(data).trim());
+          print('got data this is server');
+        });
+      });
+      // server.listen(handleClient,
+      //     onError: errorHandler, onDone: doneHandler, cancelOnError: false);
     });
   }
 
-  sendMsg() async {
-    final client = await RawDatagramSocket.bind(InternetAddress.anyIPv4, 0);
-
-    // Send broadcast message to the network
-    client.send(utf8.encode('DISCOVER_SERVER'),
-        InternetAddress('255.255.255.255'), 8080);
-    print('Sent discovery message to the network.');
-
-    // Listen for the response from the server
-    client.listen((event) async {
-      if (event == RawSocketEvent.read) {
-        Datagram? dg = client.receive();
-        if (dg != null) {
-          String serverResponse = utf8.decode(dg.data);
-          print('Server Response: $serverResponse');
-
-          // Extract the server's IP from the response
-          String serverIp = serverResponse.split(': ')[1];
-
-          // Attempt to connect to the server at the discovered IP
-          await connectToServer(serverIp);
-        }
-      }
-    });
+  void dataHandler(data) {
+    print(new String.fromCharCodes(data).trim());
   }
 
-  Future<void> connectToServer(String ip) async {
-    final socket = await Socket.connect(ip, 8080);
-    print('Connected to server at $ip');
-    socket.write(utf8.encode('Hello Server!'));
-    await socket.close();
+  void errorHandler(error, StackTrace trace) {
+    print(error);
+  }
+
+  void doneHandler() {
+    socket?.destroy();
+    exit(0);
+  }
+
+  void handleClient(Socket client) {
+    client.write("Hello from simple server!\n");
+    client.close();
   }
 }

@@ -6,10 +6,9 @@ import 'package:syncnote/myobjectbox.dart';
 import 'package:syncnote/src/model/mode_model.dart';
 import 'package:syncnote/src/model/notebooks_model.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
+import 'package:syncnote/src/section/socket_widget.dart';
 import 'package:syncnote/src/widget/custom_expansion_list.dart';
 import 'package:syncnote/src/widget/custom_text_button.dart';
-
-import '../modules/socket.dart';
 
 class SideBar extends StatefulWidget {
   const SideBar({super.key, required this.aniContoller});
@@ -132,15 +131,18 @@ class _SideBarState extends State<SideBar> {
             children: [
               // transfer Buton
               IconButton(
-                onPressed: () {
-                  SocketService().sendMsg();
-                },
-                icon: Icon(Icons.directions_bike_outlined),
+                onPressed: () {},
+                icon: Icon(Icons.screen_lock_landscape),
                 color: Colors.white,
               ),
               IconButton(
                 onPressed: () {
-                  SocketService().startSocket();
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return SocketWidget();
+                    },
+                  );
                 },
                 icon: Icon(Icons.screen_share),
                 color: Colors.white,

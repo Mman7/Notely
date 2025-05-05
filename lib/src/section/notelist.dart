@@ -186,22 +186,18 @@ class ListHeader extends StatelessWidget {
         decoration:
             BoxDecoration(color: Colors.white, border: null, boxShadow: [
           BoxShadow(
-            color: hexToColor('42526E').withOpacity(0.3),
+            color: hexToColor('42526E').withValues(alpha: 0.3),
             spreadRadius: 3,
             blurRadius: 25,
             offset: const Offset(0, 2), // changes position of shadow
           ),
         ]),
         child: ListTile(
-            title: Container(
-              color: Colors.red,
-              child: Text(
-                listMode == Mode.noteBook && noteBookSelected != null
-                    ? noteBookSelected.title
-                    : listMode,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-              ),
+            title: Text(
+              listMode == Mode.noteBook && noteBookSelected != null
+                  ? noteBookSelected.title
+                  : listMode,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
             ),
             subtitle: Text(
               'Total Notes ${list.length}',

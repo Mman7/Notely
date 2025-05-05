@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:network_info_plus/network_info_plus.dart';
-
-// users need to let this app pass through "public network"
-// working now
+import 'package:syncnote/src/modules/tcp_socket.dart';
 
 // Phone → UDP broadcast → “Hello, server?”
 //
@@ -12,22 +10,16 @@ import 'package:network_info_plus/network_info_plus.dart';
 // Phone → TCP connect → 192.168.1.5:4040
 
 class SocketClient {
-  void printE() async {
-    final localIp = await NetworkInfo().getWifiIP();
-    print(localIp);
+  void connect() async {
     final udpSocket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, 0);
     udpSocket.broadcastEnabled = true;
-
     final broadcastAddress = await getBroadcastAddress();
     final broadcastPort = 8888;
-
     udpSocket.send(
         'DISCOVER_SERVER'.codeUnits, broadcastAddress, broadcastPort);
     print('Broadcast message sent');
 
-    final completer = Completer<String>();
-
-    udpSocket.listen((event) {
+    udpSocket.listen((event) async {
       if (event == RawSocketEvent.read) {
         final datagram = udpSocket.receive();
         if (datagram == null) return;
@@ -41,25 +33,25 @@ class SocketClient {
           final tcpPort = int.parse(parts[1]);
           final serverIp = datagram.address.address;
           print('from Cli Server found at $serverIp:$tcpPort');
-          completer.complete('$serverIp:$tcpPort');
           udpSocket.close();
+          //TODO implement Data model and send it
+          TCPClient(serverAddress: '$serverIp:$tcpPort')
+              .connect()
+              .then((client) => client.send('hey server im client'));
         }
       }
     });
-
-    final serverAddress = await completer.future;
-    print('Connecting to server at $serverAddress');
-// TODO implement TCP
-    // Here you can add TCP connection logic using Socket.connect
   }
 }
 
-class SocketService {
-  main() async {
+class SocketServer {
+  startServer() async {
+    //// TCP
+    TCPServer().startServer();
+    //// UDP
     final udpSocket =
         await RawDatagramSocket.bind(InternetAddress.anyIPv4, 8888);
     print('UDP server listening on port 8888');
-
     udpSocket.listen((event) {
       if (event == RawSocketEvent.read) {
         final datagram = udpSocket.receive();
@@ -72,6 +64,7 @@ class SocketService {
         if (message == 'DISCOVER_SERVER') {
           final response = 'SERVER_HERE:4040'; // include TCP port
           udpSocket.send(response.codeUnits, datagram.address, datagram.port);
+
           print(
               'from Serv Sent response to ${datagram.address.address}:${datagram.port}');
         }
@@ -84,7 +77,6 @@ Future<InternetAddress> getBroadcastAddress() async {
   final info = NetworkInfo();
   final localIp = await info.getWifiIP();
   final subnetMask = await info.getWifiSubmask();
-
   if (localIp == null || subnetMask == null) {
     throw Exception('Could not get local IP or subnet mask');
   }
@@ -94,7 +86,6 @@ Future<InternetAddress> getBroadcastAddress() async {
 
   final broadcastParts =
       List.generate(4, (i) => ipParts[i] | (~maskParts[i] & 0xFF));
-
   final broadcastIp = broadcastParts.join('.');
   print('Calculated broadcast address: $broadcastIp');
 

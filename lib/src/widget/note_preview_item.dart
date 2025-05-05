@@ -54,7 +54,7 @@ class NotePreviewItem extends StatelessWidget {
                         text: note.isBookmark!
                             ? 'Remove from Bookmark'
                             : 'Add to Bookmark',
-                        icon: Icons.menu_book_rounded,
+                        icon: Icons.bookmark,
                         onTap: () {
                           Database().toggleBookMarked(noteId: id);
                           context.read<AppProvider>().refresh();
@@ -76,7 +76,6 @@ class NotePreviewItem extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(20),
                                     color: Colors.white,
                                   ),
-                                  color: Colors.white,
                                   child: ListView.builder(
                                       itemCount: noteBooks.length,
                                       itemBuilder: (ctx, index) {
@@ -110,9 +109,7 @@ class NotePreviewItem extends StatelessWidget {
                                                     ?.add(noteBookTitle);
                                               } else {
                                                 // else create a list
-                                                note.notebook = [
-                                                  noteBookTitle
-                                                ];
+                                                note.notebook = [noteBookTitle];
                                               }
                                               Database().saveNote(note: note);
                                               Navigator.of(context).pop();
@@ -129,7 +126,7 @@ class NotePreviewItem extends StatelessWidget {
                       ),
                       CustomPopupMenuItem(
                         text: 'Delete Note',
-                        icon: Icons.menu_book_rounded,
+                        icon: Icons.delete,
                         onTap: () {
                           Database().removeNote(id: id);
                           context.read<AppProvider>().refresh();

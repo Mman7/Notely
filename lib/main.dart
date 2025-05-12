@@ -20,12 +20,6 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
         // etc.
       };
 }
-////* MAIN TODO
-////  1 phone version try tcp transfer data
-////  2 phone style
-////  3
-////
-////
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,19 +38,30 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
+  int _selectedIndex = 0;
+
   @override
   void initState() {
     super.initState();
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-        designSize: const Size(360, 1080),
         minTextAdapt: true,
         builder: (ctx, child) {
           final screenwidth = ScreenUtil().screenWidth;
-          var isMobile = screenwidth < 800;
+          DeviceType deviceTy =
+              context.read<AppProvider>().getDeviceType(screenwidth);
+          bool isMobileOrTable =
+              deviceTy == DeviceType.mobile || deviceTy == DeviceType.tablet;
+
           debugPrint(screenwidth.toString());
 
           return ToastificationWrapper(
@@ -64,16 +69,64 @@ class _MainAppState extends State<MainApp> {
               scrollBehavior: MyCustomScrollBehavior(),
               theme: myTheme,
               home: Scaffold(
-                //TODO add drawer for mobile
-
+                floatingActionButtonLocation: isMobileOrTable
+                    ? FloatingActionButtonLocation.centerDocked
+                    : null,
+                floatingActionButton: isMobileOrTable
+                    ? FloatingActionButton(
+                        child: Icon(Icons.add),
+                        onPressed: () {},
+                      )
+                    : null,
+                bottomNavigationBar: isMobileOrTable
+                    ? BottomNavigationBar(
+                        type: BottomNavigationBarType.fixed,
+                        showSelectedLabels: false,
+                        currentIndex: _selectedIndex,
+                        onTap: _onItemTapped,
+                        items: const [
+                          BottomNavigationBarItem(
+                              icon: Icon(Icons.book), label: 'Notes'),
+                          BottomNavigationBarItem(
+                              icon: Icon(Icons.search_sharp), label: 'Search'),
+                          BottomNavigationBarItem(
+                              icon: Icon(Icons.ios_share), label: 'Share'),
+                          BottomNavigationBarItem(
+                              icon: Icon(Icons.settings), label: 'Settings'),
+                        ],
+                      )
+                    : null,
                 body: Container(
                   color: Colors.black,
                   child: Builder(
                     builder: (ctx) {
-                      if (isMobile)
-                        return const MobileLayout();
-                      else
-                        return const DesktopLayout();
+                      DeviceType deviceType = context
+                          .read<AppProvider>()
+                          .getDeviceType(screenwidth);
+
+                      if (deviceType == DeviceType.mobile) {
+                        return ScreenUtilInit(
+                            designSize: const Size(360, 1080),
+                            builder: (ctx, child) {
+                              return const MobileLayout();
+                            });
+                      }
+                      if (deviceType == DeviceType.tablet) {
+                        return ScreenUtilInit(
+                            designSize: const Size(500, 1080),
+                            builder: (ctx, child) {
+                              return const MobileLayout();
+                            });
+                      }
+                      if (deviceType == DeviceType.windows) {
+                        return ScreenUtilInit(
+                            designSize: const Size(1200, 1080),
+                            builder: (ctx, child) {
+                              return const DesktopLayout();
+                            });
+                      }
+                      return const SizedBox
+                          .shrink(); // Default return statement
                     },
                   ),
                 ),

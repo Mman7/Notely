@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:syncnote/myobjectbox.dart';
-import 'package:syncnote/src/model/mode_model.dart';
 import 'package:syncnote/src/model/notebooks_model.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
-import 'package:syncnote/src/section/socket_widget.dart';
-import 'package:syncnote/src/widget/custom_expansion_list.dart';
-import 'package:syncnote/src/widget/custom_text_button.dart';
 
 class SideBar extends StatefulWidget {
-  const SideBar({super.key, required this.aniContoller});
-  final AnimationController aniContoller;
+  const SideBar({
+    super.key,
+  });
   @override
   State<SideBar> createState() => _SideBarState();
 }
@@ -21,154 +19,111 @@ class _SideBarState extends State<SideBar> {
   bool noteBookisExpanded = false;
   bool tagsIsExpanded = false;
   TextEditingController textEditController = TextEditingController();
-
+  String text = '';
   @override
   void dispose() {
     textEditController.dispose();
     super.dispose();
   }
 
-  setNoteBookExpanded({required bool value}) {
-    setState(() {
-      noteBookisExpanded = value;
-    });
-  }
-
-  setTagsExpanded({required bool value}) {
-    setState(() {
-      tagsIsExpanded = value;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     var isExtended = context.watch<AppProvider>().isSidebarExtended;
-    var appProvider = context.read<AppProvider>();
-
-    openIcon() {
-      return isExtended
-          ? Icons.keyboard_arrow_left_sharp
-          : Icons.keyboard_arrow_right_sharp;
-    }
 
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(color: hexToColor('#313866'), border: null),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Flex(
-            direction: Axis.vertical,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomTextButton(
-                icon: Icons.search,
-                text: ' Search',
-                btnColor: Colors.white,
-                textColor: Colors.white,
-                onPressed: () {
-                  appProvider.setListMode(value: Mode.search);
-                  appProvider.clearNoteBookSelect();
-                  appProvider.setSearchMode(value: true);
-                },
+      decoration: BoxDecoration(color: hexToColor('#211C3A'), border: null),
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Gap(10),
+            Text(
+              'MeloNote',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 30.sp,
               ),
-              CustomTextButton(
-                bgColor: hexToColor('#50409A'),
-                btnColor: Colors.white,
-                textColor: Colors.white,
-                margin: const EdgeInsets.all(3),
-                borderRadiusValue: BorderRadius.circular(8.5),
-                icon: Icons.add_circle_rounded,
-                text: ' New Note',
-                onPressed: () {
-                  appProvider.setSearchMode(value: false);
-                  appProvider.clearNoteBookSelect();
-                  appProvider.setNoteSelected(id: 0);
-                },
-              ),
-              CustomTextButton(
-                icon: Icons.book,
-                btnColor: Colors.white,
-                textColor: Colors.white,
-                text: ' All Notes',
-                onPressed: () {
-                  appProvider.setSearchMode(value: false);
-                  appProvider.setListMode(value: Mode.allnotes);
-                  appProvider.clearNoteBookSelect();
-                },
-              ),
-              CustomTextButton(
-                icon: Icons.bookmark,
-                btnColor: Colors.white,
-                textColor: Colors.white,
-                text: ' Bookmarks',
-                onPressed: () {
-                  appProvider.setListMode(value: Mode.bookmarks);
-                  appProvider.clearNoteBookSelect();
-                },
-              ),
-              // Notebook Button
-              Container(
-                color: Colors.black12,
-                child: CustomExpansionList(
-                  animationStatus: widget.aniContoller.status,
-                  setExpandedToggle: () {
-                    setNoteBookExpanded(value: !noteBookisExpanded);
-                    appProvider.changeSidebarExtended(value: true);
-                  },
-                  list: context.watch<AppProvider>().noteBooks,
-                  createBtnCallBack: () => showCreateNoteBookDialog(context),
-                  isExpanded: noteBookisExpanded,
-                  icon: Icons.menu_book,
-                  text: ' Notebooks',
+            ),
+            Gap(40),
+            TextField(
+              onChanged: (value) {
+                setState(() {
+                  text = value;
+                });
+              },
+              decoration: InputDecoration(
+                hintText: 'Search for notes',
+                fillColor: Colors.white,
+                filled: true,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide.none,
                 ),
               ),
-            ],
-          ),
-
-          // close expanded button
-          Column(
-            children: [
-              // transfer Buton
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.screen_lock_landscape),
-                color: Colors.white,
+            ),
+            Gap(20),
+            SizedBox(
+              width: double.infinity,
+              child: Container(
+                decoration: BoxDecoration(boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).primaryColor.withAlpha(255),
+                    spreadRadius: 2,
+                    blurRadius: 21,
+                    offset: const Offset(0, 3), // changes position of shadow
+                  ),
+                ]),
+                child: TextButton.icon(
+                    onPressed: () {},
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 20.0, horizontal: 20.0),
+                      backgroundColor: Theme.of(context).primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    label: Text(
+                      'New Note',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall
+                          ?.copyWith(
+                              fontSize: 20.sp,
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600),
+                    ),
+                    icon: Icon(
+                      Icons.add,
+                      color: Colors.white,
+                      size: Theme.of(context).textTheme.headlineSmall?.fontSize,
+                    )),
               ),
-              IconButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return SocketWidget();
-                    },
-                  );
-                },
-                icon: Icon(Icons.screen_share),
-                color: Colors.white,
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                        onTap: () {
-                          // close note book expand
-                          setNoteBookExpanded(value: false);
-                          if (appProvider.isSidebarExtended) {
-                            appProvider.changeSidebarExtended();
-                          } else {
-                            appProvider.changeSidebarExtended();
-                          }
-                        },
-                        child: Icon(
-                          openIcon(),
-                          color: Colors.white,
-                        ))),
-              ),
-            ],
-          )
-        ],
+            ),
+            // SizedBox(
+            //   width: double.infinity,
+            //   child: Material(
+            //       color: Colors.transparent,
+            //       child: InkWell(
+            //           onTap: () {
+            //             // close note book expand
+            //             setNoteBookExpanded(value: false);
+            //             if (appProvider.isSidebarExtended) {
+            //               appProvider.changeSidebarExtended();
+            //             } else {
+            //               appProvider.changeSidebarExtended();
+            //             }
+            //           },
+            //           child: Icon(
+            //             openIcon(),
+            //             color: Colors.white,
+            //           ))),
+            // ),
+          ],
+        ),
       ),
     );
   }
@@ -220,5 +175,17 @@ class _SideBarState extends State<SideBar> {
                 ),
               ),
             ]));
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, 10);
+
+    canvas.drawRect(
+      Rect.fromLTWH(0, 0, size.width, size.height),
+      paint,
+    );
   }
 }

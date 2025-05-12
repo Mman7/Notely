@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:syncnote/myobjectbox.dart';
 import 'package:syncnote/src/model/mode_model.dart';
 import 'package:syncnote/src/model/note_model.dart';
@@ -17,6 +19,13 @@ class AppProvider extends ChangeNotifier {
   bool searchMode = false;
   String listMode = 'All Notes';
   bool isSidebarExtended = false;
+
+  getDeviceType(screenwidth) {
+    if (screenwidth < 450) return DeviceType.mobile;
+    if (screenwidth < 800) return DeviceType.tablet;
+    if (screenwidth > 800) return DeviceType.windows;
+    return DeviceType.mobile;
+  }
 
   setNoteBookSelect({required value}) {
     listMode = Mode.noteBook;

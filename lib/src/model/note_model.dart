@@ -11,6 +11,7 @@ class Note {
       this.notebook,
       this.isBookmark = false,
       this.dateCreated,
+      this.lastestModified,
       this.includePic = false});
   @Id()
   int id;
@@ -21,8 +22,6 @@ class Note {
   bool? isBookmark;
   bool? includePic;
   DateTime? dateCreated;
-
-  /// these two
   List<String>? notebook;
-  // var lastMo`dified;
+  DateTime? lastestModified;
 }

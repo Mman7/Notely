@@ -24,7 +24,7 @@
     },
     {
       "id": "5:4271254259516459972",
-      "lastPropertyId": "11:7527307426686352931",
+      "lastPropertyId": "12:2562786562007846218",
       "name": "Note",
       "properties": [
         {
@@ -72,6 +72,11 @@
           "id": "11:7527307426686352931",
           "name": "notebook",
           "type": 30
+        },
+        {
+          "id": "12:2562786562007846218",
+          "name": "lastestModified",
+          "type": 10
         }
       ],
       "relations": []

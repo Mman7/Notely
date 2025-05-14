@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
+import 'package:syncnote/src/section/editor.dart';
 
 class NoteList extends StatefulWidget {
   const NoteList({super.key});
@@ -12,7 +13,7 @@ class NoteList extends StatefulWidget {
 }
 
 class _NoteListState extends State<NoteList> {
-  bool isSearching = true;
+  bool isSearching = false;
 
   @override
   Widget build(BuildContext context) {
@@ -83,6 +84,11 @@ class _NoteListState extends State<NoteList> {
     ];
     return Scaffold(
       appBar: AppBar(
+        elevation: 7.0,
+        backgroundColor: Colors.white,
+        shadowColor: Colors.grey.shade100,
+        surfaceTintColor:
+            Colors.transparent, // Prevents color change due to elevation
         title: isSearching && isMobileOrTable
             ? TextField(
                 autofocus: true,
@@ -112,23 +118,26 @@ class _NoteListState extends State<NoteList> {
               : Container()
         ],
       ),
-      body: GridView.builder(
-        padding: EdgeInsets.all(10.0),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: checkScreen(), // Number of columns
-          crossAxisSpacing: 15.0,
-          mainAxisSpacing: 30.0,
-          childAspectRatio: 3 / 4, // Adjust the aspect ratio as needed
+      body: Padding(
+        padding: EdgeInsets.only(top: 20),
+        child: GridView.builder(
+          padding: EdgeInsets.all(10.0),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: checkScreen(), // Number of columns
+            crossAxisSpacing: 15.0,
+            mainAxisSpacing: 15.0,
+            childAspectRatio: 3 / 4, // Adjust the aspect ratio as needed
+          ),
+          itemCount: 10, // Number of items
+          itemBuilder: (context, index) {
+            return NotePreview(
+              index: index,
+              title: 'Note Title $index',
+              previewText: 'This is a preview text for note $index.',
+              lastModified: DateTime.now(),
+            );
+          },
         ),
-        itemCount: 10, // Number of items
-        itemBuilder: (context, index) {
-          return NotePreview(
-            index: index,
-            title: 'Note Title $index',
-            previewText: 'This is a preview text for note $index.',
-            lastModified: DateTime.now(),
-          );
-        },
       ),
     );
   }
@@ -150,37 +159,55 @@ class NotePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: Colors.blue.shade100,
-        borderRadius: BorderRadius.circular(8.0),
+    String lastModifiedText() {
+      List<String> date = lastModified.toLocal().toString().split('-');
+      return '${date[0]}.${date[1]}.${date[2].split(' ')[0]}';
+    }
+
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Editor(
+            title: title,
+            content: previewText,
+          ),
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Title $index',
-            style: TextStyle(
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
+      child: Container(
+        padding: EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          color: Colors.blue.shade100,
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Title $index',
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          SizedBox(height: 8.0),
-          Text(
-            'This is a paragraph for note $index. It contains some description.',
-            style: TextStyle(fontSize: 14.0),
-          ),
-          Spacer(),
-          // fake date
-          Text(
-            'lastestModified ${lastModified.toLocal().toString().split(' ')[0]}',
-            style: TextStyle(
-              fontSize: 12.0,
-              fontStyle: FontStyle.italic,
+            SizedBox(height: 8.0),
+            Text(
+              'This is a paragraph for note $index.',
+              style: TextStyle(fontSize: 14.0),
+              maxLines: 4,
+              overflow: TextOverflow.ellipsis,
             ),
-          ),
-        ],
+            Spacer(),
+            // fake date
+            Text(
+              lastModifiedText(),
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,11 +1,16 @@
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 
 class Editor extends StatefulWidget {
   const Editor({
     super.key,
+    required this.title,
+    required this.content,
   });
-
+  final String title;
+  final String content;
   @override
   State createState() => _EditorState();
 }
@@ -23,13 +28,30 @@ class _EditorState extends State<Editor> {
 
   @override
   void initState() {
-    _controller.document = Document.fromJson([
+    _titleController.text = widget.title;
+    var originalContent = widget.content;
+    // test data
+    List<Map<String, dynamic>> data = [
       {
-        'insert':
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sed est magna. Cras vehicula vel augue eget vulputate. Ut suscipit urna et ligula hendrerit, at volutpat turpis tempus. Maecenas ac sapien mi. Integer sit amet lacus risus. Morbi ac odio quis sem convallis finibus. Proin tincidunt tortor et nunc viverra, non interdum nibh rutrum. Sed maximus urna vitae massa egestas faucibus. Pellentesque mattis leo purus, ultrices rutrum ex rhoncus sit amet. Vestibulum tristique sodales metus non mollis. Quisque et molestie lorem. Aliquam nec risus et lorem viverra euismod at id ante. Proin consectetur venenatis enim, eu aliquet dui tempus a. Aenean mattis lorem et lorem ornare consectetur.\n',
-      },
-    ]);
+        "insert": '$originalContent\n',
+      }
+    ];
+    _controller.document = Document.fromJson(data);
+
+    _controller.addListener(() {
+      var aaa = _controller.document.toDelta().toJson();
+      print(mapEquals(aaa[0], data[0]));
+    });
     super.initState();
+  }
+
+  // Check if the content has changed
+  bool isContentChanged(
+      List<Map<String, dynamic>> value1, List<Map<String, dynamic>> value2) {
+    if (value1.length != value2.length) {
+      return true;
+    }
+    return mapEquals(value1[0], value2[0]);
   }
 
   @override

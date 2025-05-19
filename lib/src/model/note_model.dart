@@ -7,7 +7,7 @@ class Note {
       required this.uuid,
       required this.title,
       required this.content,
-      this.previewContent,
+      required this.previewContent,
       this.notebook,
       this.isBookmark = false,
       this.dateCreated,
@@ -16,7 +16,7 @@ class Note {
   @Id()
   int id;
   String uuid;
-  String? previewContent;
+  String previewContent;
   String title;
   String content;
   bool? isBookmark;

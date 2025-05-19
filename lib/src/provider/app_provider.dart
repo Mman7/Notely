@@ -2,12 +2,12 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:syncnote/myobjectbox.dart';
+
 import 'package:syncnote/src/model/mode_model.dart';
 import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/model/notebooks_model.dart';
-import 'package:syncnote/src/modules/local-database.dart';
+import 'package:syncnote/src/modules/local_database.dart';
 
 class AppProvider extends ChangeNotifier {
   final noteBox = objectbox.store.box<Note>();
@@ -22,8 +22,8 @@ class AppProvider extends ChangeNotifier {
 
   getDeviceType(screenwidth) {
     if (screenwidth < 450) return DeviceType.mobile;
-    if (screenwidth < 800) return DeviceType.tablet;
-    if (screenwidth > 800) return DeviceType.windows;
+    if (screenwidth < 850) return DeviceType.tablet;
+    if (screenwidth > 850) return DeviceType.windows;
     return DeviceType.mobile;
   }
 

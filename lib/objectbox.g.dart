@@ -240,16 +240,13 @@ obx_int.ModelDefinition getObjectBoxModel() {
         object.id = id;
       },
       objectToFB: (Note object, fb.Builder fbb) {
-        final uuidOffset =
-            object.uuid == null ? null : fbb.writeString(object.uuid!);
+        final uuidOffset = fbb.writeString(object.uuid);
         final previewContentOffset =
             object.previewContent == null
                 ? null
                 : fbb.writeString(object.previewContent!);
-        final titleOffset =
-            object.title == null ? null : fbb.writeString(object.title!);
-        final contentOffset =
-            object.content == null ? null : fbb.writeString(object.content!);
+        final titleOffset = fbb.writeString(object.title);
+        final contentOffset = fbb.writeString(object.content);
         final notebookOffset =
             object.notebook == null
                 ? null
@@ -291,16 +288,16 @@ obx_int.ModelDefinition getObjectBoxModel() {
         );
         final uuidParam = const fb.StringReader(
           asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 6);
+        ).vTableGet(buffer, rootOffset, 6, '');
+        final titleParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 10, '');
+        final contentParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 12, '');
         final previewContentParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 8);
-        final titleParam = const fb.StringReader(
-          asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 10);
-        final contentParam = const fb.StringReader(
-          asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 12);
         final notebookParam = const fb.ListReader<String>(
           fb.StringReader(asciiOptimization: true),
           lazy: false,
@@ -326,9 +323,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final object = Note(
           id: idParam,
           uuid: uuidParam,
-          previewContent: previewContentParam,
           title: titleParam,
           content: contentParam,
+          previewContent: previewContentParam,
           notebook: notebookParam,
           isBookmark: isBookmarkParam,
           dateCreated: dateCreatedParam,

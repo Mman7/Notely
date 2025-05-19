@@ -12,7 +12,11 @@ final myTheme = ThemeData(
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: Colors.white,
       selectedItemColor: hexToColor('#504099'),
+      selectedLabelStyle: TextStyle(
+        fontWeight: FontWeight.w500,
+      ),
       unselectedItemColor: hexToColor('#E9E6FD'),
+      showUnselectedLabels: false,
     ),
     colorScheme: ColorScheme.light().copyWith(
         primary: hexToColor('#504099'),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:syncnote/src/model/note_model.dart';
+import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/section/editor.dart';
 
 class NotePreview extends StatelessWidget {
@@ -7,29 +9,34 @@ class NotePreview extends StatelessWidget {
     super.key,
     required this.index,
     required this.title,
-    required this.previewText,
+    required this.content,
     required this.lastModified,
+    required this.previewContent,
   });
 
   final int index;
   final String title;
-  final String previewText;
+  final String content;
+  final String previewContent;
   final DateTime lastModified;
+
+  String lastModifiedText() {
+    List<String> date = lastModified.toLocal().toString().split('-');
+    return '${date[0]}.${date[1]}.${date[2].split(' ')[0]}';
+  }
 
   @override
   Widget build(BuildContext context) {
-    String lastModifiedText() {
-      List<String> date = lastModified.toLocal().toString().split('-');
-      return '${date[0]}.${date[1]}.${date[2].split(' ')[0]}';
-    }
-
-    return GestureDetector(
+    List<Note> noteList = context.watch<AppProvider>().noteList;
+    return InkWell(
       onTap: () => Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => Editor(
             title: title,
-            content: previewText,
+            content: content,
+            id: noteList[index].id,
+            uuid: noteList[index].uuid,
           ),
         ),
       ),
@@ -43,7 +50,9 @@ class NotePreview extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Title $index',
+              noteList[index].title,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
@@ -51,19 +60,15 @@ class NotePreview extends StatelessWidget {
             ),
             SizedBox(height: 8.0),
             Text(
-              'This is a paragraph for note $index.',
+              noteList[index].previewContent,
               style: TextStyle(fontSize: 14.0),
               maxLines: 4,
               overflow: TextOverflow.ellipsis,
             ),
             Spacer(),
-            // fake date
             Text(
               lastModifiedText(),
-              style: TextStyle(
-                fontSize: 12.sp,
-                fontStyle: FontStyle.italic,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
             ),
           ],
         ),

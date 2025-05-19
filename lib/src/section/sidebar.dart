@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
+import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/section/editor.dart';
 
 class SideBar extends StatefulWidget {
@@ -17,7 +19,6 @@ class _SideBarState extends State<SideBar> {
   bool tagsIsExpanded = false;
   TextEditingController textEditController = TextEditingController();
   String text = '';
-
   @override
   void dispose() {
     textEditController.dispose();

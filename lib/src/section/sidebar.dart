@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:syncnote/src/section/editor.dart';
 
 class SideBar extends StatefulWidget {
   const SideBar({
@@ -54,7 +55,7 @@ class _SideBarState extends State<SideBar> {
                 fillColor: Colors.white,
                 filled: true,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(15),
+                  borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide.none,
                 ),
               ),
@@ -80,7 +81,18 @@ class _SideBarState extends State<SideBar> {
           ),
         ]),
         child: TextButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              // Navigate to the editor page
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Editor(
+                    content: '',
+                    title: '',
+                  ),
+                ),
+              );
+            },
             style: TextButton.styleFrom(
               padding:
                   const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),

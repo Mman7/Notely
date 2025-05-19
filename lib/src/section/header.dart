@@ -17,7 +17,8 @@ class Header extends StatelessWidget {
         child: Text(
           'Welcome to MeloNote',
           style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                fontSize: 2.1.sp,
+                fontSize: 25.sp,
+                fontWeight: FontWeight.w500,
               ),
         ),
       ),

@@ -19,24 +19,20 @@ class FolderListView extends StatelessWidget {
       return 2;
     }
 
+    //TODO implement this
     return Container(
-      color: Theme.of(context).colorScheme.surface,
-      padding: const EdgeInsets.all(15),
-      child: GridView.count(
-        shrinkWrap: true,
-        crossAxisCount: checkScreen(),
-        children: [
-          Folder(),
-          Folder(),
-          Folder(),
-          Folder(),
-          Folder(),
-          Folder(),
-          Folder(),
-          Folder(),
-          Folder(),
-          Folder()
-        ],
+      color: Colors.red,
+      child: Container(
+        height: 300,
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+        ),
+        child: GridView.count(
+          shrinkWrap: true,
+          crossAxisCount: checkScreen(),
+          children: [Folder()],
+        ),
       ),
     );
   }

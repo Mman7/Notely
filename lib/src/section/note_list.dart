@@ -55,7 +55,7 @@ class _NoteListState extends State<NoteList> {
           itemBuilder: (context, index) {
             return NotePreview(
               index: index,
-              title: 'Note Title ${noteList[index].title}',
+              title: noteList[index].title,
               previewContent: noteList[index].previewContent,
               content: noteList[index].content,
               lastModified: DateTime.now(),

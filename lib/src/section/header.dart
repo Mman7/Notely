@@ -9,17 +9,22 @@ class Header extends StatelessWidget {
     return Material(
       elevation: 15,
       child: Container(
-        padding: const EdgeInsets.all(20),
+        padding: EdgeInsets.symmetric(
+          horizontal: 20.w,
+        ),
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
         ),
-        child: Text(
-          'Welcome to MeloNote',
-          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                fontSize: 25.sp,
-                fontWeight: FontWeight.w500,
-              ),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Welcome to MeloNote',
+            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+                  fontSize: 25.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+          ),
         ),
       ),
     );

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:provider/provider.dart';
-import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/section/editor.dart';
 
 class SideBar extends StatefulWidget {
@@ -38,13 +36,14 @@ class _SideBarState extends State<SideBar> {
             Gap(10),
             Text(
               'MeloNote',
+              textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 30.sp,
               ),
             ),
-            Gap(40),
+            Gap(15),
             TextField(
               onChanged: (value) {
                 setState(() {
@@ -53,6 +52,7 @@ class _SideBarState extends State<SideBar> {
               },
               decoration: InputDecoration(
                 hintText: 'Search for notes',
+                hintStyle: TextStyle(color: Colors.grey),
                 fillColor: Colors.white,
                 filled: true,
                 border: OutlineInputBorder(
@@ -60,6 +60,7 @@ class _SideBarState extends State<SideBar> {
                   borderSide: BorderSide.none,
                 ),
               ),
+              style: TextStyle(color: Colors.black),
             ),
             Gap(20),
             newNoteBtn(context),
@@ -88,6 +89,7 @@ class _SideBarState extends State<SideBar> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => Editor(
+                    isNew: true,
                     content: '',
                     title: '',
                   ),

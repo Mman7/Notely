@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:syncnote/src/screen/mobile.dart';
 import 'package:syncnote/src/utils/myobjectbox.dart';
 import 'package:toastification/toastification.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:window_manager/window_manager.dart';
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods like buildOverscrollIndicator and buildScrollbar
@@ -24,6 +26,13 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
+
+  ///* Commented out for now
+  // if (Platform.isWindows) {
+  //   WindowManager.instance.setMinimumSize(const Size(1200, 600));
+  //   WindowManager.instance.setMaximumSize(const Size(1200, 600));
+  // }
   objectbox = await ObjectBox.create();
   runApp(ChangeNotifierProvider(
     create: (ctx) => AppProvider(),
@@ -50,19 +59,6 @@ class _MainAppState extends State<MainApp> {
     setState(() {
       _selectedIndex = index;
     });
-  }
-
-  void newNote(BuildContext context) {
-    // Navigate to the editor page
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => Editor(
-          content: '',
-          title: '',
-        ),
-      ),
-    );
   }
 
   @override
@@ -98,6 +94,7 @@ class _MainAppState extends State<MainApp> {
                               ctx,
                               MaterialPageRoute(
                                 builder: (context) => Editor(
+                                  isNew: true,
                                   content: '',
                                   title: '',
                                 ),

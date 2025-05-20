@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/quill_delta.dart';
@@ -8,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/modules/local_database.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
+import 'package:toastification/toastification.dart';
 import 'package:uuid/uuid.dart';
 
 class Editor extends StatefulWidget {
@@ -17,11 +17,13 @@ class Editor extends StatefulWidget {
     required this.content,
     this.uuid,
     this.id,
+    required this.isNew,
   });
   final String title;
   final String content;
   final String? uuid;
   final int? id;
+  final bool isNew;
   @override
   State createState() => _EditorState();
 }
@@ -30,7 +32,7 @@ class Editor extends StatefulWidget {
 class _EditorState extends State<Editor> {
   final QuillController _controller = QuillController.basic();
   final _titleController = TextEditingController();
-  bool isChanged = true;
+  ValueNotifier<bool> isChanged = ValueNotifier(false);
 
   @override
   void dispose() {
@@ -46,22 +48,31 @@ class _EditorState extends State<Editor> {
     if (originalContent.isEmpty) {
       return;
     }
-    var json = jsonDecode(originalContent);
-
+    // intialize content
+    List json = jsonDecode(originalContent);
     _controller.document = Document.fromJson(json);
 
-    _controller.addListener(() {
-      List<Map<String, dynamic>> aaa = _controller.document.toDelta().toJson();
-      // setState(() => isChanged = !isContentChanged(aaa, data));
+    // Check if title has changed
+    _titleController.addListener(() {
+      if (_titleController.text != widget.title) {
+        isChanged.value = true;
+      } else {
+        isChanged.value = false;
+      }
     });
+
+    // Check if the content has changed
+    _controller.document.changes.listen((event) {
+      final change = event.change;
+      if (change.isNotEmpty) {
+        isChanged.value = true;
+      } else {
+        isChanged.value = false;
+      }
+    });
+
     super.initState();
   }
-
-  isNewNote() => widget.content.isEmpty;
-  // Check if the content has changed
-  bool isContentChanged(List<Map<String, dynamic>> value1,
-          List<Map<String, dynamic>> value2) =>
-      mapEquals(value1[0], value2[0]);
 
   @override
   Widget build(BuildContext context) {
@@ -69,30 +80,42 @@ class _EditorState extends State<Editor> {
     return Scaffold(
       appBar: AppBar(
         actions: [
-          isChanged
-              ? IconButton(
-                  onPressed: () {
-                    // Save the content
-                    String title = _titleController.text;
-                    Delta content = _controller.document.toDelta();
-                    String preview = _controller.document.toPlainText();
-                    var json = jsonEncode(content);
-                    Database().saveNote(
-                      note: Note(
-                        id: widget.id ?? 0,
-                        title: title,
-                        content: json,
-                        dateCreated: DateTime.now(),
-                        uuid: widget.uuid ?? Uuid().v4(),
-                        previewContent: preview,
-                      ),
-                    );
-
-                    provider.refresh();
-                  },
-                  icon: const Icon(Icons.save),
-                )
-              : Container()
+          ValueListenableBuilder(
+            valueListenable: isChanged,
+            builder: (context, changed, child) => changed || widget.isNew
+                ? IconButton(
+                    onPressed: () {
+                      // Save the content
+                      String title = _titleController.text;
+                      Delta content = _controller.document.toDelta();
+                      String preview = _controller.document.toPlainText();
+                      var json = jsonEncode(content);
+                      Database().saveNote(
+                        note: Note(
+                          id: widget.id ?? 0,
+                          title: title,
+                          content: json,
+                          dateCreated: DateTime.now(),
+                          uuid: widget.uuid ?? Uuid().v4(),
+                          previewContent: preview,
+                        ),
+                      );
+                      toastification.show(
+                        style: ToastificationStyle.fillColored,
+                        primaryColor: Colors.lightGreen,
+                        icon: Icon(Icons.done),
+                        context:
+                            context, // optional if you use ToastificationWrapper
+                        title: Text('Your note has been saved'),
+                        autoCloseDuration: const Duration(seconds: 3),
+                      );
+                      provider.refresh();
+                      isChanged.value = false;
+                    },
+                    icon: const Icon(Icons.done),
+                  )
+                : Container(),
+          )
         ],
         title: const Text('MelosEditor'),
       ),

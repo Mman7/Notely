@@ -33,6 +33,7 @@ class NotePreview extends StatelessWidget {
         context,
         MaterialPageRoute(
           builder: (context) => Editor(
+            isNew: false,
             title: title,
             content: content,
             id: noteList[index].id,
@@ -41,9 +42,9 @@ class NotePreview extends StatelessWidget {
         ),
       ),
       child: Container(
-        padding: EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(15.0),
         decoration: BoxDecoration(
-          color: Colors.blue.shade100,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: Column(

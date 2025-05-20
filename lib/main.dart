@@ -2,13 +2,14 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:syncnote/myobjectbox.dart';
+import 'package:syncnote/src/section/editor.dart';
 import 'package:syncnote/src/theme.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/screen/desktop.dart';
 import 'package:syncnote/src/screen/mobile.dart';
 import 'package:syncnote/src/utils/myobjectbox.dart';
 import 'package:toastification/toastification.dart';
-import 'myobjectbox.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
@@ -51,8 +52,24 @@ class _MainAppState extends State<MainApp> {
     });
   }
 
+  void newNote(BuildContext context) {
+    // Navigate to the editor page
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Editor(
+          content: '',
+          title: '',
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AppProvider>().intializeData();
+    });
     return ScreenUtilInit(
         minTextAdapt: true,
         builder: (ctx, child) {
@@ -73,9 +90,21 @@ class _MainAppState extends State<MainApp> {
                     ? FloatingActionButtonLocation.centerDocked
                     : null,
                 floatingActionButton: isMobileOrTable
-                    ? FloatingActionButton(
-                        child: Icon(Icons.add),
-                        onPressed: () {},
+                    ? Builder(
+                        builder: (ctx) => FloatingActionButton(
+                          child: Icon(Icons.add),
+                          onPressed: () {
+                            Navigator.push(
+                              ctx,
+                              MaterialPageRoute(
+                                builder: (context) => Editor(
+                                  content: '',
+                                  title: '',
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       )
                     : null,
                 bottomNavigationBar: isMobileOrTable
@@ -113,7 +142,7 @@ class _MainAppState extends State<MainApp> {
                       }
                       if (deviceType == DeviceType.tablet) {
                         return ScreenUtilInit(
-                            designSize: const Size(500, 1080),
+                            designSize: const Size(600, 1080),
                             builder: (ctx, child) {
                               return const MobileLayout();
                             });

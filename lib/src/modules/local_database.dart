@@ -1,4 +1,3 @@
-// ignore: file_names
 import 'package:syncnote/myobjectbox.dart';
 import 'package:syncnote/objectbox.g.dart';
 import 'package:syncnote/src/model/note_model.dart';
@@ -34,10 +33,9 @@ class Database {
     return noteBookData;
   }
 
-  toggleBookMarked({required int noteId}) {
-    final Note note = getNote(id: noteId);
-    note.isBookmark = !note.isBookmark!;
-    saveNote(note: note);
+  // Example: update an existing note by id
+  void updateNote({required Note note}) {
+    noteBox.put(note, mode: PutMode.update);
   }
 
   saveNote({required Note note}) {
@@ -50,5 +48,10 @@ class Database {
 
   removeNoteBook({required id}) {
     noteBookBox.remove(id);
+  }
+
+  clearAll() {
+    noteBox.removeAll();
+    noteBookBox.removeAll();
   }
 }

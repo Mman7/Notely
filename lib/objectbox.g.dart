@@ -45,7 +45,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(5, 4271254259516459972),
     name: 'Note',
-    lastPropertyId: const obx_int.IdUid(12, 2562786562007846218),
+    lastPropertyId: const obx_int.IdUid(13, 6882280431038526721),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -69,12 +69,6 @@ final _entities = <obx_int.ModelEntity>[
       obx_int.ModelProperty(
         id: const obx_int.IdUid(4, 6524839013607695808),
         name: 'title',
-        type: 9,
-        flags: 0,
-      ),
-      obx_int.ModelProperty(
-        id: const obx_int.IdUid(5, 5316681461974377569),
-        name: 'content',
         type: 9,
         flags: 0,
       ),
@@ -106,6 +100,12 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(12, 2562786562007846218),
         name: 'lastestModified',
         type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(13, 6882280431038526721),
+        name: 'content',
+        type: 9,
         flags: 0,
       ),
     ],
@@ -190,6 +190,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       1966642670325292921,
       3110496900558503241,
       1549105256777534732,
+      5316681461974377569,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -240,33 +241,27 @@ obx_int.ModelDefinition getObjectBoxModel() {
         object.id = id;
       },
       objectToFB: (Note object, fb.Builder fbb) {
-        final uuidOffset =
-            object.uuid == null ? null : fbb.writeString(object.uuid!);
-        final previewContentOffset =
-            object.previewContent == null
-                ? null
-                : fbb.writeString(object.previewContent!);
-        final titleOffset =
-            object.title == null ? null : fbb.writeString(object.title!);
-        final contentOffset =
-            object.content == null ? null : fbb.writeString(object.content!);
+        final uuidOffset = fbb.writeString(object.uuid);
+        final previewContentOffset = fbb.writeString(object.previewContent);
+        final titleOffset = fbb.writeString(object.title);
         final notebookOffset =
             object.notebook == null
                 ? null
                 : fbb.writeList(
                   object.notebook!.map(fbb.writeString).toList(growable: false),
                 );
-        fbb.startTable(13);
+        final contentOffset = fbb.writeString(object.content);
+        fbb.startTable(14);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addOffset(2, previewContentOffset);
         fbb.addOffset(3, titleOffset);
-        fbb.addOffset(4, contentOffset);
         fbb.addBool(5, object.isBookmark);
         fbb.addBool(6, object.includePic);
         fbb.addInt64(7, object.dateCreated?.millisecondsSinceEpoch);
         fbb.addOffset(10, notebookOffset);
         fbb.addInt64(11, object.lastestModified?.millisecondsSinceEpoch);
+        fbb.addOffset(12, contentOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -291,16 +286,16 @@ obx_int.ModelDefinition getObjectBoxModel() {
         );
         final uuidParam = const fb.StringReader(
           asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 6);
-        final previewContentParam = const fb.StringReader(
-          asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 8);
+        ).vTableGet(buffer, rootOffset, 6, '');
         final titleParam = const fb.StringReader(
           asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 10);
+        ).vTableGet(buffer, rootOffset, 10, '');
         final contentParam = const fb.StringReader(
           asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 12);
+        ).vTableGet(buffer, rootOffset, 28, '');
+        final previewContentParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 8, '');
         final notebookParam = const fb.ListReader<String>(
           fb.StringReader(asciiOptimization: true),
           lazy: false,
@@ -326,9 +321,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final object = Note(
           id: idParam,
           uuid: uuidParam,
-          previewContent: previewContentParam,
           title: titleParam,
           content: contentParam,
+          previewContent: previewContentParam,
           notebook: notebookParam,
           isBookmark: isBookmarkParam,
           dateCreated: dateCreatedParam,
@@ -375,33 +370,33 @@ class Note_ {
     _entities[1].properties[3],
   );
 
-  /// See [Note.content].
-  static final content = obx.QueryStringProperty<Note>(
-    _entities[1].properties[4],
-  );
-
   /// See [Note.isBookmark].
   static final isBookmark = obx.QueryBooleanProperty<Note>(
-    _entities[1].properties[5],
+    _entities[1].properties[4],
   );
 
   /// See [Note.includePic].
   static final includePic = obx.QueryBooleanProperty<Note>(
-    _entities[1].properties[6],
+    _entities[1].properties[5],
   );
 
   /// See [Note.dateCreated].
   static final dateCreated = obx.QueryDateProperty<Note>(
-    _entities[1].properties[7],
+    _entities[1].properties[6],
   );
 
   /// See [Note.notebook].
   static final notebook = obx.QueryStringVectorProperty<Note>(
-    _entities[1].properties[8],
+    _entities[1].properties[7],
   );
 
   /// See [Note.lastestModified].
   static final lastestModified = obx.QueryDateProperty<Note>(
+    _entities[1].properties[8],
+  );
+
+  /// See [Note.content].
+  static final content = obx.QueryStringProperty<Note>(
     _entities[1].properties[9],
   );
 }

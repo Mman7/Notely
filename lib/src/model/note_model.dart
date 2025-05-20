@@ -4,10 +4,10 @@ import 'package:objectbox/objectbox.dart';
 class Note {
   Note(
       {this.id = 0,
-      this.uuid,
-      this.previewContent,
-      this.title,
-      this.content,
+      required this.uuid,
+      required this.title,
+      required this.content,
+      required this.previewContent,
       this.notebook,
       this.isBookmark = false,
       this.dateCreated,
@@ -15,10 +15,10 @@ class Note {
       this.includePic = false});
   @Id()
   int id;
-  String? uuid;
-  String? previewContent;
-  String? title;
-  String? content;
+  String uuid;
+  String previewContent;
+  String title;
+  String content;
   bool? isBookmark;
   bool? includePic;
   DateTime? dateCreated;

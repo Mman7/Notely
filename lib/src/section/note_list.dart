@@ -18,8 +18,7 @@ class _NoteListState extends State<NoteList> {
   @override
   Widget build(BuildContext context) {
     List<Note> noteList = context.watch<AppProvider>().noteList;
-    DeviceType deviceType =
-        context.read<AppProvider>().getDeviceType(ScreenUtil().screenWidth);
+    DeviceType deviceType = context.read<AppProvider>().getDeviceType();
     int checkScreen() {
       if (ScreenUtil().screenWidth > 1500) return 8;
       if (deviceType == DeviceType.mobile) return 2;

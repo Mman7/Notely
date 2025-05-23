@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/quill_delta.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/modules/local_database.dart';
@@ -28,11 +29,14 @@ class Editor extends StatefulWidget {
   State createState() => _EditorState();
 }
 
-/// TODO Add bottom sticky bar for mobile
+// TODO when user save set this.uuid,title,content
+// TODO add delete note
+
 class _EditorState extends State<Editor> {
   final QuillController _controller = QuillController.basic();
   final _titleController = TextEditingController();
   ValueNotifier<bool> isChanged = ValueNotifier(false);
+  bool isEditing = false;
 
   @override
   void dispose() {
@@ -52,13 +56,13 @@ class _EditorState extends State<Editor> {
     List json = jsonDecode(originalContent);
     _controller.document = Document.fromJson(json);
 
+    // isEditing
+
     // Check if title has changed
+    //TODO fix if content is changed but title didnt, isChange.value always true
     _titleController.addListener(() {
-      if (_titleController.text != widget.title) {
-        isChanged.value = true;
-      } else {
-        isChanged.value = false;
-      }
+      if (_titleController.text != widget.title) isChanged.value = true;
+      if (_titleController.text == widget.title) isChanged.value = false;
     });
 
     // Check if the content has changed
@@ -74,9 +78,27 @@ class _EditorState extends State<Editor> {
     super.initState();
   }
 
+  FocusNode editorFocusNode = FocusNode();
+
   @override
   Widget build(BuildContext context) {
     AppProvider provider = context.read<AppProvider>();
+    //TODO isMobile show sticky toolbar
+    DeviceType deviceType = provider.getDeviceType();
+    //TODO this
+    editorFocusNode.addListener(() {
+      print(isChanged.value);
+      if (isChanged.value) {
+        setState(() {
+          isEditing = false;
+        });
+      } else {
+        setState(() {
+          isEditing = true;
+        });
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -117,42 +139,70 @@ class _EditorState extends State<Editor> {
                 : Container(),
           )
         ],
-        title: const Text('MelosEditor'),
+        title: const Text('MeloEditor'),
       ),
-      body: Column(
-        children: [
-          Container(
-              width: double.infinity,
-              color: Colors.blue,
-              child: QuillToolbar.simple(
-                  controller: _controller,
-                  configurations: QuillSimpleToolbarConfigurations(
-                    sharedConfigurations: const QuillSharedConfigurations(
-                      locale: Locale('en'),
-                    ),
-                  ))),
-          TextField(
-            controller: _titleController,
-            decoration: const InputDecoration(
-              hintText: 'Title',
-            ),
-          ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              color: Colors.red,
-              child: QuillEditor.basic(
-                configurations: QuillEditorConfigurations(
-                  placeholder: 'Write down your note',
-                  sharedConfigurations: const QuillSharedConfigurations(
-                    locale: Locale('en'),
+      body: Container(
+        color: Colors.red,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Column(
+              children: [
+                TextField(
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.w500),
+                  controller: _titleController,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    fillColor: Theme.of(context).colorScheme.secondary,
+                    labelText: 'Title',
+                    hintText: 'Title',
                   ),
                 ),
-                controller: _controller,
-              ),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    color: Theme.of(context).colorScheme.secondary,
+                    child: QuillEditor.basic(
+                      focusNode: editorFocusNode,
+                      configurations: QuillEditorConfigurations(
+                        placeholder: 'Write down your note',
+                        sharedConfigurations: const QuillSharedConfigurations(
+                          locale: Locale('en'),
+                        ),
+                      ),
+                      controller: _controller,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
+            //TODO style the toolbar
+            // Toolbar
+            Center(
+              child: isEditing
+                  ? Column(
+                      children: [
+                        Spacer(),
+                        Container(
+                            color: Theme.of(context).colorScheme.primary,
+                            width: double.infinity,
+                            child: QuillToolbar.simple(
+                                controller: _controller,
+                                configurations:
+                                    QuillSimpleToolbarConfigurations(
+                                  sharedConfigurations:
+                                      const QuillSharedConfigurations(
+                                    locale: Locale('en'),
+                                  ),
+                                ))),
+                      ],
+                    )
+                  : Container(),
+            )
+          ],
+        ),
       ),
     );
   }

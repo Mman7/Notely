@@ -9,8 +9,7 @@ class FolderListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int checkScreen() {
-      DeviceType deviceType =
-          context.read<AppProvider>().getDeviceType(ScreenUtil().screenWidth);
+      DeviceType deviceType = context.read<AppProvider>().getDeviceType();
 
       if (ScreenUtil().screenWidth > 1500) return 7;
       if (deviceType == DeviceType.mobile) return 2;

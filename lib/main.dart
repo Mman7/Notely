@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -70,10 +69,9 @@ class _MainAppState extends State<MainApp> {
         minTextAdapt: true,
         builder: (ctx, child) {
           final screenwidth = ScreenUtil().screenWidth;
-          DeviceType deviceTy =
-              context.read<AppProvider>().getDeviceType(screenwidth);
-          bool isMobileOrTable =
-              deviceTy == DeviceType.mobile || deviceTy == DeviceType.tablet;
+          DeviceType deviceType = context.read<AppProvider>().getDeviceType();
+          bool isMobileOrTable = deviceType == DeviceType.mobile ||
+              deviceType == DeviceType.tablet;
 
           debugPrint(screenwidth.toString());
 
@@ -126,10 +124,6 @@ class _MainAppState extends State<MainApp> {
                   color: Colors.black,
                   child: Builder(
                     builder: (ctx) {
-                      DeviceType deviceType = context
-                          .read<AppProvider>()
-                          .getDeviceType(screenwidth);
-
                       if (deviceType == DeviceType.mobile) {
                         return ScreenUtilInit(
                             designSize: const Size(360, 1080),

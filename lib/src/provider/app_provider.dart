@@ -20,10 +20,11 @@ class AppProvider extends ChangeNotifier {
   String listMode = 'All Notes';
   bool isSidebarExtended = false;
 
-  getDeviceType(screenwidth) {
-    if (screenwidth < 450) return DeviceType.mobile;
-    if (screenwidth < 850) return DeviceType.tablet;
-    if (screenwidth > 850) return DeviceType.windows;
+  getDeviceType() {
+    double screenWidth = ScreenUtil().screenWidth;
+    if (screenWidth < 450) return DeviceType.mobile;
+    if (screenWidth < 850) return DeviceType.tablet;
+    if (screenWidth > 850) return DeviceType.windows;
     return DeviceType.mobile;
   }
 

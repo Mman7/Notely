@@ -83,11 +83,8 @@ class _EditorState extends State<Editor> {
   @override
   Widget build(BuildContext context) {
     AppProvider provider = context.read<AppProvider>();
-    //TODO isMobile show sticky toolbar
     DeviceType deviceType = provider.getDeviceType();
-    //TODO this
     editorFocusNode.addListener(() {
-      print(isChanged.value);
       if (isChanged.value) {
         setState(() {
           isEditing = false;
@@ -99,6 +96,20 @@ class _EditorState extends State<Editor> {
       }
     });
 
+    Widget toolbar = Container(
+        color: Theme.of(context).colorScheme.primary,
+        width: double.infinity,
+        child: QuillToolbar.simple(
+            controller: _controller,
+            configurations: QuillSimpleToolbarConfigurations(
+              sharedConfigurations: const QuillSharedConfigurations(
+                locale: Locale('en'),
+              ),
+            )));
+
+    Widget mobileLayoutToolbar = Column(
+      children: [Spacer(), toolbar],
+    );
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -148,6 +159,7 @@ class _EditorState extends State<Editor> {
           children: [
             Column(
               children: [
+                deviceType == DeviceType.windows ? toolbar : Container(),
                 TextField(
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurface,
@@ -180,27 +192,11 @@ class _EditorState extends State<Editor> {
             ),
             //TODO style the toolbar
             // Toolbar
-            Center(
-              child: isEditing
-                  ? Column(
-                      children: [
-                        Spacer(),
-                        Container(
-                            color: Theme.of(context).colorScheme.primary,
-                            width: double.infinity,
-                            child: QuillToolbar.simple(
-                                controller: _controller,
-                                configurations:
-                                    QuillSimpleToolbarConfigurations(
-                                  sharedConfigurations:
-                                      const QuillSharedConfigurations(
-                                    locale: Locale('en'),
-                                  ),
-                                ))),
-                      ],
-                    )
-                  : Container(),
-            )
+            deviceType != DeviceType.windows
+                ? isEditing
+                    ? mobileLayoutToolbar
+                    : Container()
+                : Container()
           ],
         ),
       ),

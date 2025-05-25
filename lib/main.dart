@@ -84,21 +84,33 @@ class _MainAppState extends State<MainApp> {
                     ? FloatingActionButtonLocation.centerDocked
                     : null,
                 floatingActionButton: isMobileOrTable
-                    ? Builder(
-                        builder: (ctx) => FloatingActionButton(
-                          child: Icon(Icons.add),
-                          onPressed: () {
-                            Navigator.push(
-                              ctx,
-                              MaterialPageRoute(
-                                builder: (context) => Editor(
-                                  isNew: true,
-                                  content: '',
-                                  title: '',
+                    ? Container(
+                        decoration: BoxDecoration(boxShadow: [
+                          BoxShadow(
+                            color: Theme.of(context).primaryColor.withBlue(255),
+                            spreadRadius: 1,
+                            blurRadius: 30,
+                            offset: const Offset(
+                                0, 0), // changes position of shadow
+                          ),
+                        ]),
+                        child: Builder(
+                          builder: (ctx) => FloatingActionButton(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            child: Icon(Icons.add),
+                            onPressed: () {
+                              Navigator.push(
+                                ctx,
+                                MaterialPageRoute(
+                                  builder: (context) => Editor(
+                                    isNew: true,
+                                    content: '',
+                                    title: '',
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
                       )
                     : null,

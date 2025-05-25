@@ -87,7 +87,10 @@ class _MainAppState extends State<MainApp> {
                     ? Container(
                         decoration: BoxDecoration(boxShadow: [
                           BoxShadow(
-                            color: Theme.of(context).primaryColor.withBlue(255),
+                            color: Theme.of(context)
+                                .primaryColor
+                                .withBlue(255)
+                                .withAlpha(200),
                             spreadRadius: 1,
                             blurRadius: 30,
                             offset: const Offset(

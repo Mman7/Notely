@@ -42,6 +42,11 @@ class Database {
     noteBox.put(note);
   }
 
+  addNoteBook({required name, required description}) {
+    Notebook notebook = Notebook(title: name, description: description ?? '');
+    noteBookBox.put(notebook);
+  }
+
   removeNote({required id}) {
     noteBox.remove(id);
   }

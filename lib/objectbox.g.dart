@@ -23,7 +23,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(3, 798849588595128635),
     name: 'Notebook',
-    lastPropertyId: const obx_int.IdUid(3, 4479470878023695645),
+    lastPropertyId: const obx_int.IdUid(4, 3551947636204397678),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -35,6 +35,12 @@ final _entities = <obx_int.ModelEntity>[
       obx_int.ModelProperty(
         id: const obx_int.IdUid(2, 4081382284707450781),
         name: 'title',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 3551947636204397678),
+        name: 'description',
         type: 9,
         flags: 0,
       ),
@@ -209,9 +215,14 @@ obx_int.ModelDefinition getObjectBoxModel() {
       },
       objectToFB: (Notebook object, fb.Builder fbb) {
         final titleOffset = fbb.writeString(object.title);
-        fbb.startTable(4);
+        final descriptionOffset =
+            object.description == null
+                ? null
+                : fbb.writeString(object.description!);
+        fbb.startTable(5);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, titleOffset);
+        fbb.addOffset(3, descriptionOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -227,7 +238,14 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final titleParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 6, '');
-        final object = Notebook(id: idParam, title: titleParam);
+        final descriptionParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 10);
+        final object = Notebook(
+          id: idParam,
+          title: titleParam,
+          description: descriptionParam,
+        );
 
         return object;
       },
@@ -349,6 +367,11 @@ class Notebook_ {
   /// See [Notebook.title].
   static final title = obx.QueryStringProperty<Notebook>(
     _entities[0].properties[1],
+  );
+
+  /// See [Notebook.description].
+  static final description = obx.QueryStringProperty<Notebook>(
+    _entities[0].properties[2],
   );
 }
 

@@ -20,17 +20,18 @@ class Folder extends StatelessWidget {
           MaterialPageRoute(builder: (context) => NoteList()),
         );
       },
-      child: Container(
-        margin: const EdgeInsets.all(10),
-        child: Stack(children: [
+      child: Center(
+        child: Stack(alignment: Alignment.centerLeft, children: [
           SvgPicture.asset(
             "assets/images/folder.svg",
           ),
           Container(
-            padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
+            margin: EdgeInsets.only(
+              left: 20.sp,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
                   padding: EdgeInsets.all(10.sp),
@@ -40,7 +41,7 @@ class Folder extends StatelessWidget {
                   ),
                   child: Icon(
                     Icons.file_copy_sharp,
-                    size: 20,
+                    size: 20.sp,
                   ),
                 ),
                 Gap(10),

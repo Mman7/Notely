@@ -6,9 +6,10 @@ final myTheme = ThemeData(
       bodyLarge: TextStyle(color: Colors.white),
     ),
     inputDecorationTheme: InputDecorationTheme(
-      fillColor: Colors.orange,
-      filled: true,
-    ),
+        fillColor: Colors.orange,
+        filled: true,
+        hintStyle: TextStyle(color: Colors.grey),
+        labelStyle: TextStyle(color: Colors.black)),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: Colors.white,
       selectedItemColor: hexToColor('#504099'),

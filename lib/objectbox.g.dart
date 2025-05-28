@@ -23,7 +23,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(3, 798849588595128635),
     name: 'Notebook',
-    lastPropertyId: const obx_int.IdUid(4, 3551947636204397678),
+    lastPropertyId: const obx_int.IdUid(7, 763734887088423762),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -35,12 +35,6 @@ final _entities = <obx_int.ModelEntity>[
       obx_int.ModelProperty(
         id: const obx_int.IdUid(2, 4081382284707450781),
         name: 'title',
-        type: 9,
-        flags: 0,
-      ),
-      obx_int.ModelProperty(
-        id: const obx_int.IdUid(4, 3551947636204397678),
-        name: 'description',
         type: 9,
         flags: 0,
       ),
@@ -81,12 +75,6 @@ final _entities = <obx_int.ModelEntity>[
       obx_int.ModelProperty(
         id: const obx_int.IdUid(6, 6019034536151155963),
         name: 'isBookmark',
-        type: 1,
-        flags: 0,
-      ),
-      obx_int.ModelProperty(
-        id: const obx_int.IdUid(7, 6209204083061683773),
-        name: 'includePic',
         type: 1,
         flags: 0,
       ),
@@ -197,6 +185,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
       3110496900558503241,
       1549105256777534732,
       5316681461974377569,
+      3551947636204397678,
+      1381133535795069735,
+      493215236131655716,
+      6209204083061683773,
+      763734887088423762,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -215,14 +208,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
       },
       objectToFB: (Notebook object, fb.Builder fbb) {
         final titleOffset = fbb.writeString(object.title);
-        final descriptionOffset =
-            object.description == null
-                ? null
-                : fbb.writeString(object.description!);
-        fbb.startTable(5);
+        fbb.startTable(8);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, titleOffset);
-        fbb.addOffset(3, descriptionOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -238,14 +226,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final titleParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 6, '');
-        final descriptionParam = const fb.StringReader(
-          asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 10);
-        final object = Notebook(
-          id: idParam,
-          title: titleParam,
-          description: descriptionParam,
-        );
+        final object = Notebook(id: idParam, title: titleParam);
 
         return object;
       },
@@ -275,7 +256,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addOffset(2, previewContentOffset);
         fbb.addOffset(3, titleOffset);
         fbb.addBool(5, object.isBookmark);
-        fbb.addBool(6, object.includePic);
         fbb.addInt64(7, object.dateCreated?.millisecondsSinceEpoch);
         fbb.addOffset(10, notebookOffset);
         fbb.addInt64(11, object.lastestModified?.millisecondsSinceEpoch);
@@ -331,11 +311,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
             lastestModifiedValue == null
                 ? null
                 : DateTime.fromMillisecondsSinceEpoch(lastestModifiedValue);
-        final includePicParam = const fb.BoolReader().vTableGetNullable(
-          buffer,
-          rootOffset,
-          16,
-        );
         final object = Note(
           id: idParam,
           uuid: uuidParam,
@@ -346,7 +321,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
           isBookmark: isBookmarkParam,
           dateCreated: dateCreatedParam,
           lastestModified: lastestModifiedParam,
-          includePic: includePicParam,
         );
 
         return object;
@@ -367,11 +341,6 @@ class Notebook_ {
   /// See [Notebook.title].
   static final title = obx.QueryStringProperty<Notebook>(
     _entities[0].properties[1],
-  );
-
-  /// See [Notebook.description].
-  static final description = obx.QueryStringProperty<Notebook>(
-    _entities[0].properties[2],
   );
 }
 
@@ -398,28 +367,23 @@ class Note_ {
     _entities[1].properties[4],
   );
 
-  /// See [Note.includePic].
-  static final includePic = obx.QueryBooleanProperty<Note>(
-    _entities[1].properties[5],
-  );
-
   /// See [Note.dateCreated].
   static final dateCreated = obx.QueryDateProperty<Note>(
-    _entities[1].properties[6],
+    _entities[1].properties[5],
   );
 
   /// See [Note.notebook].
   static final notebook = obx.QueryStringVectorProperty<Note>(
-    _entities[1].properties[7],
+    _entities[1].properties[6],
   );
 
   /// See [Note.lastestModified].
   static final lastestModified = obx.QueryDateProperty<Note>(
-    _entities[1].properties[8],
+    _entities[1].properties[7],
   );
 
   /// See [Note.content].
   static final content = obx.QueryStringProperty<Note>(
-    _entities[1].properties[9],
+    _entities[1].properties[8],
   );
 }

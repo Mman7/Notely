@@ -17,13 +17,13 @@ class Editor extends StatefulWidget {
     required this.title,
     required this.content,
     this.uuid,
-    this.id,
+    required this.id,
     required this.isNew,
   });
   String title;
   String content;
   String? uuid;
-  int? id;
+  int id;
   bool isNew;
   @override
   State createState() => _EditorState();
@@ -73,6 +73,7 @@ class _EditorState extends State<Editor> {
     String title = _titleController.text;
     Delta content = _controller.document.toDelta();
     String preview = _controller.document.toPlainText();
+    print(widget.id);
     var json = jsonEncode(content);
     Database().saveNote(
       note: Note(
@@ -149,11 +150,9 @@ class _EditorState extends State<Editor> {
                     // Handle menu item selection here
                     // Delete Note
                     if (value == 1) {
-                      // Prevent widget is new
-                      if (widget.id == null) return;
-
                       Database().removeNote(id: widget.id);
                       context.read<AppProvider>().refresh();
+                      //TODO create addToFolder
                       toastification.show(
                         style: ToastificationStyle.minimal,
                         primaryColor: Colors.lightGreen,
@@ -161,6 +160,7 @@ class _EditorState extends State<Editor> {
                         context:
                             context, // optional if you use ToastificationWrapper
                         title: Text('Your note has been deleted'),
+                        pauseOnHover: false,
                         autoCloseDuration: const Duration(seconds: 2),
                       );
                       Navigator.of(context).pop();
@@ -174,6 +174,16 @@ class _EditorState extends State<Editor> {
                           Icon(Icons.delete, color: Colors.black),
                           SizedBox(width: 8),
                           Text('Delete Note'),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 2,
+                      child: Row(
+                        children: [
+                          Icon(Icons.folder, color: Colors.black),
+                          SizedBox(width: 8),
+                          Text('Add to folder'),
                         ],
                       ),
                     ),

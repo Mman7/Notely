@@ -92,6 +92,7 @@ class _SideBarState extends State<SideBar> {
                     isNew: true,
                     content: '',
                     title: '',
+                    id: 0,
                   ),
                 ),
               );

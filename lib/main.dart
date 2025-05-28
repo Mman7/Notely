@@ -106,6 +106,7 @@ class _MainAppState extends State<MainApp> {
                                 ctx,
                                 MaterialPageRoute(
                                   builder: (context) => Editor(
+                                    id: 0,
                                     isNew: true,
                                     content: '',
                                     title: '',

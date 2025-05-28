@@ -25,10 +25,7 @@ class Database {
   getSpecificNoteBook({required int id}) {
     // prevent first launch value equals to null
     if (noteBookBox.getAll().isEmpty) return;
-    String noteBooktitle = objectbox.store.box<Notebook>().get(id)!.title;
-    final query =
-        noteBox.query(Note_.notebook.containsElement(noteBooktitle)).build();
-    final noteBookData = query.find();
+    var noteBookData = noteBookBox.get(id);
 
     return noteBookData;
   }
@@ -42,8 +39,12 @@ class Database {
     noteBox.put(note);
   }
 
-  addNoteBook({required name, required description}) {
-    Notebook notebook = Notebook(title: name, description: description ?? '');
+  addNoteBook({
+    required name,
+  }) {
+    Notebook notebook = Notebook(
+      title: name,
+    );
     noteBookBox.put(notebook);
   }
 

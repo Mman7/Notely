@@ -14,34 +14,12 @@ import 'package:objectbox/internal.dart'
 import 'package:objectbox/objectbox.dart' as obx;
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
+import 'src/model/folder_model.dart';
 import 'src/model/note_model.dart';
-import 'src/model/notebooks_model.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
 final _entities = <obx_int.ModelEntity>[
-  obx_int.ModelEntity(
-    id: const obx_int.IdUid(3, 798849588595128635),
-    name: 'Notebook',
-    lastPropertyId: const obx_int.IdUid(7, 763734887088423762),
-    flags: 0,
-    properties: <obx_int.ModelProperty>[
-      obx_int.ModelProperty(
-        id: const obx_int.IdUid(1, 7665380459296939238),
-        name: 'id',
-        type: 6,
-        flags: 1,
-      ),
-      obx_int.ModelProperty(
-        id: const obx_int.IdUid(2, 4081382284707450781),
-        name: 'title',
-        type: 9,
-        flags: 0,
-      ),
-    ],
-    relations: <obx_int.ModelRelation>[],
-    backlinks: <obx_int.ModelBacklink>[],
-  ),
   obx_int.ModelEntity(
     id: const obx_int.IdUid(5, 4271254259516459972),
     name: 'Note',
@@ -106,6 +84,34 @@ final _entities = <obx_int.ModelEntity>[
     relations: <obx_int.ModelRelation>[],
     backlinks: <obx_int.ModelBacklink>[],
   ),
+  obx_int.ModelEntity(
+    id: const obx_int.IdUid(6, 3609905975199727364),
+    name: 'Folder',
+    lastPropertyId: const obx_int.IdUid(3, 107140961531475377),
+    flags: 0,
+    properties: <obx_int.ModelProperty>[
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(1, 5045664895887237276),
+        name: 'id',
+        type: 6,
+        flags: 1,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(2, 1234735489074752688),
+        name: 'title',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(3, 107140961531475377),
+        name: 'noteInclude',
+        type: 9,
+        flags: 0,
+      ),
+    ],
+    relations: <obx_int.ModelRelation>[],
+    backlinks: <obx_int.ModelBacklink>[],
+  ),
 ];
 
 /// Shortcut for [obx.Store.new] that passes [getObjectBoxModel] and for Flutter
@@ -146,7 +152,7 @@ Future<obx.Store> openStore({
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
     entities: _entities,
-    lastEntityId: const obx_int.IdUid(5, 4271254259516459972),
+    lastEntityId: const obx_int.IdUid(6, 3609905975199727364),
     lastIndexId: const obx_int.IdUid(0, 0),
     lastRelationId: const obx_int.IdUid(0, 0),
     lastSequenceId: const obx_int.IdUid(0, 0),
@@ -154,6 +160,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       3783086095446467721,
       3472751663052211731,
       7148833971392364869,
+      798849588595128635,
     ],
     retiredIndexUids: const [],
     retiredPropertyUids: const [
@@ -190,6 +197,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
       493215236131655716,
       6209204083061683773,
       763734887088423762,
+      7665380459296939238,
+      4081382284707450781,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -198,41 +207,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
   );
 
   final bindings = <Type, obx_int.EntityDefinition>{
-    Notebook: obx_int.EntityDefinition<Notebook>(
-      model: _entities[0],
-      toOneRelations: (Notebook object) => [],
-      toManyRelations: (Notebook object) => {},
-      getId: (Notebook object) => object.id,
-      setId: (Notebook object, int id) {
-        object.id = id;
-      },
-      objectToFB: (Notebook object, fb.Builder fbb) {
-        final titleOffset = fbb.writeString(object.title);
-        fbb.startTable(8);
-        fbb.addInt64(0, object.id);
-        fbb.addOffset(1, titleOffset);
-        fbb.finish(fbb.endTable());
-        return object.id;
-      },
-      objectFromFB: (obx.Store store, ByteData fbData) {
-        final buffer = fb.BufferContext(fbData);
-        final rootOffset = buffer.derefObject(0);
-        final idParam = const fb.Int64Reader().vTableGet(
-          buffer,
-          rootOffset,
-          4,
-          0,
-        );
-        final titleParam = const fb.StringReader(
-          asciiOptimization: true,
-        ).vTableGet(buffer, rootOffset, 6, '');
-        final object = Notebook(id: idParam, title: titleParam);
-
-        return object;
-      },
-    ),
     Note: obx_int.EntityDefinition<Note>(
-      model: _entities[1],
+      model: _entities[0],
       toOneRelations: (Note object) => [],
       toManyRelations: (Note object) => {},
       getId: (Note object) => object.id,
@@ -326,64 +302,114 @@ obx_int.ModelDefinition getObjectBoxModel() {
         return object;
       },
     ),
+    Folder: obx_int.EntityDefinition<Folder>(
+      model: _entities[1],
+      toOneRelations: (Folder object) => [],
+      toManyRelations: (Folder object) => {},
+      getId: (Folder object) => object.id,
+      setId: (Folder object, int id) {
+        object.id = id;
+      },
+      objectToFB: (Folder object, fb.Builder fbb) {
+        final titleOffset = fbb.writeString(object.title);
+        final noteIncludeOffset =
+            object.noteInclude == null
+                ? null
+                : fbb.writeString(object.noteInclude!);
+        fbb.startTable(4);
+        fbb.addInt64(0, object.id);
+        fbb.addOffset(1, titleOffset);
+        fbb.addOffset(2, noteIncludeOffset);
+        fbb.finish(fbb.endTable());
+        return object.id;
+      },
+      objectFromFB: (obx.Store store, ByteData fbData) {
+        final buffer = fb.BufferContext(fbData);
+        final rootOffset = buffer.derefObject(0);
+        final idParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          4,
+          0,
+        );
+        final titleParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 6, '');
+        final noteIncludeParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 8);
+        final object = Folder(
+          id: idParam,
+          title: titleParam,
+          noteInclude: noteIncludeParam,
+        );
+
+        return object;
+      },
+    ),
   };
 
   return obx_int.ModelDefinition(model, bindings);
 }
 
-/// [Notebook] entity fields to define ObjectBox queries.
-class Notebook_ {
-  /// See [Notebook.id].
-  static final id = obx.QueryIntegerProperty<Notebook>(
-    _entities[0].properties[0],
-  );
-
-  /// See [Notebook.title].
-  static final title = obx.QueryStringProperty<Notebook>(
-    _entities[0].properties[1],
-  );
-}
-
 /// [Note] entity fields to define ObjectBox queries.
 class Note_ {
   /// See [Note.id].
-  static final id = obx.QueryIntegerProperty<Note>(_entities[1].properties[0]);
+  static final id = obx.QueryIntegerProperty<Note>(_entities[0].properties[0]);
 
   /// See [Note.uuid].
-  static final uuid = obx.QueryStringProperty<Note>(_entities[1].properties[1]);
+  static final uuid = obx.QueryStringProperty<Note>(_entities[0].properties[1]);
 
   /// See [Note.previewContent].
   static final previewContent = obx.QueryStringProperty<Note>(
-    _entities[1].properties[2],
+    _entities[0].properties[2],
   );
 
   /// See [Note.title].
   static final title = obx.QueryStringProperty<Note>(
-    _entities[1].properties[3],
+    _entities[0].properties[3],
   );
 
   /// See [Note.isBookmark].
   static final isBookmark = obx.QueryBooleanProperty<Note>(
-    _entities[1].properties[4],
+    _entities[0].properties[4],
   );
 
   /// See [Note.dateCreated].
   static final dateCreated = obx.QueryDateProperty<Note>(
-    _entities[1].properties[5],
+    _entities[0].properties[5],
   );
 
   /// See [Note.notebook].
   static final notebook = obx.QueryStringVectorProperty<Note>(
-    _entities[1].properties[6],
+    _entities[0].properties[6],
   );
 
   /// See [Note.lastestModified].
   static final lastestModified = obx.QueryDateProperty<Note>(
-    _entities[1].properties[7],
+    _entities[0].properties[7],
   );
 
   /// See [Note.content].
   static final content = obx.QueryStringProperty<Note>(
-    _entities[1].properties[8],
+    _entities[0].properties[8],
+  );
+}
+
+/// [Folder] entity fields to define ObjectBox queries.
+class Folder_ {
+  /// See [Folder.id].
+  static final id = obx.QueryIntegerProperty<Folder>(
+    _entities[1].properties[0],
+  );
+
+  /// See [Folder.title].
+  static final title = obx.QueryStringProperty<Folder>(
+    _entities[1].properties[1],
+  );
+
+  /// See [Folder.noteInclude].
+  static final noteInclude = obx.QueryStringProperty<Folder>(
+    _entities[1].properties[2],
   );
 }

@@ -85,25 +85,25 @@ final _entities = <obx_int.ModelEntity>[
     backlinks: <obx_int.ModelBacklink>[],
   ),
   obx_int.ModelEntity(
-    id: const obx_int.IdUid(6, 3609905975199727364),
-    name: 'Folder',
-    lastPropertyId: const obx_int.IdUid(3, 107140961531475377),
+    id: const obx_int.IdUid(7, 803764365636331852),
+    name: 'FolderModel',
+    lastPropertyId: const obx_int.IdUid(3, 4894203926291146665),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(1, 5045664895887237276),
+        id: const obx_int.IdUid(1, 7442030417774950137),
         name: 'id',
         type: 6,
         flags: 1,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(2, 1234735489074752688),
+        id: const obx_int.IdUid(2, 7604553850537347311),
         name: 'title',
         type: 9,
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(3, 107140961531475377),
+        id: const obx_int.IdUid(3, 4894203926291146665),
         name: 'noteInclude',
         type: 9,
         flags: 0,
@@ -152,7 +152,7 @@ Future<obx.Store> openStore({
 obx_int.ModelDefinition getObjectBoxModel() {
   final model = obx_int.ModelInfo(
     entities: _entities,
-    lastEntityId: const obx_int.IdUid(6, 3609905975199727364),
+    lastEntityId: const obx_int.IdUid(7, 803764365636331852),
     lastIndexId: const obx_int.IdUid(0, 0),
     lastRelationId: const obx_int.IdUid(0, 0),
     lastSequenceId: const obx_int.IdUid(0, 0),
@@ -161,6 +161,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       3472751663052211731,
       7148833971392364869,
       798849588595128635,
+      3609905975199727364,
     ],
     retiredIndexUids: const [],
     retiredPropertyUids: const [
@@ -199,6 +200,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
       763734887088423762,
       7665380459296939238,
       4081382284707450781,
+      5045664895887237276,
+      1234735489074752688,
+      107140961531475377,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -302,15 +306,15 @@ obx_int.ModelDefinition getObjectBoxModel() {
         return object;
       },
     ),
-    Folder: obx_int.EntityDefinition<Folder>(
+    FolderModel: obx_int.EntityDefinition<FolderModel>(
       model: _entities[1],
-      toOneRelations: (Folder object) => [],
-      toManyRelations: (Folder object) => {},
-      getId: (Folder object) => object.id,
-      setId: (Folder object, int id) {
+      toOneRelations: (FolderModel object) => [],
+      toManyRelations: (FolderModel object) => {},
+      getId: (FolderModel object) => object.id,
+      setId: (FolderModel object, int id) {
         object.id = id;
       },
-      objectToFB: (Folder object, fb.Builder fbb) {
+      objectToFB: (FolderModel object, fb.Builder fbb) {
         final titleOffset = fbb.writeString(object.title);
         final noteIncludeOffset =
             object.noteInclude == null
@@ -338,7 +342,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final noteIncludeParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 8);
-        final object = Folder(
+        final object = FolderModel(
           id: idParam,
           title: titleParam,
           noteInclude: noteIncludeParam,
@@ -396,20 +400,20 @@ class Note_ {
   );
 }
 
-/// [Folder] entity fields to define ObjectBox queries.
-class Folder_ {
-  /// See [Folder.id].
-  static final id = obx.QueryIntegerProperty<Folder>(
+/// [FolderModel] entity fields to define ObjectBox queries.
+class FolderModel_ {
+  /// See [FolderModel.id].
+  static final id = obx.QueryIntegerProperty<FolderModel>(
     _entities[1].properties[0],
   );
 
-  /// See [Folder.title].
-  static final title = obx.QueryStringProperty<Folder>(
+  /// See [FolderModel.title].
+  static final title = obx.QueryStringProperty<FolderModel>(
     _entities[1].properties[1],
   );
 
-  /// See [Folder.noteInclude].
-  static final noteInclude = obx.QueryStringProperty<Folder>(
+  /// See [FolderModel.noteInclude].
+  static final noteInclude = obx.QueryStringProperty<FolderModel>(
     _entities[1].properties[2],
   );
 }

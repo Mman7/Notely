@@ -1,11 +1,11 @@
 import 'package:syncnote/myobjectbox.dart';
 import 'package:syncnote/objectbox.g.dart';
+import 'package:syncnote/src/model/folder_model.dart';
 import 'package:syncnote/src/model/note_model.dart';
-import 'package:syncnote/src/model/notebooks_model.dart';
 
 class Database {
   final noteBox = objectbox.store.box<Note>();
-  final noteBookBox = objectbox.store.box<Notebook>();
+  final noteBookBox = objectbox.store.box<FolderModel>();
 
   getNote({required int id}) {
     final note = noteBox.get(id);
@@ -18,7 +18,7 @@ class Database {
   }
 
   getAllNoteBook() {
-    final noteBookList = objectbox.store.box<Notebook>().getAll();
+    final noteBookList = objectbox.store.box<FolderModel>().getAll();
     return noteBookList;
   }
 
@@ -42,7 +42,7 @@ class Database {
   addNoteBook({
     required name,
   }) {
-    Notebook notebook = Notebook(
+    FolderModel notebook = FolderModel(
       title: name,
     );
     noteBookBox.put(notebook);

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:syncnote/myobjectbox.dart';
+import 'package:syncnote/src/model/folder_model.dart';
 
 import 'package:syncnote/src/model/note_model.dart';
-import 'package:syncnote/src/model/notebooks_model.dart';
 import 'package:syncnote/src/modules/local_database.dart';
 
 class AppProvider extends ChangeNotifier {
   final noteBox = objectbox.store.box<Note>();
   List<Note> noteList = [];
-  List<Notebook> noteBooks = [];
+  List<FolderModel> noteBooks = [];
   final database = Database();
   bool searchMode = false;
   String listMode = 'All Notes';

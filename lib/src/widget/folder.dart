@@ -9,7 +9,7 @@ import 'package:syncnote/src/section/note_list.dart';
 class Folder extends StatelessWidget {
   const Folder({super.key, this.folderName, this.folderCount});
   final String? folderName;
-  final String? folderCount;
+  final int? folderCount;
 
   @override
   Widget build(BuildContext context) {

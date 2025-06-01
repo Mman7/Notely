@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:syncnote/src/model/folder_model.dart';
+import 'package:syncnote/src/modules/local_database.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/widget/folder.dart';
 
 class FolderListView extends StatelessWidget {
-  const FolderListView({super.key});
+  FolderListView({super.key});
+  final TextEditingController _controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    List<FolderModel> folderList = context.watch<AppProvider>().folderList;
+
     int checkScreen() {
       DeviceType deviceType = context.read<AppProvider>().getDeviceType();
-
       if (ScreenUtil().screenWidth > 1500) return 7;
       if (deviceType == DeviceType.mobile) return 2;
       if (deviceType == DeviceType.tablet) return 3;
@@ -25,20 +29,34 @@ class FolderListView extends StatelessWidget {
       ),
       child: SizedBox(
         height: ScreenUtil().screenHeight * 0.85,
-        child: GridView.count(
-          shrinkWrap: true,
-          crossAxisCount: checkScreen(),
-          mainAxisSpacing: 15,
-          crossAxisSpacing: 15,
-          children: [Folder(), addNewFolderView(context)],
-        ),
+        child: GridView.builder(
+            shrinkWrap: true,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: checkScreen(),
+              mainAxisSpacing: 5,
+              crossAxisSpacing: 15,
+            ),
+            itemCount: folderList.length + 2,
+            itemBuilder: (context, index) {
+              if (index == 0) return Folder();
+
+              // if index is not folderlist last index
+              if (index != folderList.length + 1) {
+                return Folder(
+                  folderCount: 1,
+                  folderName: folderList[index - 1].title,
+                );
+              }
+
+              return addNewFolderView(context);
+            }),
       ),
     );
   }
 
   Container addNewFolderView(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(25.sp),
+      margin: EdgeInsets.all(20.sp),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondary,
         borderRadius: BorderRadius.circular(15),
@@ -58,6 +76,7 @@ class FolderListView extends StatelessWidget {
                   children: [
                     TextField(
                       style: TextStyle(color: Colors.black),
+                      controller: _controller,
                       decoration: InputDecoration(
                         hintStyle: TextStyle(color: Colors.grey),
                         fillColor: Colors.white,
@@ -66,15 +85,6 @@ class FolderListView extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 16),
-                    TextField(
-                      style: TextStyle(color: Colors.black),
-                      decoration: InputDecoration(
-                        labelText: 'Description',
-                        hintStyle: TextStyle(color: Colors.grey),
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
                   ],
                 ),
                 actions: [
@@ -84,7 +94,8 @@ class FolderListView extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      // Add folder logic here
+                      Database().addNoteBook(name: _controller.text);
+                      context.read<AppProvider>().refresh();
                       Navigator.of(context).pop();
                     },
                     child: Text('Create'),

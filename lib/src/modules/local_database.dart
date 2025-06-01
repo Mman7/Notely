@@ -5,7 +5,7 @@ import 'package:syncnote/src/model/note_model.dart';
 
 class Database {
   final noteBox = objectbox.store.box<Note>();
-  final noteBookBox = objectbox.store.box<FolderModel>();
+  final folderBox = objectbox.store.box<FolderModel>();
 
   getNote({required int id}) {
     final note = noteBox.get(id);
@@ -24,8 +24,8 @@ class Database {
 
   getSpecificNoteBook({required int id}) {
     // prevent first launch value equals to null
-    if (noteBookBox.getAll().isEmpty) return;
-    var noteBookData = noteBookBox.get(id);
+    if (folderBox.getAll().isEmpty) return;
+    var noteBookData = folderBox.get(id);
 
     return noteBookData;
   }
@@ -45,7 +45,7 @@ class Database {
     FolderModel notebook = FolderModel(
       title: name,
     );
-    noteBookBox.put(notebook);
+    folderBox.put(notebook);
   }
 
   removeNote({required id}) {
@@ -53,11 +53,16 @@ class Database {
   }
 
   removeNoteBook({required id}) {
-    noteBookBox.remove(id);
+    folderBox.remove(id);
   }
 
   clearAll() {
     noteBox.removeAll();
-    noteBookBox.removeAll();
+    folderBox.removeAll();
+  }
+
+  getFolder({id}) {
+    FolderModel? folder = folderBox.get(id);
+    return folder;
   }
 }

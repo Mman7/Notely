@@ -65,4 +65,8 @@ class Database {
     FolderModel? folder = folderBox.get(id);
     return folder;
   }
+
+  updateFolder({required FolderModel folder}) {
+    folderBox.put(folder, mode: PutMode.update);
+  }
 }

@@ -1,6 +1,7 @@
+import 'dart:convert';
+
 import 'package:objectbox/objectbox.dart';
 
-//TODO create
 @Entity()
 class FolderModel {
   FolderModel({this.id = 0, required this.title, this.noteInclude});
@@ -9,4 +10,7 @@ class FolderModel {
   String title;
   // List covert into string
   String? noteInclude;
+  List getConvertNoteInclude() {
+    return jsonDecode(noteInclude ?? '[]');
+  }
 }

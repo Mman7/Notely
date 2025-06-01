@@ -17,8 +17,8 @@ class _NoteListState extends State<NoteList> {
 
   @override
   Widget build(BuildContext context) {
-    List<Note> noteList = context.watch<AppProvider>().noteList;
     DeviceType deviceType = context.read<AppProvider>().getDeviceType();
+    List<Note> noteList = context.watch<AppProvider>().noteList;
     int checkScreen() {
       if (ScreenUtil().screenWidth > 1500) return 8;
       if (deviceType == DeviceType.mobile) return 2;
@@ -38,7 +38,13 @@ class _NoteListState extends State<NoteList> {
         surfaceTintColor:
             Colors.transparent, // Prevents color change due to elevation
         title: title(isSearching, isMobileOrTable),
-        actions: [actionButton(isMobileOrTable)],
+        actions: [
+          isSearching
+              ? IconButton(
+                  onPressed: () => setState(() => isSearching = !isSearching),
+                  icon: Icon(Icons.cancel_sharp))
+              : menuOptions(isMobileOrTable),
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.only(top: 20),
@@ -62,6 +68,39 @@ class _NoteListState extends State<NoteList> {
           },
         ),
       ),
+    );
+  }
+
+  PopupMenuButton<String> menuOptions(bool isMobileOrTable) {
+    return PopupMenuButton(
+      icon: Icon(Icons.more_vert, color: Colors.black),
+      onSelected: (value) {
+        if (value == 'search') {
+          setState(() => isSearching = !isSearching);
+        } else if (value == 'delete_folder') {}
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 'search',
+          child: Row(
+            children: [
+              Icon(Icons.search),
+              SizedBox(width: 8),
+              Text('Search'),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'delete_folder',
+          child: Row(
+            children: [
+              Icon(Icons.delete),
+              SizedBox(width: 8),
+              Text('Delete Folder'),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

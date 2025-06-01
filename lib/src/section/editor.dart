@@ -1,10 +1,10 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:syncnote/src/model/folder_model.dart';
 import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/modules/local_database.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
@@ -73,11 +73,10 @@ class _EditorState extends State<Editor> {
     String title = _titleController.text;
     Delta content = _controller.document.toDelta();
     String preview = _controller.document.toPlainText();
-    print(widget.id);
     var json = jsonEncode(content);
     Database().saveNote(
       note: Note(
-        id: widget.id ?? 0,
+        id: widget.id,
         title: title,
         content: json,
         dateCreated: DateTime.now(),
@@ -101,16 +100,13 @@ class _EditorState extends State<Editor> {
 
   @override
   Widget build(BuildContext context) {
-    AppProvider provider = context.read<AppProvider>();
-    DeviceType deviceType = provider.getDeviceType();
+    List folderList = context.watch<AppProvider>().folderList;
+    DeviceType deviceType = context.read<AppProvider>().getDeviceType();
+
     // Check is editing
     editorFocusNode.addListener(() {
       if (editorFocusNode.hasFocus) setState(() => isEditing = true);
     });
-
-    Widget mobileLayoutToolbar = Column(
-      children: [Spacer(), Toolbar(controller: _controller)],
-    );
 
     Widget titleTextField = TitleWidget(titleController: _titleController);
     return Scaffold(
@@ -128,15 +124,15 @@ class _EditorState extends State<Editor> {
                       // Save the content
                       saveContent();
                       toastification.show(
-                        style: ToastificationStyle.fillColored,
-                        primaryColor: Colors.lightGreen,
-                        icon: Icon(Icons.done),
-                        context:
-                            context, // optional if you use ToastificationWrapper
-                        title: Text('Your note has been saved'),
-                        autoCloseDuration: const Duration(seconds: 2),
-                      );
-                      provider.refresh();
+                          style: ToastificationStyle.fillColored,
+                          primaryColor: Colors.lightGreen,
+                          icon: Icon(Icons.done),
+                          context:
+                              context, // optional if you use ToastificationWrapper
+                          title: Text('Your note has been saved'),
+                          autoCloseDuration: const Duration(seconds: 2),
+                          pauseOnHover: false);
+                      context.read<AppProvider>().refresh();
                       refreshWhenSave();
                     },
                     icon: const Icon(Icons.done),
@@ -152,7 +148,6 @@ class _EditorState extends State<Editor> {
                     if (value == 1) {
                       Database().removeNote(id: widget.id);
                       context.read<AppProvider>().refresh();
-                      //TODO create addToFolder
                       toastification.show(
                         style: ToastificationStyle.minimal,
                         primaryColor: Colors.lightGreen,
@@ -164,6 +159,55 @@ class _EditorState extends State<Editor> {
                         autoCloseDuration: const Duration(seconds: 2),
                       );
                       Navigator.of(context).pop();
+                    }
+                    // Add NoteId to Folder
+                    if (value == 2) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return SimpleDialog(
+                                title: Text('Select Folder'),
+                                children: [
+                                  ...folderList.map((e) {
+                                    return SimpleDialogOption(
+                                      onPressed: () {
+                                        // Handle folder selection here
+                                        List newList =
+                                            e.getConvertNoteInclude();
+                                        // Prevent id contained
+                                        if (newList.contains(widget.id)) return;
+                                        //else
+                                        newList.add(widget.id);
+                                        String encodeList = jsonEncode(newList);
+
+                                        FolderModel newFolder = FolderModel(
+                                            title: e.title,
+                                            id: e.id,
+                                            noteInclude: encodeList);
+                                        Database()
+                                            .updateFolder(folder: newFolder);
+
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Center(child: Text(e.title)),
+                                    );
+                                  })
+                                ],
+                              );
+                            });
+                      });
+
+                      toastification.show(
+                        style: ToastificationStyle.minimal,
+                        primaryColor: Colors.lightGreen,
+                        icon: Icon(Icons.done),
+                        context:
+                            context, // optional if you use ToastificationWrapper
+                        title: Text('Your note has been added'),
+                        pauseOnHover: false,
+                        autoCloseDuration: const Duration(seconds: 2),
+                      );
                     }
                   },
                   itemBuilder: (context) => [
@@ -202,12 +246,17 @@ class _EditorState extends State<Editor> {
             Column(
               children: [
                 deviceType == DeviceType.windows
-                    ? Toolbar(controller: _controller)
+                    ? Toolbar(
+                        controller: _controller,
+                        deviceType: deviceType,
+                      )
                     : Container(),
                 titleTextField,
+                // EDITOR
                 Expanded(
                   child: Container(
-                    padding: const EdgeInsets.all(8),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     color: hexToColor('#FFFFFF'),
                     child: QuillEditor.basic(
                       focusNode: editorFocusNode,
@@ -223,26 +272,41 @@ class _EditorState extends State<Editor> {
                 ),
               ],
             ),
-            // Toolbar
-            deviceType != DeviceType.windows
-                ? isEditing
-                    ? mobileLayoutToolbar
-                    : Container()
+
+            // Toolbar mobile
+            deviceType == DeviceType.mobile || deviceType == DeviceType.tablet
+                ? mobileToolbar(deviceType)
                 : Container()
           ],
         ),
       ),
     );
   }
+
+  Widget mobileToolbar(DeviceType deviceType) {
+    return isEditing
+        ? Column(
+            children: [
+              Spacer(),
+              Toolbar(
+                controller: _controller,
+                deviceType: deviceType,
+              ),
+            ],
+          )
+        : Container();
+  }
 }
 
 class Toolbar extends StatelessWidget {
-  const Toolbar({
-    super.key,
-    required QuillController controller,
-  }) : _controller = controller;
+  Toolbar(
+      {super.key,
+      required QuillController controller,
+      required this.deviceType})
+      : _controller = controller;
 
   final QuillController _controller;
+  DeviceType deviceType;
 
   @override
   Widget build(BuildContext context) {
@@ -253,7 +317,9 @@ class Toolbar extends StatelessWidget {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-                color: Colors.grey,
+                color: deviceType == DeviceType.mobile
+                    ? Colors.grey
+                    : Colors.white,
                 blurRadius: 20,
                 offset: Offset(0, 2),
                 spreadRadius: 3),
@@ -289,19 +355,22 @@ class TitleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
-          fontSize: 30,
-          fontWeight: FontWeight.w500),
-      controller: _titleController,
-      decoration: InputDecoration(
-        hintStyle: TextStyle(color: Colors.grey),
-        contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-        border: InputBorder.none,
-        fillColor: hexToColor('#FFFFFF'),
-        hintText: 'Title',
-        hoverColor: Colors.transparent,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      child: TextField(
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontSize: 30,
+            fontWeight: FontWeight.w500),
+        controller: _titleController,
+        decoration: InputDecoration(
+          hintStyle: TextStyle(color: Colors.grey),
+          contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          border: InputBorder.none,
+          fillColor: hexToColor('#FFFFFF'),
+          hintText: 'Title',
+          hoverColor: Colors.transparent,
+        ),
       ),
     );
   }

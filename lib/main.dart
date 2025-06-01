@@ -49,14 +49,6 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   int _selectedIndex = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AppProvider>().intializeData();
-    });
-  }
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -65,6 +57,9 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AppProvider>().intializeData();
+    });
     return ScreenUtilInit(
         minTextAdapt: true,
         builder: (ctx, child) {
@@ -74,6 +69,7 @@ class _MainAppState extends State<MainApp> {
               deviceType == DeviceType.tablet;
 
           debugPrint(screenwidth.toString());
+          debugPrint(deviceType.toString());
 
           return ToastificationWrapper(
             child: MaterialApp(

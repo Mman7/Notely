@@ -52,6 +52,9 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AppProvider>().intializeData();
+    });
   }
 
   void _onItemTapped(int index) {
@@ -62,9 +65,6 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AppProvider>().intializeData();
-    });
     return ScreenUtilInit(
         minTextAdapt: true,
         builder: (ctx, child) {

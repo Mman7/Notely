@@ -10,7 +10,7 @@ class FolderModel {
   String title;
   // List covert into string
   String? noteInclude;
-  List getConvertNoteInclude() {
-    return jsonDecode(noteInclude ?? '[]');
+  List<int> getConvertNoteInclude() {
+    return List<int>.from(jsonDecode(noteInclude ?? '[]'));
   }
 }

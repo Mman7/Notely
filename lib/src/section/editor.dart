@@ -166,6 +166,18 @@ class _EditorState extends State<Editor> {
                         showDialog(
                             context: context,
                             builder: (context) {
+                              showToast() => toastification.show(
+                                    style: ToastificationStyle.minimal,
+                                    primaryColor: Colors.lightGreen,
+                                    icon: Icon(Icons.done),
+                                    context:
+                                        context, // optional if you use ToastificationWrapper
+                                    title: Text('Your note has been added'),
+                                    pauseOnHover: false,
+                                    autoCloseDuration:
+                                        const Duration(seconds: 2),
+                                  );
+
                               return SimpleDialog(
                                 title: Text('Select Folder'),
                                 children: [
@@ -173,13 +185,19 @@ class _EditorState extends State<Editor> {
                                     return SimpleDialogOption(
                                       onPressed: () {
                                         // Handle folder selection here
-                                        List newList =
+                                        List noteIncludedList =
                                             e.getConvertNoteInclude();
                                         // Prevent id contained
-                                        if (newList.contains(widget.id)) return;
+                                        if (noteIncludedList
+                                            .contains(widget.id)) {
+                                          showToast();
+                                          Navigator.of(context).pop();
+                                          return;
+                                        }
                                         //else
-                                        newList.add(widget.id);
-                                        String encodeList = jsonEncode(newList);
+                                        noteIncludedList.add(widget.id);
+                                        String encodeList =
+                                            jsonEncode(noteIncludedList);
 
                                         FolderModel newFolder = FolderModel(
                                             title: e.title,
@@ -187,7 +205,7 @@ class _EditorState extends State<Editor> {
                                             noteInclude: encodeList);
                                         Database()
                                             .updateFolder(folder: newFolder);
-
+                                        showToast();
                                         Navigator.of(context).pop();
                                       },
                                       child: Center(child: Text(e.title)),
@@ -197,17 +215,6 @@ class _EditorState extends State<Editor> {
                               );
                             });
                       });
-
-                      toastification.show(
-                        style: ToastificationStyle.minimal,
-                        primaryColor: Colors.lightGreen,
-                        icon: Icon(Icons.done),
-                        context:
-                            context, // optional if you use ToastificationWrapper
-                        title: Text('Your note has been added'),
-                        pauseOnHover: false,
-                        autoCloseDuration: const Duration(seconds: 2),
-                      );
                     }
                   },
                   itemBuilder: (context) => [

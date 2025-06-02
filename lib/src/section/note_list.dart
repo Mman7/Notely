@@ -2,23 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:syncnote/src/model/note_model.dart';
+import 'package:syncnote/src/modules/local_database.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/widget/note_preview.dart';
 
 class NoteList extends StatefulWidget {
-  const NoteList({super.key});
-
+  NoteList(
+      {super.key,
+      required this.folderId,
+      required this.noteIncluded,
+      required this.folderName});
+  int? folderId;
+  String? folderName;
+  List<int>? noteIncluded;
   @override
   State<NoteList> createState() => _NoteListState();
 }
 
 class _NoteListState extends State<NoteList> {
   bool isSearching = false;
+  List _noteList = [];
 
   @override
   Widget build(BuildContext context) {
     DeviceType deviceType = context.read<AppProvider>().getDeviceType();
-    List<Note> noteList = context.watch<AppProvider>().noteList;
+    // Load data
+    if (widget.noteIncluded == null) {
+      setState(() => _noteList = context.watch<AppProvider>().noteList);
+    }
+    if (widget.noteIncluded != null) {
+      List data = Database().filterNoteByFolder(ids: widget.noteIncluded);
+      _noteList = data;
+    }
+
     int checkScreen() {
       if (ScreenUtil().screenWidth > 1500) return 8;
       if (deviceType == DeviceType.mobile) return 2;
@@ -27,7 +43,7 @@ class _NoteListState extends State<NoteList> {
       return 2;
     }
 
-    var isMobileOrTable =
+    bool isMobileOrTable =
         deviceType == DeviceType.mobile || deviceType == DeviceType.tablet;
 
     return Scaffold(
@@ -37,13 +53,16 @@ class _NoteListState extends State<NoteList> {
         shadowColor: Colors.grey.shade100,
         surfaceTintColor:
             Colors.transparent, // Prevents color change due to elevation
-        title: title(isSearching, isMobileOrTable),
+        title: title(
+            folderName: widget.folderName,
+            isMobileOrTable: isMobileOrTable,
+            isSearching: isSearching),
         actions: [
           isSearching
               ? IconButton(
                   onPressed: () => setState(() => isSearching = !isSearching),
                   icon: Icon(Icons.cancel_sharp))
-              : menuOptions(isMobileOrTable),
+              : menuOptions(),
         ],
       ),
       body: Padding(
@@ -56,13 +75,13 @@ class _NoteListState extends State<NoteList> {
             mainAxisSpacing: 15.0,
             childAspectRatio: 3 / 4, // Adjust the aspect ratio as needed
           ),
-          itemCount: noteList.length, // Number of items
+          itemCount: _noteList.length, // Number of items
           itemBuilder: (context, index) {
             return NotePreview(
               index: index,
-              title: noteList[index].title,
-              previewContent: noteList[index].previewContent,
-              content: noteList[index].content,
+              title: _noteList[index].title,
+              previewContent: _noteList[index].previewContent,
+              content: _noteList[index].content,
               lastModified: DateTime.now(),
             );
           },
@@ -71,16 +90,12 @@ class _NoteListState extends State<NoteList> {
     );
   }
 
-  PopupMenuButton<String> menuOptions(bool isMobileOrTable) {
+  PopupMenuButton<String> menuOptions() {
     return PopupMenuButton(
       icon: Icon(Icons.more_vert, color: Colors.black),
-      onSelected: (value) {
-        if (value == 'search') {
-          setState(() => isSearching = !isSearching);
-        } else if (value == 'delete_folder') {}
-      },
       itemBuilder: (context) => [
         PopupMenuItem(
+          onTap: () => setState(() => isSearching = !isSearching),
           value: 'search',
           child: Row(
             children: [
@@ -91,6 +106,12 @@ class _NoteListState extends State<NoteList> {
           ),
         ),
         PopupMenuItem(
+          onTap: () {
+            if (widget.folderId == null) return;
+            Database().removeFolder(id: widget.folderId);
+            context.read<AppProvider>().refresh();
+            Navigator.of(context).pop();
+          },
           value: 'delete_folder',
           child: Row(
             children: [
@@ -115,7 +136,10 @@ class _NoteListState extends State<NoteList> {
         : Container();
   }
 
-  Widget title(isSearching, isMobileOrTable) {
+  Widget title(
+      {required bool isSearching,
+      required bool isMobileOrTable,
+      String? folderName}) {
     return isSearching && isMobileOrTable
         ? TextField(
             autofocus: true,
@@ -133,6 +157,6 @@ class _NoteListState extends State<NoteList> {
               // Implement search logic
             },
           )
-        : Text('Note List');
+        : Text(overflow: TextOverflow.fade, folderName ?? 'Note List');
   }
 }

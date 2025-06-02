@@ -7,9 +7,16 @@ import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/section/note_list.dart';
 
 class Folder extends StatelessWidget {
-  const Folder({super.key, this.folderName, this.folderCount});
+  const Folder(
+      {super.key,
+      this.folderName,
+      this.folderCount,
+      this.id,
+      this.noteIncluded});
   final String? folderName;
   final int? folderCount;
+  final int? id;
+  final List<int>? noteIncluded;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +24,12 @@ class Folder extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => NoteList()),
+          MaterialPageRoute(
+              builder: (context) => NoteList(
+                    folderName: folderName,
+                    folderId: id,
+                    noteIncluded: noteIncluded,
+                  )),
         );
       },
       child: Center(
@@ -26,9 +38,7 @@ class Folder extends StatelessWidget {
             "assets/images/folder.svg",
           ),
           Container(
-            margin: EdgeInsets.only(
-              left: 20.sp,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 20.sp),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -46,8 +56,9 @@ class Folder extends StatelessWidget {
                 ),
                 Gap(10),
                 Text(
-                  folderName ?? 'Unorganized',
+                  folderName ?? 'All notes',
                   maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context)
                       .textTheme
                       .titleLarge

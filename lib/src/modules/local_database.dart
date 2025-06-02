@@ -52,10 +52,6 @@ class Database {
     noteBox.remove(id);
   }
 
-  removeNoteBook({required id}) {
-    folderBox.remove(id);
-  }
-
   clearAll() {
     noteBox.removeAll();
     folderBox.removeAll();
@@ -68,5 +64,14 @@ class Database {
 
   updateFolder({required FolderModel folder}) {
     folderBox.put(folder, mode: PutMode.update);
+  }
+
+  removeFolder({required id}) {
+    folderBox.remove(id);
+  }
+
+  List<Note?> filterNoteByFolder({required List<int>? ids}) {
+    if (ids == null) return [];
+    return noteBox.getMany(ids);
   }
 }

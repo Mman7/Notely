@@ -38,10 +38,14 @@ class FolderListView extends StatelessWidget {
             ),
             itemCount: folderList.length + 2,
             itemBuilder: (context, index) {
-              if (index == 0) return Folder();
+              if (index == 0) {
+                return Folder();
+              }
               // if index is not folderlist last index
               if (index != folderList.length + 1) {
                 return Folder(
+                  id: folderList[index - 1].id,
+                  noteIncluded: folderList[index - 1].getConvertNoteInclude(),
                   folderCount:
                       folderList[index - 1].getConvertNoteInclude().length,
                   folderName: folderList[index - 1].title,
@@ -96,6 +100,7 @@ class FolderListView extends StatelessWidget {
                     onPressed: () {
                       Database().addNoteBook(name: _controller.text);
                       context.read<AppProvider>().refresh();
+                      _controller.text = '';
                       Navigator.of(context).pop();
                     },
                     child: Text('Create'),

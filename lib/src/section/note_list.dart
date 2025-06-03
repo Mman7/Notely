@@ -26,14 +26,13 @@ class _NoteListState extends State<NoteList> {
   Widget build(BuildContext context) {
     DeviceType deviceType = context.read<AppProvider>().getDeviceType();
     // Load data
+    if (widget.noteIncluded != null) {
+      List data = Database().filterNoteByFolder(ids: widget.noteIncluded) ?? [];
+      setState(() => _noteList = data);
+    }
     if (widget.noteIncluded == null) {
       setState(() => _noteList = context.watch<AppProvider>().noteList);
     }
-    if (widget.noteIncluded != null) {
-      List data = Database().filterNoteByFolder(ids: widget.noteIncluded);
-      _noteList = data;
-    }
-
     int checkScreen() {
       if (ScreenUtil().screenWidth > 1500) return 8;
       if (deviceType == DeviceType.mobile) return 2;
@@ -143,11 +142,6 @@ class _NoteListState extends State<NoteList> {
                 ],
               ),
             );
-
-            // if (widget.folderId == null) return;
-            // Database().removeFolder(id: widget.folderId);
-            // context.read<AppProvider>().refresh();
-            // Navigator.of(context).pop();
           },
           value: 'delete_folder',
           child: Row(

@@ -142,105 +142,126 @@ class _EditorState extends State<Editor> {
           !widget.isNew
               ? PopupMenuButton<int>(
                   icon: Icon(Icons.more_vert),
-                  onSelected: (value) {
-                    // Handle menu item selection here
-                    // Delete Note
-                    if (value == 1) {
-                      Database().removeNote(id: widget.id);
-                      context.read<AppProvider>().refresh();
-                      toastification.show(
-                        style: ToastificationStyle.minimal,
-                        primaryColor: Colors.lightGreen,
-                        icon: Icon(Icons.done),
-                        context:
-                            context, // optional if you use ToastificationWrapper
-                        title: Text('Your note has been deleted'),
-                        pauseOnHover: false,
-                        autoCloseDuration: const Duration(seconds: 2),
-                      );
-                      Navigator.of(context).pop();
-                    }
-                    // Add NoteId to Folder
-                    if (value == 2) {
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              showToast() => toastification.show(
-                                    style: ToastificationStyle.minimal,
-                                    primaryColor: Colors.lightGreen,
-                                    icon: Icon(Icons.done),
-                                    context:
-                                        context, // optional if you use ToastificationWrapper
-                                    title: Text('Your note has been added'),
-                                    pauseOnHover: false,
-                                    autoCloseDuration:
-                                        const Duration(seconds: 2),
-                                  );
-
-                              return SimpleDialog(
-                                title: Text('Select Folder'),
-                                children: [
-                                  ...folderList.map((e) {
-                                    return SimpleDialogOption(
-                                      onPressed: () {
-                                        // Handle folder selection here
-                                        List noteIncludedList =
-                                            e.getConvertNoteInclude();
-                                        // Prevent id contained
-                                        if (noteIncludedList
-                                            .contains(widget.id)) {
-                                          showToast();
-                                          Navigator.of(context).pop();
-                                          return;
-                                        }
-                                        //else
-                                        noteIncludedList.add(widget.id);
-                                        String encodeList =
-                                            jsonEncode(noteIncludedList);
-
-                                        FolderModel newFolder = FolderModel(
-                                            title: e.title,
-                                            id: e.id,
-                                            noteInclude: encodeList);
-                                        Database()
-                                            .updateFolder(folder: newFolder);
-                                        showToast();
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Center(child: Text(e.title)),
-                                    );
-                                  })
-                                ],
-                              );
-                            });
-                      });
-                    }
-                  },
                   itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 1,
-                      child: Row(
-                        children: [
-                          Icon(Icons.delete, color: Colors.black),
-                          SizedBox(width: 8),
-                          Text('Delete Note'),
-                        ],
-                      ),
-                    ),
-                    PopupMenuItem(
-                      value: 2,
-                      child: Row(
-                        children: [
-                          Icon(Icons.folder, color: Colors.black),
-                          SizedBox(width: 8),
-                          Text('Add to folder'),
-                        ],
-                      ),
-                    ),
-                    // Add more menu items if needed
-                  ],
-                )
+                        PopupMenuItem(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('Delete Note'),
+                                content: Text(
+                                    'Are you sure you want to delete this note?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(),
+                                    child: Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Database().removeNote(id: widget.id);
+                                      context.read<AppProvider>().refresh();
+                                      toastification.show(
+                                        style: ToastificationStyle.minimal,
+                                        primaryColor: Colors.lightGreen,
+                                        icon: Icon(Icons.done),
+                                        context: context,
+                                        title:
+                                            Text('Your note has been deleted'),
+                                        pauseOnHover: false,
+                                        autoCloseDuration:
+                                            const Duration(seconds: 2),
+                                      );
+                                      Navigator.of(context)
+                                          .pop(); // Close dialog
+                                      Navigator.of(context)
+                                          .pop(); // Close editor
+                                    },
+                                    child: Text('Delete',
+                                        style: TextStyle(color: Colors.red)),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          value: 1,
+                          child: Row(
+                            children: [
+                              Icon(Icons.delete, color: Colors.black),
+                              SizedBox(width: 8),
+                              Text('Delete Note'),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          onTap: () {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    showToast() => toastification.show(
+                                          style: ToastificationStyle.minimal,
+                                          primaryColor: Colors.lightGreen,
+                                          icon: Icon(Icons.done),
+                                          context:
+                                              context, // optional if you use ToastificationWrapper
+                                          title:
+                                              Text('Your note has been added'),
+                                          pauseOnHover: false,
+                                          autoCloseDuration:
+                                              const Duration(seconds: 2),
+                                        );
+
+                                    return SimpleDialog(
+                                      title: Text('Select Folder'),
+                                      children: [
+                                        ...folderList.map((e) {
+                                          return SimpleDialogOption(
+                                            onPressed: () {
+                                              // Handle folder selection here
+                                              List noteIncludedList =
+                                                  e.getConvertNoteInclude();
+                                              // Prevent id contained
+                                              if (noteIncludedList
+                                                  .contains(widget.id)) {
+                                                showToast();
+                                                Navigator.of(context).pop();
+                                                return;
+                                              }
+                                              //else
+                                              noteIncludedList.add(widget.id);
+                                              String encodeList =
+                                                  jsonEncode(noteIncludedList);
+
+                                              FolderModel newFolder =
+                                                  FolderModel(
+                                                      title: e.title,
+                                                      id: e.id,
+                                                      noteInclude: encodeList);
+                                              Database().updateFolder(
+                                                  folder: newFolder);
+                                              showToast();
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Center(child: Text(e.title)),
+                                          );
+                                        })
+                                      ],
+                                    );
+                                  });
+                            });
+                          },
+                          value: 2,
+                          child: Row(
+                            children: [
+                              Icon(Icons.folder, color: Colors.black),
+                              SizedBox(width: 8),
+                              Text('Add to folder'),
+                            ],
+                          ),
+                        ),
+                        // Add more menu items if needed
+                      ])
               : Container()
         ],
         title: const Text('MeloEditor'),

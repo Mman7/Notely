@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/modules/local_database.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/widget/note_preview.dart';
@@ -107,10 +106,48 @@ class _NoteListState extends State<NoteList> {
         ),
         PopupMenuItem(
           onTap: () {
-            if (widget.folderId == null) return;
-            Database().removeFolder(id: widget.folderId);
-            context.read<AppProvider>().refresh();
-            Navigator.of(context).pop();
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text('Delete Folder'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Are you sure you want to delete this folder?'),
+                    SizedBox(height: 8),
+                    Text(
+                      'This action cannot be undone.',
+                      style: TextStyle(fontSize: 13, color: Colors.redAccent),
+                    ),
+                  ],
+                ),
+                actions: [
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all(Colors.red),
+                    ),
+                    onPressed: () {
+                      if (widget.folderId != null) {
+                        Database().removeFolder(id: widget.folderId);
+                        context.read<AppProvider>().refresh();
+                      }
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Yes', style: TextStyle(color: Colors.white)),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text('Cancel'),
+                  ),
+                ],
+              ),
+            );
+
+            // if (widget.folderId == null) return;
+            // Database().removeFolder(id: widget.folderId);
+            // context.read<AppProvider>().refresh();
+            // Navigator.of(context).pop();
           },
           value: 'delete_folder',
           child: Row(

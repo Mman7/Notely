@@ -70,8 +70,8 @@ class Database {
     folderBox.remove(id);
   }
 
-  List<Note?> filterNoteByFolder({required List<int>? ids}) {
+  List<Note>? filterNoteByFolder({required List<int>? ids}) {
     if (ids == null) return [];
-    return noteBox.getMany(ids);
+    return noteBox.getMany(ids).whereType<Note>().toList();
   }
 }

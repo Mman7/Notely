@@ -23,7 +23,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(5, 4271254259516459972),
     name: 'Note',
-    lastPropertyId: const obx_int.IdUid(13, 6882280431038526721),
+    lastPropertyId: const obx_int.IdUid(14, 3694927225866095609),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -63,12 +63,6 @@ final _entities = <obx_int.ModelEntity>[
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(11, 7527307426686352931),
-        name: 'notebook',
-        type: 30,
-        flags: 0,
-      ),
-      obx_int.ModelProperty(
         id: const obx_int.IdUid(12, 2562786562007846218),
         name: 'lastestModified',
         type: 10,
@@ -77,6 +71,12 @@ final _entities = <obx_int.ModelEntity>[
       obx_int.ModelProperty(
         id: const obx_int.IdUid(13, 6882280431038526721),
         name: 'content',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(14, 3694927225866095609),
+        name: 'folder',
         type: 9,
         flags: 0,
       ),
@@ -203,6 +203,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       5045664895887237276,
       1234735489074752688,
       107140961531475377,
+      7527307426686352931,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -223,23 +224,19 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final uuidOffset = fbb.writeString(object.uuid);
         final previewContentOffset = fbb.writeString(object.previewContent);
         final titleOffset = fbb.writeString(object.title);
-        final notebookOffset =
-            object.notebook == null
-                ? null
-                : fbb.writeList(
-                  object.notebook!.map(fbb.writeString).toList(growable: false),
-                );
         final contentOffset = fbb.writeString(object.content);
-        fbb.startTable(14);
+        final folderOffset =
+            object.folder == null ? null : fbb.writeString(object.folder!);
+        fbb.startTable(15);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addOffset(2, previewContentOffset);
         fbb.addOffset(3, titleOffset);
         fbb.addBool(5, object.isBookmark);
         fbb.addInt64(7, object.dateCreated?.millisecondsSinceEpoch);
-        fbb.addOffset(10, notebookOffset);
         fbb.addInt64(11, object.lastestModified?.millisecondsSinceEpoch);
         fbb.addOffset(12, contentOffset);
+        fbb.addOffset(13, folderOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -274,10 +271,9 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final previewContentParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 8, '');
-        final notebookParam = const fb.ListReader<String>(
-          fb.StringReader(asciiOptimization: true),
-          lazy: false,
-        ).vTableGetNullable(buffer, rootOffset, 24);
+        final folderParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 30);
         final isBookmarkParam = const fb.BoolReader().vTableGetNullable(
           buffer,
           rootOffset,
@@ -297,7 +293,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
           title: titleParam,
           content: contentParam,
           previewContent: previewContentParam,
-          notebook: notebookParam,
+          folder: folderParam,
           isBookmark: isBookmarkParam,
           dateCreated: dateCreatedParam,
           lastestModified: lastestModifiedParam,
@@ -384,18 +380,18 @@ class Note_ {
     _entities[0].properties[5],
   );
 
-  /// See [Note.notebook].
-  static final notebook = obx.QueryStringVectorProperty<Note>(
-    _entities[0].properties[6],
-  );
-
   /// See [Note.lastestModified].
   static final lastestModified = obx.QueryDateProperty<Note>(
-    _entities[0].properties[7],
+    _entities[0].properties[6],
   );
 
   /// See [Note.content].
   static final content = obx.QueryStringProperty<Note>(
+    _entities[0].properties[7],
+  );
+
+  /// See [Note.folder].
+  static final folder = obx.QueryStringProperty<Note>(
     _entities[0].properties[8],
   );
 }

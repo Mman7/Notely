@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
+import 'package:syncnote/src/model/folder_model.dart';
 import 'package:syncnote/src/modules/local_database.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/widget/note_preview.dart';
 
 class NoteList extends StatefulWidget {
-  NoteList(
-      {super.key,
-      required this.folderId,
-      required this.noteIncluded,
-      required this.folderName});
-  int? folderId;
-  String? folderName;
-  List<int>? noteIncluded;
+  NoteList({super.key, this.folder});
+  FolderModel? folder;
   @override
   State<NoteList> createState() => _NoteListState();
 }
@@ -26,11 +21,13 @@ class _NoteListState extends State<NoteList> {
   Widget build(BuildContext context) {
     DeviceType deviceType = context.read<AppProvider>().getDeviceType();
     // Load data
-    if (widget.noteIncluded != null) {
-      List data = Database().filterNoteByFolder(ids: widget.noteIncluded) ?? [];
+    if (widget.folder != null) {
+      List data = Database().filterNoteByFolder(
+              ids: widget.folder?.getConvertNoteIncluded()) ??
+          [];
       setState(() => _noteList = data);
     }
-    if (widget.noteIncluded == null) {
+    if (widget.folder == null) {
       setState(() => _noteList = context.watch<AppProvider>().noteList);
     }
     int checkScreen() {
@@ -52,7 +49,7 @@ class _NoteListState extends State<NoteList> {
         surfaceTintColor:
             Colors.transparent, // Prevents color change due to elevation
         title: title(
-            folderName: widget.folderName,
+            folderName: widget.folder?.title ?? 'All notes',
             isMobileOrTable: isMobileOrTable,
             isSearching: isSearching),
         actions: [
@@ -103,55 +100,55 @@ class _NoteListState extends State<NoteList> {
             ],
           ),
         ),
-        PopupMenuItem(
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: Text('Delete Folder'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Are you sure you want to delete this folder?'),
-                    SizedBox(height: 8),
-                    Text(
-                      'This action cannot be undone.',
-                      style: TextStyle(fontSize: 13, color: Colors.redAccent),
+        if (widget.folder?.id != null)
+          PopupMenuItem(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Delete Folder'),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Are you sure you want to delete this folder?'),
+                      SizedBox(height: 8),
+                      Text(
+                        'This action cannot be undone.',
+                        style: TextStyle(fontSize: 13, color: Colors.redAccent),
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStateProperty.all(Colors.red),
+                      ),
+                      onPressed: () {
+                        if (widget.folder?.id == null) return;
+                        Database().deleteFolder(id: widget.folder?.id);
+                        context.read<AppProvider>().refresh();
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Yes', style: TextStyle(color: Colors.white)),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text('Cancel'),
                     ),
                   ],
                 ),
-                actions: [
-                  TextButton(
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(Colors.red),
-                    ),
-                    onPressed: () {
-                      if (widget.folderId != null) {
-                        Database().removeFolder(id: widget.folderId);
-                        context.read<AppProvider>().refresh();
-                      }
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Yes', style: TextStyle(color: Colors.white)),
-                  ),
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text('Cancel'),
-                  ),
-                ],
-              ),
-            );
-          },
-          value: 'delete_folder',
-          child: Row(
-            children: [
-              Icon(Icons.delete),
-              SizedBox(width: 8),
-              Text('Delete Folder'),
-            ],
-          ),
-        ),
+              );
+            },
+            value: 'delete_folder',
+            child: Row(
+              children: [
+                Icon(Icons.delete),
+                SizedBox(width: 8),
+                Text('Delete Folder'),
+              ],
+            ),
+          )
       ],
     );
   }

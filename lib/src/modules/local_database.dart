@@ -17,17 +17,9 @@ class Database {
     return notes;
   }
 
-  getAllNoteBook() {
+  getAllFolder() {
     final noteBookList = objectbox.store.box<FolderModel>().getAll();
     return noteBookList;
-  }
-
-  getSpecificNoteBook({required int id}) {
-    // prevent first launch value equals to null
-    if (folderBox.getAll().isEmpty) return;
-    var noteBookData = folderBox.get(id);
-
-    return noteBookData;
   }
 
   // Example: update an existing note by id
@@ -39,7 +31,7 @@ class Database {
     noteBox.put(note);
   }
 
-  addNoteBook({
+  addFolder({
     required name,
   }) {
     FolderModel notebook = FolderModel(
@@ -48,8 +40,12 @@ class Database {
     folderBox.put(notebook);
   }
 
-  removeNote({required id}) {
+  deleteNote({required id}) {
     noteBox.remove(id);
+  }
+
+  getManyNote({required List<int> list}) {
+    return noteBox.getMany(list);
   }
 
   clearAll() {
@@ -57,7 +53,7 @@ class Database {
     folderBox.removeAll();
   }
 
-  getFolder({id}) {
+  getFolder({required int id}) {
     FolderModel? folder = folderBox.get(id);
     return folder;
   }
@@ -66,7 +62,7 @@ class Database {
     folderBox.put(folder, mode: PutMode.update);
   }
 
-  removeFolder({required id}) {
+  deleteFolder({required id}) {
     folderBox.remove(id);
   }
 

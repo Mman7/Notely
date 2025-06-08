@@ -33,11 +33,8 @@ class NotePreview extends StatelessWidget {
         context,
         MaterialPageRoute(
           builder: (context) => Editor(
+            note: noteList[index],
             isNew: false,
-            title: title,
-            content: content,
-            id: noteList[index].id,
-            uuid: noteList[index].uuid,
           ),
         ),
       ),

@@ -9,9 +9,6 @@ class AppProvider extends ChangeNotifier {
   List<Note> noteList = [];
   List<FolderModel> folderList = [];
   final database = Database();
-  bool searchMode = false;
-  String listMode = 'All Notes';
-  bool isSidebarExtended = false;
 
   getDeviceType() {
     double screenWidth = ScreenUtil().screenWidth;
@@ -21,24 +18,24 @@ class AppProvider extends ChangeNotifier {
     return DeviceType.mobile;
   }
 
-  getAllNote() {
+  intializeNote() {
     final note = database.getAllNote();
     noteList = note;
   }
 
-  getAllNoteBook() {
-    final result = database.getAllNoteBook();
+  intializeFolder() {
+    final result = database.getAllFolder();
     folderList = result;
   }
 
   intializeData() {
-    getAllNote();
-    getAllNoteBook();
+    intializeNote();
+    intializeFolder();
     notifyListeners();
   }
 
   refreshNoteBook() {
-    getAllNoteBook();
+    intializeFolder();
     notifyListeners();
   }
 

@@ -9,22 +9,15 @@ import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/modules/local_database.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:toastification/toastification.dart';
-import 'package:uuid/uuid.dart';
 
 class Editor extends StatefulWidget {
   Editor({
     super.key,
-    required this.title,
-    required this.content,
-    this.uuid,
-    required this.id,
+    required this.note,
     required this.isNew,
   });
-  String title;
-  String content;
-  String? uuid;
-  int id;
   bool isNew;
+  Note note;
   @override
   State createState() => _EditorState();
 }
@@ -45,8 +38,8 @@ class _EditorState extends State<Editor> {
 
   @override
   void initState() {
-    _titleController.text = widget.title;
-    String originalContent = widget.content;
+    _titleController.text = widget.note.title;
+    String originalContent = widget.note.content;
 
     if (!widget.isNew) {
       // load content
@@ -57,8 +50,8 @@ class _EditorState extends State<Editor> {
     // Check if title has changed
     _titleController.addListener(() {
       if (isChanged.value == true) return;
-      if (_titleController.text != widget.title) isChanged.value = true;
-      if (_titleController.text == widget.title) isChanged.value = false;
+      if (_titleController.text != widget.note.title) isChanged.value = true;
+      if (_titleController.text == widget.note.title) isChanged.value = false;
     });
     // Check if the content has changed
     _controller.document.changes.listen((event) {
@@ -76,11 +69,11 @@ class _EditorState extends State<Editor> {
     var json = jsonEncode(content);
     Database().saveNote(
       note: Note(
-        id: widget.id,
+        id: widget.note.id,
         title: title,
         content: json,
         dateCreated: DateTime.now(),
-        uuid: widget.uuid ?? Uuid().v4(),
+        uuid: widget.note.uuid,
         previewContent: preview,
       ),
     );
@@ -89,11 +82,11 @@ class _EditorState extends State<Editor> {
   /// Updates the widget's properties with the latest note data from the provider.
   void refreshWhenSave() {
     Note note = context.read<AppProvider>().noteList.last;
-    widget.title = note.title;
-    widget.content = note.content;
-    widget.id = note.id;
+    widget.note.title = note.title;
+    widget.note.content = note.content;
+    widget.note.id = note.id;
     widget.isNew = false;
-    widget.uuid = note.uuid;
+    widget.note.uuid = note.uuid;
     isChanged.value = false;
     setState(() => isEditing = false);
   }
@@ -159,7 +152,8 @@ class _EditorState extends State<Editor> {
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      Database().removeNote(id: widget.id);
+                                      Database database = Database();
+                                      database.deleteNote(id: widget.note.id);
                                       context.read<AppProvider>().refresh();
                                       toastification.show(
                                         style: ToastificationStyle.minimal,
@@ -172,10 +166,10 @@ class _EditorState extends State<Editor> {
                                         autoCloseDuration:
                                             const Duration(seconds: 2),
                                       );
-                                      Navigator.of(context)
-                                          .pop(); // Close dialog
-                                      Navigator.of(context)
-                                          .pop(); // Close editor
+
+                                      // Close dialog and leave editor
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
                                     },
                                     child: Text('Delete',
                                         style: TextStyle(color: Colors.red)),
@@ -223,16 +217,18 @@ class _EditorState extends State<Editor> {
                                                   e.getConvertNoteInclude();
                                               // Prevent id contained
                                               if (noteIncludedList
-                                                  .contains(widget.id)) {
+                                                  .contains(widget.note.id)) {
                                                 showToast();
                                                 Navigator.of(context).pop();
                                                 return;
                                               }
-                                              //else
-                                              noteIncludedList.add(widget.id);
+                                              //else update folder's note included
+                                              noteIncludedList
+                                                  .add(widget.note.id);
                                               String encodeList =
                                                   jsonEncode(noteIncludedList);
-
+                                              List folderList = widget.note
+                                                  .getfolderIncluded();
                                               FolderModel newFolder =
                                                   FolderModel(
                                                       title: e.title,
@@ -240,6 +236,30 @@ class _EditorState extends State<Editor> {
                                                       noteInclude: encodeList);
                                               Database().updateFolder(
                                                   folder: newFolder);
+                                              // update note folder
+                                              if (folderList.contains(e.id)) {
+                                                return;
+                                              } else {
+                                                String newList = [
+                                                  ...folderList,
+                                                  e.id
+                                                ].toString();
+                                                Note updatedNote = Note(
+                                                    id: widget.note.id,
+                                                    uuid: widget.note.uuid,
+                                                    title: widget.note.title,
+                                                    content:
+                                                        widget.note.content,
+                                                    folder: newList,
+                                                    previewContent: widget
+                                                        .note.previewContent);
+                                                Database().updateNote(
+                                                    note: updatedNote);
+                                              }
+
+                                              context
+                                                  .read<AppProvider>()
+                                                  .refreshNoteBook();
                                               showToast();
                                               Navigator.of(context).pop();
                                             },

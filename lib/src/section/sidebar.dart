@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/section/editor.dart';
 
 class SideBar extends StatefulWidget {
@@ -13,8 +14,6 @@ class SideBar extends StatefulWidget {
 }
 
 class _SideBarState extends State<SideBar> {
-  bool noteBookisExpanded = false;
-  bool tagsIsExpanded = false;
   TextEditingController textEditController = TextEditingController();
   String text = '';
   @override
@@ -89,10 +88,8 @@ class _SideBarState extends State<SideBar> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => Editor(
+                    note: Note.newNote(),
                     isNew: true,
-                    content: '',
-                    title: '',
-                    id: 0,
                   ),
                 ),
               );

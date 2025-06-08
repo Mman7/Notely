@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:objectbox/objectbox.dart';
+import 'package:uuid/uuid.dart';
 
 @Entity()
 class Note {
@@ -8,7 +11,7 @@ class Note {
     required this.title,
     required this.content,
     required this.previewContent,
-    this.notebook,
+    this.folder,
     this.isBookmark = false,
     this.dateCreated,
     this.lastestModified,
@@ -21,6 +24,18 @@ class Note {
   String title;
   bool? isBookmark;
   DateTime? dateCreated;
-  List<String>? notebook;
+  String? folder;
   DateTime? lastestModified;
+  List<int> getfolderIncluded() {
+    return List<int>.from(jsonDecode(folder ?? '[]'));
+  }
+
+  factory Note.newNote() {
+    return Note(
+      uuid: Uuid().v4(),
+      title: '',
+      content: '',
+      previewContent: '',
+    );
+  }
 }

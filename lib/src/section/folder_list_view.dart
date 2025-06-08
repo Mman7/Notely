@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:syncnote/src/model/folder_model.dart';
+import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/modules/local_database.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/widget/folder.dart';
+import 'package:syncnote/src/widget/folder_header.dart';
 
 class FolderListView extends StatelessWidget {
   FolderListView({super.key});
@@ -12,6 +14,7 @@ class FolderListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<FolderModel> folderList = context.watch<AppProvider>().folderList;
+    List<Note> noteList = context.watch<AppProvider>().noteList;
 
     int checkScreen() {
       DeviceType deviceType = context.read<AppProvider>().getDeviceType();
@@ -36,23 +39,22 @@ class FolderListView extends StatelessWidget {
               mainAxisSpacing: 5,
               crossAxisSpacing: 15,
             ),
-            itemCount: folderList.length + 2,
+            itemCount: folderList.length + 2, // 1 for header 1 for footer
             itemBuilder: (context, index) {
+              // Header
               if (index == 0) {
-                return Folder();
+                return FolderHeader(listCount: noteList.length);
               }
-              // if index is not folderlist last index
-              if (index != folderList.length + 1) {
-                return Folder(
-                  id: folderList[index - 1].id,
-                  noteIncluded: folderList[index - 1].getConvertNoteInclude(),
-                  folderCount:
-                      folderList[index - 1].getConvertNoteInclude().length,
-                  folderName: folderList[index - 1].title,
-                );
+              // Footer
+              if (index == folderList.length + 1) {
+                return addNewFolderView(context);
               }
+              var item = folderList[index - 1];
 
-              return addNewFolderView(context);
+              return Folder(
+                folder: item,
+                id: item.id,
+              );
             }),
       ),
     );
@@ -98,7 +100,7 @@ class FolderListView extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Database().addNoteBook(name: _controller.text);
+                      Database().addFolder(name: _controller.text);
                       context.read<AppProvider>().refresh();
                       _controller.text = '';
                       Navigator.of(context).pop();

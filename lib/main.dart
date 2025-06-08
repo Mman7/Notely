@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncnote/myobjectbox.dart';
+import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/section/editor.dart';
 import 'package:syncnote/src/theme.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
@@ -102,10 +103,8 @@ class _MainAppState extends State<MainApp> {
                                 ctx,
                                 MaterialPageRoute(
                                   builder: (context) => Editor(
-                                    id: 0,
+                                    note: Note.newNote(),
                                     isNew: true,
-                                    content: '',
-                                    title: '',
                                   ),
                                 ),
                               );

@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:syncnote/myobjectbox.dart';
@@ -76,6 +76,11 @@ class _MainAppState extends State<MainApp> {
 
           return ToastificationWrapper(
             child: MaterialApp(
+              localizationsDelegates: const [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
               scrollBehavior: MyCustomScrollBehavior(),
               theme: myTheme,
               home: Scaffold(

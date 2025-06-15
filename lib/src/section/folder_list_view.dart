@@ -53,7 +53,6 @@ class FolderListView extends StatelessWidget {
 
               return FolderView(
                 folder: item,
-                id: item.id,
               );
             }),
       ),

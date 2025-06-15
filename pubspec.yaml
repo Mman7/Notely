@@ -12,13 +12,15 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_animate: ^4.5.0
-  flutter_quill: ^10.8.4
+  flutter_quill: ^11.4.1
   flutter_screenutil: ^5.9.1
   flutter_svg: ^2.1.0
   gap: ^3.0.1
   intl: any
+  hexcolor: ^3.0.1
   network_info_plus: ^6.1.4
   objectbox: ^4.2.0
+  flutter_localization: ^0.3.2
   objectbox_flutter_libs: ^4.2.0
   path: any
   path_provider: ^2.1.3

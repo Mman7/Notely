@@ -12,21 +12,38 @@ class FolderModel {
   String title;
   // List covert into string
   String? noteInclude;
+  get getNoteIncluded => _getConvertNoteIncluded();
 
-  List<int> getConvertNoteIncluded() {
+  List<int> _getConvertNoteIncluded() {
     return List<int>.from(jsonDecode(noteInclude ?? '[]'));
+  }
+
+  addNote({required int noteId}) {
+    List<int> newList = List.from(getNoteIncluded);
+    if (newList.contains(noteId)) {
+      return; // Folder already included
+    }
+    newList.add(noteId);
+    noteInclude = jsonEncode(newList);
+    Database().updateFolder(folder: this);
+  }
+
+  void removeFromFolder({required int noteId}) {
+    List<int> newList = getNoteIncluded;
+    newList.remove(noteId);
+    noteInclude = jsonEncode(newList);
+    Database().updateFolder(folder: this);
   }
 
   /// Filter out [null]
   void refreshNoteIncluded() {
     Database database = Database();
-    List result = database.getManyNote(list: getConvertNoteIncluded());
+    List result = database.getManyNote(list: getNoteIncluded);
     List newList = [];
     for (Note? e in result) {
       if (e != null) newList.add(e.id);
     }
-    String json = jsonEncode(newList);
-    noteInclude = json;
+    noteInclude = jsonEncode(newList);
     Database().updateFolder(folder: this);
   }
 }

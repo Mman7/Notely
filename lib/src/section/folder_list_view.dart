@@ -5,7 +5,7 @@ import 'package:syncnote/src/model/folder_model.dart';
 import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/modules/local_database.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
-import 'package:syncnote/src/widget/folder.dart';
+import 'package:syncnote/src/widget/folder_view.dart';
 import 'package:syncnote/src/widget/folder_header.dart';
 
 class FolderListView extends StatelessWidget {
@@ -51,7 +51,7 @@ class FolderListView extends StatelessWidget {
               }
               var item = folderList[index - 1];
 
-              return Folder(
+              return FolderView(
                 folder: item,
                 id: item.id,
               );

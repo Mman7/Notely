@@ -74,12 +74,6 @@ final _entities = <obx_int.ModelEntity>[
         type: 9,
         flags: 0,
       ),
-      obx_int.ModelProperty(
-        id: const obx_int.IdUid(14, 3694927225866095609),
-        name: 'folder',
-        type: 9,
-        flags: 0,
-      ),
     ],
     relations: <obx_int.ModelRelation>[],
     backlinks: <obx_int.ModelBacklink>[],
@@ -204,6 +198,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       1234735489074752688,
       107140961531475377,
       7527307426686352931,
+      3694927225866095609,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -225,8 +220,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final previewContentOffset = fbb.writeString(object.previewContent);
         final titleOffset = fbb.writeString(object.title);
         final contentOffset = fbb.writeString(object.content);
-        final folderOffset =
-            object.folder == null ? null : fbb.writeString(object.folder!);
         fbb.startTable(15);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
@@ -236,7 +229,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(7, object.dateCreated?.millisecondsSinceEpoch);
         fbb.addInt64(11, object.lastestModified?.millisecondsSinceEpoch);
         fbb.addOffset(12, contentOffset);
-        fbb.addOffset(13, folderOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -271,9 +263,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final previewContentParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 8, '');
-        final folderParam = const fb.StringReader(
-          asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 30);
         final isBookmarkParam = const fb.BoolReader().vTableGetNullable(
           buffer,
           rootOffset,
@@ -293,7 +282,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
           title: titleParam,
           content: contentParam,
           previewContent: previewContentParam,
-          folder: folderParam,
           isBookmark: isBookmarkParam,
           dateCreated: dateCreatedParam,
           lastestModified: lastestModifiedParam,
@@ -388,11 +376,6 @@ class Note_ {
   /// See [Note.content].
   static final content = obx.QueryStringProperty<Note>(
     _entities[0].properties[7],
-  );
-
-  /// See [Note.folder].
-  static final folder = obx.QueryStringProperty<Note>(
-    _entities[0].properties[8],
   );
 }
 

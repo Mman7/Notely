@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:objectbox/objectbox.dart';
 import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/modules/local_database.dart';
@@ -28,7 +27,7 @@ class FolderModel {
     Database().updateFolder(folder: this);
   }
 
-  void removeFromFolder({required int noteId}) {
+  void removeNote({required int noteId}) {
     List<int> newList = getNoteIncluded;
     newList.remove(noteId);
     noteInclude = jsonEncode(newList);

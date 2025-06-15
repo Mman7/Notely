@@ -7,14 +7,13 @@ class FolderView extends StatelessWidget {
   const FolderView({
     super.key,
     required this.folder,
-    this.id,
   });
   final FolderModel folder;
-  final int? id;
 
   @override
   Widget build(BuildContext context) {
     folder.refreshNoteIncluded();
+
     return InkWell(
       onTap: () {
         Navigator.push(

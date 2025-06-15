@@ -23,110 +23,102 @@ class _NoteListState extends State<NoteList> {
   @override
   void initState() {
     super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    DeviceType deviceType = context.read<AppProvider>().getDeviceType();
-    context.watch<AppProvider>().folderList;
-    // Check if the folder is not null and filter notes by folder
-    if (widget.folder != null) {
-      List<Note> data =
-          Database().filterNoteByFolder(ids: widget.folder?.getNoteIncluded) ??
-              [];
-      setState(() {
-        _noteList = data;
-        _backupList = data;
-      });
-    }
-    // Load all notes if no folder is selected
-    if (widget.folder == null && _searchController.text.isEmpty) {
-      setState(() {
-        _noteList = context.watch<AppProvider>().noteList;
-        _backupList = context.watch<AppProvider>().noteList;
-      });
-    }
-
-    search({required List<Note> list, required String text}) {
-      return list.where((note) {
-        return note.title.contains(text);
-      }).toList();
-    }
+    // Initialize notes based on folder or all notes
 
     _searchController.addListener(() {
       if (_searchController.text.isEmpty) {
         setState(() {
           _noteList = _backupList;
         });
-      }
-      if (_searchController.text.isNotEmpty) {
-        List<Note> list = search(list: _noteList, text: _searchController.text);
+      } else {
+        List<Note> list = _backupList
+            .where((note) => note.title.contains(_searchController.text))
+            .toList();
         setState(() {
           _noteList = list;
         });
       }
     });
-    int checkScreen() {
-      if (ScreenUtil().screenWidth > 1500) return 8;
-      if (deviceType == DeviceType.mobile) return 2;
-      if (deviceType == DeviceType.tablet) return 3;
-      if (deviceType == DeviceType.windows) return 5;
-      return 2;
-    }
+  }
+
+  int checkScreen(DeviceType deviceType) {
+    if (ScreenUtil().screenWidth > 1500) return 8;
+    if (deviceType == DeviceType.mobile) return 2;
+    if (deviceType == DeviceType.tablet) return 3;
+    if (deviceType == DeviceType.windows) return 5;
+    return 2;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print(_noteList);
+
+    DeviceType deviceType = context.watch<AppProvider>().getDeviceType();
+    final appProvider = context.watch<AppProvider>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.folder != null) {
+        List<Note> data = Database()
+            .filterNoteByFolder(ids: widget.folder?.getNoteIncluded)
+            .whereType<Note>()
+            .toList();
+
+        setState(() {
+          _noteList = data;
+          _backupList = data;
+        });
+      } else {
+        setState(() {
+          _noteList = appProvider.noteList;
+          _backupList = appProvider.noteList;
+        });
+      }
+    });
 
     bool isMobileOrTable =
         deviceType == DeviceType.mobile || deviceType == DeviceType.tablet;
-
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(
+              Icons.arrow_back_ios_new_rounded,
+            ),
+            onPressed: () {
+              if (_isSearching) setState(() => _isSearching = !_isSearching);
+              Navigator.of(context).pop();
+            },
           ),
-          onPressed: () {
-            if (_isSearching) setState(() => _isSearching = !_isSearching);
-            Navigator.of(context).pop();
-          },
+          elevation: 7.0,
+          backgroundColor: Colors.white,
+          shadowColor: Colors.grey.shade100,
+          surfaceTintColor:
+              Colors.transparent, // Prevents color change due to elevation
+          title: title(
+              folderName: widget.folder?.title ?? 'All notes',
+              isMobileOrTable: isMobileOrTable,
+              isSearching: _isSearching),
+          actions: [
+            _isSearching
+                ? IconButton(
+                    onPressed: () =>
+                        setState(() => _isSearching = !_isSearching),
+                    icon: Icon(Icons.cancel_sharp))
+                : menuOptions(),
+          ],
         ),
-        elevation: 7.0,
-        backgroundColor: Colors.white,
-        shadowColor: Colors.grey.shade100,
-        surfaceTintColor:
-            Colors.transparent, // Prevents color change due to elevation
-        title: title(
-            folderName: widget.folder?.title ?? 'All notes',
-            isMobileOrTable: isMobileOrTable,
-            isSearching: _isSearching),
-        actions: [
-          _isSearching
-              ? IconButton(
-                  onPressed: () => setState(() => _isSearching = !_isSearching),
-                  icon: Icon(Icons.cancel_sharp))
-              : menuOptions(),
-        ],
-      ),
-      body: Padding(
-        padding: EdgeInsets.only(top: 20),
-        child: GridView.builder(
-          padding: EdgeInsets.all(10.0),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: checkScreen(), // Number of columns
-            crossAxisSpacing: 15.0,
-            mainAxisSpacing: 15.0,
-            childAspectRatio: 3 / 4, // Adjust the aspect ratio as needed
-          ),
-          itemCount: _noteList.length, // Number of items
-          itemBuilder: (context, index) {
-            return NotePreview(
-                index: index,
-                title: _noteList[index].title,
-                previewContent: _noteList[index].previewContent,
-                content: _noteList[index].content,
-                lastModified: DateTime.now());
-          },
-        ),
-      ),
-    );
+        body: Padding(
+            padding: EdgeInsets.only(top: 20),
+            child: GridView.builder(
+                padding: EdgeInsets.all(10.0),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: checkScreen(deviceType), // Number of columns
+                  crossAxisSpacing: 15.0,
+                  mainAxisSpacing: 15.0,
+                  childAspectRatio: 3 / 4, // Adjust the aspect ratio as needed
+                ),
+                itemCount: _noteList.length, // Number of items
+                itemBuilder: (context, index) {
+                  return NotePreview(index: index, note: _noteList[index]);
+                })));
   }
 
   PopupMenuButton<String> menuOptions() {

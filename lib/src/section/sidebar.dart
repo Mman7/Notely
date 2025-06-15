@@ -33,13 +33,15 @@ class _SideBarState extends State<SideBar> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Gap(10),
-            Text(
-              'MeloNote',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 30.sp,
+            Align(
+              alignment: Alignment.center,
+              child: Text(
+                'MeloNote',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30.sp,
+                ),
               ),
             ),
             Gap(15),

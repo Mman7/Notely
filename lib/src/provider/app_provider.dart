@@ -21,6 +21,7 @@ class AppProvider extends ChangeNotifier {
   intializeNote() {
     final note = database.getAllNote();
     noteList = note;
+    notifyListeners();
   }
 
   intializeFolder() {
@@ -34,7 +35,7 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  refreshNoteBook() {
+  refreshFolder() {
     intializeFolder();
     notifyListeners();
   }

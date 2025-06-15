@@ -7,6 +7,12 @@ class Database {
   final noteBox = objectbox.store.box<Note>();
   final folderBox = objectbox.store.box<FolderModel>();
 
+  /// only for testing purpose
+  wipeAllData() {
+    noteBox.removeAll();
+    folderBox.removeAll();
+  }
+
   getNote({required int id}) {
     final note = noteBox.get(id);
     return note;

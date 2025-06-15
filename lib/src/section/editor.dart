@@ -62,11 +62,24 @@ class _EditorState extends State<Editor> {
     super.initState();
   }
 
+  void showToaster({required String text}) {
+    toastification.show(
+      style: ToastificationStyle.minimal,
+      primaryColor: Colors.lightGreen,
+      icon: Icon(Icons.done),
+      context: context, // optional if you use ToastificationWrapper
+      title: Text(text),
+      pauseOnHover: false,
+      autoCloseDuration: const Duration(seconds: 2),
+    );
+  }
+
   void saveContent() {
     String title = _titleController.text;
     Delta content = _controller.document.toDelta();
     String preview = _controller.document.toPlainText();
     var json = jsonEncode(content);
+
     Database().saveNote(
       note: Note(
         id: widget.note.id,
@@ -77,6 +90,7 @@ class _EditorState extends State<Editor> {
         previewContent: preview,
       ),
     );
+    context.read<AppProvider>().refresh();
   }
 
   /// Updates the widget's properties with the latest note data from the provider.
@@ -93,7 +107,7 @@ class _EditorState extends State<Editor> {
 
   @override
   Widget build(BuildContext context) {
-    List folderList = context.watch<AppProvider>().folderList;
+    List<FolderModel> folderList = context.watch<AppProvider>().folderList;
     DeviceType deviceType = context.read<AppProvider>().getDeviceType();
 
     // Check is editing
@@ -104,6 +118,41 @@ class _EditorState extends State<Editor> {
     Widget titleTextField = TitleWidget(titleController: _titleController);
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            if (isChanged.value) {
+              // Show confirmation dialog
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Unsaved Changes'),
+                  content: Text(
+                      'You have unsaved changes. Do you want to save them?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        saveContent();
+                        showToaster(text: 'Your note has been saved');
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(); // Close editor
+                      },
+                      child: Text('Save'),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              Navigator.of(context).pop(); // Close editor
+            }
+          },
+        ),
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
         elevation: 6,
@@ -116,16 +165,7 @@ class _EditorState extends State<Editor> {
                     onPressed: () {
                       // Save the content
                       saveContent();
-                      toastification.show(
-                          style: ToastificationStyle.fillColored,
-                          primaryColor: Colors.lightGreen,
-                          icon: Icon(Icons.done),
-                          context:
-                              context, // optional if you use ToastificationWrapper
-                          title: Text('Your note has been saved'),
-                          autoCloseDuration: const Duration(seconds: 2),
-                          pauseOnHover: false);
-                      context.read<AppProvider>().refresh();
+                      showToaster(text: 'Your note has been saved');
                       refreshWhenSave();
                     },
                     icon: const Icon(Icons.done),
@@ -155,18 +195,8 @@ class _EditorState extends State<Editor> {
                                       Database database = Database();
                                       database.deleteNote(id: widget.note.id);
                                       context.read<AppProvider>().refresh();
-                                      toastification.show(
-                                        style: ToastificationStyle.minimal,
-                                        primaryColor: Colors.lightGreen,
-                                        icon: Icon(Icons.done),
-                                        context: context,
-                                        title:
-                                            Text('Your note has been deleted'),
-                                        pauseOnHover: false,
-                                        autoCloseDuration:
-                                            const Duration(seconds: 2),
-                                      );
-
+                                      showToaster(
+                                          text: 'Your note has been deleted');
                                       // Close dialog and leave editor
                                       Navigator.of(context).pop();
                                       Navigator.of(context).pop();
@@ -187,83 +217,47 @@ class _EditorState extends State<Editor> {
                             ],
                           ),
                         ),
+                        // Add to Folder
                         PopupMenuItem(
                           onTap: () {
                             WidgetsBinding.instance.addPostFrameCallback((_) {
                               showDialog(
                                   context: context,
                                   builder: (context) {
-                                    showToast() => toastification.show(
-                                          style: ToastificationStyle.minimal,
-                                          primaryColor: Colors.lightGreen,
-                                          icon: Icon(Icons.done),
-                                          context:
-                                              context, // optional if you use ToastificationWrapper
-                                          title:
-                                              Text('Your note has been added'),
-                                          pauseOnHover: false,
-                                          autoCloseDuration:
-                                              const Duration(seconds: 2),
-                                        );
-
                                     return SimpleDialog(
                                       title: Text('Select Folder'),
                                       children: [
-                                        ...folderList.map((e) {
+                                        ...folderList.map((folder) {
                                           return SimpleDialogOption(
                                             onPressed: () {
                                               // Handle folder selection here
-                                              List noteIncludedList =
-                                                  e.getConvertNoteInclude();
+                                              List noteInFolder =
+                                                  folder.getNoteIncluded;
                                               // Prevent id contained
-                                              if (noteIncludedList
+                                              if (noteInFolder
                                                   .contains(widget.note.id)) {
-                                                showToast();
+                                                showToaster(
+                                                    text:
+                                                        'Your note has been added to ${folder.title}');
                                                 Navigator.of(context).pop();
                                                 return;
                                               }
                                               //else update folder's note included
-                                              noteIncludedList
-                                                  .add(widget.note.id);
-                                              String encodeList =
-                                                  jsonEncode(noteIncludedList);
-                                              List folderList = widget.note
-                                                  .getfolderIncluded();
-                                              FolderModel newFolder =
-                                                  FolderModel(
-                                                      title: e.title,
-                                                      id: e.id,
-                                                      noteInclude: encodeList);
-                                              Database().updateFolder(
-                                                  folder: newFolder);
-                                              // update note folder
-                                              if (folderList.contains(e.id)) {
-                                                return;
-                                              } else {
-                                                String newList = [
-                                                  ...folderList,
-                                                  e.id
-                                                ].toString();
-                                                Note updatedNote = Note(
-                                                    id: widget.note.id,
-                                                    uuid: widget.note.uuid,
-                                                    title: widget.note.title,
-                                                    content:
-                                                        widget.note.content,
-                                                    folder: newList,
-                                                    previewContent: widget
-                                                        .note.previewContent);
-                                                Database().updateNote(
-                                                    note: updatedNote);
-                                              }
+                                              folder.addNote(
+                                                  noteId: widget.note.id);
+                                              widget.note.addFolder(
+                                                  folderId: folder.id);
 
                                               context
                                                   .read<AppProvider>()
                                                   .refreshNoteBook();
-                                              showToast();
+                                              showToaster(
+                                                  text:
+                                                      'Your note has been added ${folder.title}');
                                               Navigator.of(context).pop();
                                             },
-                                            child: Center(child: Text(e.title)),
+                                            child: Center(
+                                                child: Text(folder.title)),
                                           );
                                         })
                                       ],
@@ -280,7 +274,36 @@ class _EditorState extends State<Editor> {
                             ],
                           ),
                         ),
-                        // Add more menu items if needed
+                        PopupMenuItem(
+                          onTap: () {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return SimpleDialog(
+                                      title: Text(
+                                        'Remove from Folder',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Colors.pink[800],
+                                        ),
+                                      ),
+                                      //TODO: add remove folder list for user selection
+                                      children: []);
+                                },
+                              );
+                            });
+                          },
+                          value: 3,
+                          child: Row(
+                            children: [
+                              Icon(Icons.drive_file_move_rtl_outlined,
+                                  color: Colors.pink[800]),
+                              SizedBox(width: 8),
+                              Text('Remove from Folder'),
+                            ],
+                          ),
+                        ),
                       ])
               : Container()
         ],

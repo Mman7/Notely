@@ -3,8 +3,8 @@ import 'package:syncnote/src/model/folder_model.dart';
 import 'package:syncnote/src/section/note_list.dart';
 import 'package:syncnote/src/widget/folder_widget.dart';
 
-class Folder extends StatelessWidget {
-  const Folder({
+class FolderView extends StatelessWidget {
+  const FolderView({
     super.key,
     required this.folder,
     this.id,
@@ -27,7 +27,7 @@ class Folder extends StatelessWidget {
       },
       child: FolderWidget(
         folderTitle: folder.title,
-        folderCount: folder.getConvertNoteIncluded().length,
+        folderCount: folder.getNoteIncluded.length,
       ),
     );
   }

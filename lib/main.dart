@@ -34,6 +34,7 @@ void main() async {
   //   WindowManager.instance.setMaximumSize(const Size(1200, 600));
   // }
   objectbox = await ObjectBox.create();
+
   runApp(ChangeNotifierProvider(
     create: (ctx) => AppProvider(),
     child: const MainApp(),
@@ -58,6 +59,7 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
+    // Database().wipeAllData(); // Uncomment to wipe all data for testing
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AppProvider>().intializeData();
     });

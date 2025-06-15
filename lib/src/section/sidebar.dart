@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/section/editor.dart';
 
@@ -26,7 +26,7 @@ class _SideBarState extends State<SideBar> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(color: hexToColor('#211C3A'), border: null),
+      decoration: BoxDecoration(color: HexColor('#211C3A'), border: null),
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(

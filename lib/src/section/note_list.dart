@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:syncnote/src/model/folder_model.dart';
+import 'package:syncnote/src/model/note_model.dart';
 import 'package:syncnote/src/modules/local_database.dart';
 import 'package:syncnote/src/provider/app_provider.dart';
 import 'package:syncnote/src/widget/note_preview.dart';
@@ -14,22 +15,57 @@ class NoteList extends StatefulWidget {
 }
 
 class _NoteListState extends State<NoteList> {
-  bool isSearching = false;
-  List _noteList = [];
+  bool _isSearching = false;
+  final TextEditingController _searchController = TextEditingController();
+  List<Note> _noteList = [];
+  List<Note> _backupList = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     DeviceType deviceType = context.read<AppProvider>().getDeviceType();
-    // Load data
+    context.watch<AppProvider>().folderList;
+    // Check if the folder is not null and filter notes by folder
     if (widget.folder != null) {
-      List data = Database().filterNoteByFolder(
-              ids: widget.folder?.getConvertNoteIncluded()) ??
-          [];
-      setState(() => _noteList = data);
+      List<Note> data =
+          Database().filterNoteByFolder(ids: widget.folder?.getNoteIncluded) ??
+              [];
+      setState(() {
+        _noteList = data;
+        _backupList = data;
+      });
     }
-    if (widget.folder == null) {
-      setState(() => _noteList = context.watch<AppProvider>().noteList);
+    // Load all notes if no folder is selected
+    if (widget.folder == null && _searchController.text.isEmpty) {
+      setState(() {
+        _noteList = context.watch<AppProvider>().noteList;
+        _backupList = context.watch<AppProvider>().noteList;
+      });
     }
+
+    search({required List<Note> list, required String text}) {
+      return list.where((note) {
+        return note.title.contains(text);
+      }).toList();
+    }
+
+    _searchController.addListener(() {
+      if (_searchController.text.isEmpty) {
+        setState(() {
+          _noteList = _backupList;
+        });
+      }
+      if (_searchController.text.isNotEmpty) {
+        List<Note> list = search(list: _noteList, text: _searchController.text);
+        setState(() {
+          _noteList = list;
+        });
+      }
+    });
     int checkScreen() {
       if (ScreenUtil().screenWidth > 1500) return 8;
       if (deviceType == DeviceType.mobile) return 2;
@@ -43,6 +79,15 @@ class _NoteListState extends State<NoteList> {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+          ),
+          onPressed: () {
+            if (_isSearching) setState(() => _isSearching = !_isSearching);
+            Navigator.of(context).pop();
+          },
+        ),
         elevation: 7.0,
         backgroundColor: Colors.white,
         shadowColor: Colors.grey.shade100,
@@ -51,11 +96,11 @@ class _NoteListState extends State<NoteList> {
         title: title(
             folderName: widget.folder?.title ?? 'All notes',
             isMobileOrTable: isMobileOrTable,
-            isSearching: isSearching),
+            isSearching: _isSearching),
         actions: [
-          isSearching
+          _isSearching
               ? IconButton(
-                  onPressed: () => setState(() => isSearching = !isSearching),
+                  onPressed: () => setState(() => _isSearching = !_isSearching),
                   icon: Icon(Icons.cancel_sharp))
               : menuOptions(),
         ],
@@ -73,12 +118,11 @@ class _NoteListState extends State<NoteList> {
           itemCount: _noteList.length, // Number of items
           itemBuilder: (context, index) {
             return NotePreview(
-              index: index,
-              title: _noteList[index].title,
-              previewContent: _noteList[index].previewContent,
-              content: _noteList[index].content,
-              lastModified: DateTime.now(),
-            );
+                index: index,
+                title: _noteList[index].title,
+                previewContent: _noteList[index].previewContent,
+                content: _noteList[index].content,
+                lastModified: DateTime.now());
           },
         ),
       ),
@@ -90,7 +134,7 @@ class _NoteListState extends State<NoteList> {
       icon: Icon(Icons.more_vert, color: Colors.black),
       itemBuilder: (context) => [
         PopupMenuItem(
-          onTap: () => setState(() => isSearching = !isSearching),
+          onTap: () => setState(() => _isSearching = !_isSearching),
           value: 'search',
           child: Row(
             children: [
@@ -129,6 +173,7 @@ class _NoteListState extends State<NoteList> {
                         Database().deleteFolder(id: widget.folder?.id);
                         context.read<AppProvider>().refresh();
                         Navigator.of(context).pop();
+                        Navigator.of(context).pop();
                       },
                       child: Text('Yes', style: TextStyle(color: Colors.white)),
                     ),
@@ -153,23 +198,13 @@ class _NoteListState extends State<NoteList> {
     );
   }
 
-  Widget actionButton(bool isMobileOrTable) {
-    return isMobileOrTable
-        ? IconButton(
-            icon: Icon(isSearching ? Icons.close : Icons.search),
-            onPressed: () {
-              setState(() => isSearching = !isSearching);
-            },
-          )
-        : Container();
-  }
-
   Widget title(
       {required bool isSearching,
       required bool isMobileOrTable,
       String? folderName}) {
-    return isSearching && isMobileOrTable
+    return isSearching
         ? TextField(
+            controller: _searchController,
             autofocus: true,
             decoration: InputDecoration(
               fillColor: Colors.white,

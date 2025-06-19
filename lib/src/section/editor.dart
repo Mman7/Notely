@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
-import 'package:syncnote/src/model/folder_model.dart';
-import 'package:syncnote/src/model/note_model.dart';
-import 'package:syncnote/src/modules/local_database.dart';
-import 'package:syncnote/src/provider/app_provider.dart';
+import 'package:melonote/src/model/folder_model.dart';
+import 'package:melonote/src/model/note_model.dart';
+import 'package:melonote/src/modules/local_database.dart';
+import 'package:melonote/src/provider/app_provider.dart';
 import 'package:toastification/toastification.dart';
 
 class Editor extends StatefulWidget {
@@ -195,6 +196,9 @@ class _EditorState extends State<Editor> {
                                       Database database = Database();
                                       database.deleteNote(id: widget.note.id);
                                       context.read<AppProvider>().refresh();
+                                      context
+                                          .read<AppProvider>()
+                                          .refreshFolder();
                                       showToaster(
                                           text: 'Your note has been deleted');
                                       // Close dialog and leave editor
@@ -241,20 +245,18 @@ class _EditorState extends State<Editor> {
                                                         'Your note has been added to ${folder.title}');
                                                 Navigator.of(context).pop();
                                                 return;
+                                              } else {
+                                                folder.addNote(
+                                                    noteId: widget.note.id);
+                                                context
+                                                    .read<AppProvider>()
+                                                    .refreshFolder();
+                                                showToaster(
+                                                    text:
+                                                        'Your note has been added ${folder.title}');
+                                                Navigator.of(context).pop();
                                               }
                                               //else update folder's note included
-                                              folder.addNote(
-                                                  noteId: widget.note.id);
-                                              widget.note.addFolder(
-                                                  folderId: folder.id);
-
-                                              context
-                                                  .read<AppProvider>()
-                                                  .refreshNoteBook();
-                                              showToaster(
-                                                  text:
-                                                      'Your note has been added ${folder.title}');
-                                              Navigator.of(context).pop();
                                             },
                                             child: Center(
                                                 child: Text(folder.title)),
@@ -288,8 +290,33 @@ class _EditorState extends State<Editor> {
                                           color: Colors.pink[800],
                                         ),
                                       ),
-                                      //TODO: add remove folder list for user selection
-                                      children: []);
+                                      children: [
+                                        for (var folder in folderList)
+                                          if (folder.getNoteIncluded
+                                              .contains(widget.note.id))
+                                            SimpleDialogOption(
+                                              onPressed: () {
+                                                // Remove note from folder
+                                                folder.removeNote(
+                                                    noteId: widget.note.id);
+
+                                                showToaster(
+                                                    text:
+                                                        'Your note has been removed from ${folder.title}');
+                                                context
+                                                    .read<AppProvider>()
+                                                    .refresh();
+                                                context
+                                                    .read<AppProvider>()
+                                                    .refreshFolder();
+
+                                                Navigator.of(context).pop();
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Center(
+                                                  child: Text(folder.title)),
+                                            ),
+                                      ]);
                                 },
                               );
                             });
@@ -324,23 +351,19 @@ class _EditorState extends State<Editor> {
                     : Container(),
                 titleTextField,
                 // EDITOR
-                Expanded(
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    color: hexToColor('#FFFFFF'),
-                    child: QuillEditor.basic(
-                      focusNode: editorFocusNode,
-                      configurations: QuillEditorConfigurations(
-                        placeholder: 'Write down your note',
-                        sharedConfigurations: const QuillSharedConfigurations(
-                          locale: Locale('en'),
-                        ),
-                      ),
-                      controller: _controller,
-                    ),
-                  ),
-                ),
+                // Expanded(
+                //   child: Container(
+                //       padding: const EdgeInsets.symmetric(
+                //           vertical: 8, horizontal: 16),
+                //       child: Container()
+                //       //  QuillEditor.basic(
+                //       //   focusNode: editorFocusNode,
+                //       //   config: QuillEditorConfig(
+                //       //     placeholder: 'Write down your note',
+                //       //   ),
+                //       //   controller: _controller,
+                //       ),
+                // ),
               ],
             ),
 
@@ -396,9 +419,9 @@ class Toolbar extends StatelessWidget {
                 spreadRadius: 3),
           ],
         ),
-        child: QuillToolbar.simple(
+        child: QuillSimpleToolbar(
             controller: _controller,
-            configurations: QuillSimpleToolbarConfigurations(
+            config: QuillSimpleToolbarConfig(
               buttonOptions: QuillSimpleToolbarButtonOptions(
                   base: QuillToolbarBaseButtonOptions(
                       iconTheme: QuillIconTheme(
@@ -409,9 +432,6 @@ class Toolbar extends StatelessWidget {
                                           .colorScheme
                                           .primary
                                           .withAlpha(200))))))),
-              sharedConfigurations: const QuillSharedConfigurations(
-                locale: Locale('en'),
-              ),
             )));
   }
 }
@@ -438,7 +458,7 @@ class TitleWidget extends StatelessWidget {
           hintStyle: TextStyle(color: Colors.grey),
           contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
           border: InputBorder.none,
-          fillColor: hexToColor('#FFFFFF'),
+          fillColor: HexColor('#FFFFFF'),
           hintText: 'Title',
           hoverColor: Colors.transparent,
         ),

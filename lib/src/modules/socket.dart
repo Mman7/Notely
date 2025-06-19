@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:network_info_plus/network_info_plus.dart';
-import 'package:syncnote/src/modules/tcp_socket.dart';
+import 'package:melonote/src/modules/tcp_socket.dart';
 
 // Phone → UDP broadcast → “Hello, server?”
 //

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:syncnote/src/model/folder_model.dart';
-import 'package:syncnote/src/model/note_model.dart';
-import 'package:syncnote/src/modules/local_database.dart';
-import 'package:syncnote/src/provider/app_provider.dart';
-import 'package:syncnote/src/widget/note_preview.dart';
+import 'package:melonote/src/model/folder_model.dart';
+import 'package:melonote/src/model/note_model.dart';
+import 'package:melonote/src/modules/local_database.dart';
+import 'package:melonote/src/provider/app_provider.dart';
+import 'package:melonote/src/widget/note_preview.dart';
 
 class NoteList extends StatefulWidget {
   NoteList({super.key, this.folder});
@@ -51,8 +51,6 @@ class _NoteListState extends State<NoteList> {
 
   @override
   Widget build(BuildContext context) {
-    print(_noteList);
-
     DeviceType deviceType = context.watch<AppProvider>().getDeviceType();
     final appProvider = context.watch<AppProvider>();
     WidgetsBinding.instance.addPostFrameCallback((_) {

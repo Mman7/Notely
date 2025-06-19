@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:objectbox/objectbox.dart';
-import 'package:syncnote/src/modules/local_database.dart';
 import 'package:uuid/uuid.dart';
 
 @Entity()

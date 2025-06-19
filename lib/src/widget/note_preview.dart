@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:syncnote/src/model/note_model.dart';
-import 'package:syncnote/src/section/editor.dart';
+import 'package:melonote/src/model/note_model.dart';
+import 'package:melonote/src/section/editor.dart';
 
 class NotePreview extends StatelessWidget {
   const NotePreview({

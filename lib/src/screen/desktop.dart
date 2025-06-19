@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:syncnote/src/section/folder_list_view.dart';
-import 'package:syncnote/src/section/header.dart';
-import 'package:syncnote/src/section/sidebar.dart';
+import 'package:melonote/src/section/folder_list_view.dart';
+import 'package:melonote/src/section/header.dart';
+import 'package:melonote/src/section/sidebar.dart';
 
 class DesktopLayout extends StatefulWidget {
   const DesktopLayout({super.key});

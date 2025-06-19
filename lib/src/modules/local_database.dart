@@ -1,7 +1,7 @@
-import 'package:syncnote/myobjectbox.dart';
-import 'package:syncnote/objectbox.g.dart';
-import 'package:syncnote/src/model/folder_model.dart';
-import 'package:syncnote/src/model/note_model.dart';
+import 'package:melonote/myobjectbox.dart';
+import 'package:melonote/objectbox.g.dart';
+import 'package:melonote/src/model/folder_model.dart';
+import 'package:melonote/src/model/note_model.dart';
 
 class Database {
   final noteBox = objectbox.store.box<Note>();

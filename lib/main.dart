@@ -1,15 +1,16 @@
 import 'dart:ui';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
-import 'package:syncnote/myobjectbox.dart';
-import 'package:syncnote/src/model/note_model.dart';
-import 'package:syncnote/src/section/editor.dart';
-import 'package:syncnote/src/theme.dart';
-import 'package:syncnote/src/provider/app_provider.dart';
-import 'package:syncnote/src/screen/desktop.dart';
-import 'package:syncnote/src/screen/mobile.dart';
-import 'package:syncnote/src/utils/myobjectbox.dart';
+import 'package:melonote/myobjectbox.dart';
+import 'package:melonote/src/model/note_model.dart';
+import 'package:melonote/src/section/editor.dart';
+import 'package:melonote/src/theme.dart';
+import 'package:melonote/src/provider/app_provider.dart';
+import 'package:melonote/src/screen/desktop.dart';
+import 'package:melonote/src/screen/mobile.dart';
+import 'package:melonote/src/utils/myobjectbox.dart';
 import 'package:toastification/toastification.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:window_manager/window_manager.dart';
@@ -77,6 +78,7 @@ class _MainAppState extends State<MainApp> {
           return ToastificationWrapper(
             child: MaterialApp(
               localizationsDelegates: const [
+                FlutterQuillLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,

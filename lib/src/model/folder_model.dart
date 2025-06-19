@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:objectbox/objectbox.dart';
-import 'package:syncnote/src/model/note_model.dart';
-import 'package:syncnote/src/modules/local_database.dart';
+import 'package:melonote/src/model/note_model.dart';
+import 'package:melonote/src/modules/local_database.dart';
 
 @Entity()
 class FolderModel {

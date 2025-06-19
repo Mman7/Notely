@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:syncnote/src/model/folder_model.dart';
-import 'package:syncnote/src/model/note_model.dart';
-import 'package:syncnote/src/modules/local_database.dart';
-import 'package:syncnote/src/provider/app_provider.dart';
-import 'package:syncnote/src/widget/folder_view.dart';
-import 'package:syncnote/src/widget/folder_header.dart';
+import 'package:melonote/src/model/folder_model.dart';
+import 'package:melonote/src/model/note_model.dart';
+import 'package:melonote/src/modules/local_database.dart';
+import 'package:melonote/src/provider/app_provider.dart';
+import 'package:melonote/src/widget/folder_view.dart';
+import 'package:melonote/src/widget/folder_header.dart';
 
 class FolderListView extends StatelessWidget {
   FolderListView({super.key});

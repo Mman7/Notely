@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:syncnote/src/modules/socket.dart';
+import 'package:melonote/src/modules/socket.dart';
 
 class SocketWidget extends StatelessWidget {
   const SocketWidget({

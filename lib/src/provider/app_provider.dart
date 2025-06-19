@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:syncnote/src/model/folder_model.dart';
+import 'package:melonote/src/model/folder_model.dart';
 
-import 'package:syncnote/src/model/note_model.dart';
-import 'package:syncnote/src/modules/local_database.dart';
+import 'package:melonote/src/model/note_model.dart';
+import 'package:melonote/src/modules/local_database.dart';
 
 class AppProvider extends ChangeNotifier {
   List<Note> noteList = [];

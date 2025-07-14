@@ -10,6 +10,7 @@ import 'package:melonote/src/model/note_model.dart';
 import 'package:melonote/src/modules/local_database.dart';
 import 'package:melonote/src/provider/app_provider.dart';
 import 'package:toastification/toastification.dart';
+//TODO currently using not official quill editor, waiting platform bug fix
 
 class Editor extends StatefulWidget {
   Editor({
@@ -114,270 +115,256 @@ class _EditorState extends State<Editor> {
     // Check is editing
     editorFocusNode.addListener(() {
       if (editorFocusNode.hasFocus) setState(() => isEditing = true);
+      if (!editorFocusNode.hasFocus) setState(() => isEditing = false);
     });
 
     Widget titleTextField = TitleWidget(titleController: _titleController);
+
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            if (isChanged.value) {
-              // Show confirmation dialog
-              showDialog(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text('Unsaved Changes'),
-                  content: Text(
-                      'You have unsaved changes. Do you want to save them?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        saveContent();
-                        showToaster(text: 'Your note has been saved');
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pop(); // Close editor
-                      },
-                      child: Text('Save'),
-                    ),
-                  ],
-                ),
-              );
-            } else {
-              Navigator.of(context).pop(); // Close editor
-            }
-          },
-        ),
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        elevation: 6,
-        shadowColor: Colors.grey.withAlpha(128),
-        actions: [
-          ValueListenableBuilder(
-            valueListenable: isChanged,
-            builder: (context, changed, child) => changed || widget.isNew
-                ? IconButton(
-                    onPressed: () {
-                      // Save the content
-                      saveContent();
-                      showToaster(text: 'Your note has been saved');
-                      refreshWhenSave();
-                    },
-                    icon: const Icon(Icons.done),
-                  )
-                : Container(),
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              if (isChanged.value) {
+                // Show confirmation dialog
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text('Unsaved Changes'),
+                    content: Text(
+                        'You have unsaved changes. Do you want to save them?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          saveContent();
+                          showToaster(text: 'Your note has been saved');
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop(); // Close editor
+                        },
+                        child: Text('Save'),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                Navigator.of(context).pop(); // Close editor
+              }
+            },
           ),
-          !widget.isNew
-              ? PopupMenuButton<int>(
-                  icon: Icon(Icons.more_vert),
-                  itemBuilder: (context) => [
-                        PopupMenuItem(
-                          onTap: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text('Delete Note'),
-                                content: Text(
-                                    'Are you sure you want to delete this note?'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(),
-                                    child: Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Database database = Database();
-                                      database.deleteNote(id: widget.note.id);
-                                      context.read<AppProvider>().refresh();
-                                      context
-                                          .read<AppProvider>()
-                                          .refreshFolder();
-                                      showToaster(
-                                          text: 'Your note has been deleted');
-                                      // Close dialog and leave editor
-                                      Navigator.of(context).pop();
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text('Delete',
-                                        style: TextStyle(color: Colors.red)),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                          value: 1,
-                          child: Row(
-                            children: [
-                              Icon(Icons.delete, color: Colors.black),
-                              SizedBox(width: 8),
-                              Text('Delete Note'),
-                            ],
-                          ),
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          elevation: 6,
+          shadowColor: Colors.grey.withAlpha(128),
+          actions: [editorAction(), editorPopUp(folderList)],
+          title: const Text('MeloEditor'),
+        ),
+        body: Container(
+          color: Colors.white,
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  Toolbar(controller: _controller, deviceType: deviceType),
+                  TitleWidget(titleController: _titleController),
+                  Expanded(
+                    child: QuillEditor.basic(
+                      controller: _controller,
+                      focusNode: editorFocusNode,
+                      config: const QuillEditorConfig(),
+                    ),
+                  ),
+                ],
+              ),
+              Align(
+                  alignment: Alignment.bottomCenter,
+                  child: mobileToolbar(deviceType))
+            ],
+          ),
+        ));
+  }
+
+  Widget editorPopUp(List<FolderModel> folderList) {
+    return !widget.isNew
+        ? PopupMenuButton<int>(
+            icon: Icon(Icons.more_vert),
+            itemBuilder: (context) => [
+                  PopupMenuItem(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Text('Delete Note'),
+                          content: Text(
+                              'Are you sure you want to delete this note?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Database database = Database();
+                                database.deleteNote(id: widget.note.id);
+                                context.read<AppProvider>().refresh();
+                                context.read<AppProvider>().refreshFolder();
+                                showToaster(text: 'Your note has been deleted');
+                                // Close dialog and leave editor
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('Delete',
+                                  style: TextStyle(color: Colors.red)),
+                            ),
+                          ],
                         ),
-                        // Add to Folder
-                        PopupMenuItem(
-                          onTap: () {
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return SimpleDialog(
-                                      title: Text('Select Folder'),
-                                      children: [
-                                        ...folderList.map((folder) {
-                                          return SimpleDialogOption(
-                                            onPressed: () {
-                                              // Handle folder selection here
-                                              List noteInFolder =
-                                                  folder.getNoteIncluded;
-                                              // Prevent id contained
-                                              if (noteInFolder
-                                                  .contains(widget.note.id)) {
-                                                showToaster(
-                                                    text:
-                                                        'Your note has been added to ${folder.title}');
-                                                Navigator.of(context).pop();
-                                                return;
-                                              } else {
-                                                folder.addNote(
-                                                    noteId: widget.note.id);
-                                                context
-                                                    .read<AppProvider>()
-                                                    .refreshFolder();
-                                                showToaster(
-                                                    text:
-                                                        'Your note has been added ${folder.title}');
-                                                Navigator.of(context).pop();
-                                              }
-                                              //else update folder's note included
-                                            },
-                                            child: Center(
-                                                child: Text(folder.title)),
-                                          );
-                                        })
-                                      ],
+                      );
+                    },
+                    value: 1,
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete, color: Colors.black),
+                        SizedBox(width: 8),
+                        Text('Delete Note'),
+                      ],
+                    ),
+                  ),
+                  // Add to Folder
+                  PopupMenuItem(
+                    onTap: () {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return SimpleDialog(
+                                title: Text('Select Folder'),
+                                children: [
+                                  ...folderList.map((folder) {
+                                    return SimpleDialogOption(
+                                      onPressed: () {
+                                        // Handle folder selection here
+                                        List noteInFolder =
+                                            folder.getNoteIncluded;
+                                        // Prevent id contained
+                                        if (noteInFolder
+                                            .contains(widget.note.id)) {
+                                          showToaster(
+                                              text:
+                                                  'Your note has been added to ${folder.title}');
+                                          Navigator.of(context).pop();
+                                          return;
+                                        } else {
+                                          folder.addNote(
+                                              noteId: widget.note.id);
+                                          context
+                                              .read<AppProvider>()
+                                              .refreshFolder();
+                                          showToaster(
+                                              text:
+                                                  'Your note has been added ${folder.title}');
+                                          Navigator.of(context).pop();
+                                        }
+                                        //else update folder's note included
+                                      },
+                                      child: Center(child: Text(folder.title)),
                                     );
-                                  });
-                            });
-                          },
-                          value: 2,
-                          child: Row(
-                            children: [
-                              Icon(Icons.folder, color: Colors.black),
-                              SizedBox(width: 8),
-                              Text('Add to folder'),
-                            ],
-                          ),
-                        ),
-                        PopupMenuItem(
-                          onTap: () {
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return SimpleDialog(
-                                      title: Text(
-                                        'Remove from Folder',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          color: Colors.pink[800],
-                                        ),
-                                      ),
-                                      children: [
-                                        for (var folder in folderList)
-                                          if (folder.getNoteIncluded
-                                              .contains(widget.note.id))
-                                            SimpleDialogOption(
-                                              onPressed: () {
-                                                // Remove note from folder
-                                                folder.removeNote(
-                                                    noteId: widget.note.id);
-
-                                                showToaster(
-                                                    text:
-                                                        'Your note has been removed from ${folder.title}');
-                                                context
-                                                    .read<AppProvider>()
-                                                    .refresh();
-                                                context
-                                                    .read<AppProvider>()
-                                                    .refreshFolder();
-
-                                                Navigator.of(context).pop();
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: Center(
-                                                  child: Text(folder.title)),
-                                            ),
-                                      ]);
-                                },
+                                  })
+                                ],
                               );
                             });
-                          },
-                          value: 3,
-                          child: Row(
-                            children: [
-                              Icon(Icons.drive_file_move_rtl_outlined,
-                                  color: Colors.pink[800]),
-                              SizedBox(width: 8),
-                              Text('Remove from Folder'),
-                            ],
-                          ),
-                        ),
-                      ])
-              : Container()
-        ],
-        title: const Text('MeloEditor'),
-      ),
-      body: Container(
-        color: Colors.white,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Column(
-              children: [
-                deviceType == DeviceType.windows
-                    ? Toolbar(
-                        controller: _controller,
-                        deviceType: deviceType,
-                      )
-                    : Container(),
-                titleTextField,
-                // EDITOR
-                // Expanded(
-                //   child: Container(
-                //       padding: const EdgeInsets.symmetric(
-                //           vertical: 8, horizontal: 16),
-                //       child: Container()
-                //       //  QuillEditor.basic(
-                //       //   focusNode: editorFocusNode,
-                //       //   config: QuillEditorConfig(
-                //       //     placeholder: 'Write down your note',
-                //       //   ),
-                //       //   controller: _controller,
-                //       ),
-                // ),
-              ],
-            ),
+                      });
+                    },
+                    value: 2,
+                    child: Row(
+                      children: [
+                        Icon(Icons.folder, color: Colors.black),
+                        SizedBox(width: 8),
+                        Text('Add to folder'),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    onTap: () {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return SimpleDialog(
+                                title: Text(
+                                  'Remove from Folder',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.pink[800],
+                                  ),
+                                ),
+                                children: [
+                                  for (var folder in folderList)
+                                    if (folder.getNoteIncluded
+                                        .contains(widget.note.id))
+                                      SimpleDialogOption(
+                                        onPressed: () {
+                                          // Remove note from folder
+                                          folder.removeNote(
+                                              noteId: widget.note.id);
 
-            // Toolbar mobile
-            deviceType == DeviceType.mobile || deviceType == DeviceType.tablet
-                ? mobileToolbar(deviceType)
-                : Container()
-          ],
-        ),
-      ),
+                                          showToaster(
+                                              text:
+                                                  'Your note has been removed from ${folder.title}');
+                                          context.read<AppProvider>().refresh();
+                                          context
+                                              .read<AppProvider>()
+                                              .refreshFolder();
+
+                                          Navigator.of(context).pop();
+                                          Navigator.of(context).pop();
+                                        },
+                                        child:
+                                            Center(child: Text(folder.title)),
+                                      ),
+                                ]);
+                          },
+                        );
+                      });
+                    },
+                    value: 3,
+                    child: Row(
+                      children: [
+                        Icon(Icons.drive_file_move_rtl_outlined,
+                            color: Colors.pink[800]),
+                        SizedBox(width: 8),
+                        Text('Remove from Folder'),
+                      ],
+                    ),
+                  ),
+                ])
+        : Container();
+  }
+
+  //CHeck if the content has changed
+  ValueListenableBuilder<bool> editorAction() {
+    return ValueListenableBuilder(
+      valueListenable: isChanged,
+      builder: (context, changed, child) => changed || widget.isNew
+          ? IconButton(
+              onPressed: () {
+                // Save the content
+                saveContent();
+                showToaster(text: 'Your note has been saved');
+                refreshWhenSave();
+              },
+              icon: const Icon(Icons.done),
+            )
+          : Container(),
     );
   }
 
   Widget mobileToolbar(DeviceType deviceType) {
+    if (deviceType == DeviceType.windows) return Container();
     return isEditing
         ? Column(
             children: [
@@ -412,8 +399,8 @@ class Toolbar extends StatelessWidget {
           boxShadow: [
             BoxShadow(
                 color: deviceType == DeviceType.mobile
-                    ? Colors.grey
-                    : Colors.white,
+                    ? Colors.white
+                    : Colors.grey,
                 blurRadius: 20,
                 offset: Offset(0, 2),
                 spreadRadius: 3),
@@ -446,22 +433,22 @@ class TitleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      child: TextField(
-        style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
-            fontSize: 30,
-            fontWeight: FontWeight.w500),
-        controller: _titleController,
-        decoration: InputDecoration(
-          hintStyle: TextStyle(color: Colors.grey),
-          contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-          border: InputBorder.none,
-          fillColor: HexColor('#FFFFFF'),
-          hintText: 'Title',
-          hoverColor: Colors.transparent,
-        ),
+    return TextField(
+      style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface,
+          fontSize: 30,
+          fontWeight: FontWeight.w500),
+      controller: _titleController,
+      decoration: InputDecoration(
+        hintStyle: TextStyle(color: Colors.grey),
+        contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+        border: InputBorder.none,
+        fillColor: HexColor('#FFFFFF'),
+        hintText: 'Title',
+        hoverColor: Colors.transparent,
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
+        disabledBorder: InputBorder.none,
       ),
     );
   }

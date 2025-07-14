@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 import 'package:melonote/myobjectbox.dart';
-import 'package:melonote/src/model/note_model.dart';
-import 'package:melonote/src/section/editor.dart';
 import 'package:melonote/src/theme.dart';
 import 'package:melonote/src/provider/app_provider.dart';
 import 'package:melonote/src/screen/desktop.dart';
@@ -50,14 +48,6 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     // Database().wipeAllData(); // Uncomment to wipe all data for testing
@@ -69,14 +59,17 @@ class _MainAppState extends State<MainApp> {
         builder: (ctx, child) {
           final screenwidth = ScreenUtil().screenWidth;
           DeviceType deviceType = context.read<AppProvider>().getDeviceType();
-          bool isMobileOrTable = deviceType == DeviceType.mobile ||
-              deviceType == DeviceType.tablet;
-
           debugPrint(screenwidth.toString());
           debugPrint(deviceType.toString());
 
           return ToastificationWrapper(
             child: MaterialApp(
+              routes: {
+                // TODO implement these routes and functionalities
+                '/search': (context) => ListView(),
+                '/transfer': (context) => Container(),
+                '/settings': (context) => Container(),
+              },
               localizationsDelegates: const [
                 FlutterQuillLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,
@@ -86,60 +79,6 @@ class _MainAppState extends State<MainApp> {
               scrollBehavior: MyCustomScrollBehavior(),
               theme: myTheme,
               home: Scaffold(
-                floatingActionButtonLocation: isMobileOrTable
-                    ? FloatingActionButtonLocation.centerDocked
-                    : null,
-                floatingActionButton: isMobileOrTable
-                    ? Container(
-                        decoration: BoxDecoration(boxShadow: [
-                          BoxShadow(
-                            color: Theme.of(context)
-                                .primaryColor
-                                .withBlue(255)
-                                .withAlpha(200),
-                            spreadRadius: 1,
-                            blurRadius: 30,
-                            offset: const Offset(
-                                0, 0), // changes position of shadow
-                          ),
-                        ]),
-                        child: Builder(
-                          builder: (ctx) => FloatingActionButton(
-                            backgroundColor: Theme.of(context).primaryColor,
-                            child: Icon(Icons.add),
-                            onPressed: () {
-                              Navigator.push(
-                                ctx,
-                                MaterialPageRoute(
-                                  builder: (context) => Editor(
-                                    note: Note.newNote(),
-                                    isNew: true,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      )
-                    : null,
-                bottomNavigationBar: isMobileOrTable
-                    ? BottomNavigationBar(
-                        type: BottomNavigationBarType.fixed,
-                        showSelectedLabels: false,
-                        currentIndex: _selectedIndex,
-                        onTap: _onItemTapped,
-                        items: const [
-                          BottomNavigationBarItem(
-                              icon: Icon(Icons.book), label: 'Notes'),
-                          BottomNavigationBarItem(
-                              icon: Icon(Icons.search_sharp), label: 'Search'),
-                          BottomNavigationBarItem(
-                              icon: Icon(Icons.ios_share), label: 'Share'),
-                          BottomNavigationBarItem(
-                              icon: Icon(Icons.settings), label: 'Settings'),
-                        ],
-                      )
-                    : null,
                 body: Container(
                   color: Colors.black,
                   child: Builder(

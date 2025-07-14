@@ -13,7 +13,10 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_animate: ^4.5.0
-  flutter_quill: ^11.4.1
+  flutter_quill:
+    git:
+      url: https://github.com/theniceboy/flutter-quill
+      ref: 5ff5967
   flutter_screenutil: ^5.9.1
   flutter_svg: ^2.1.0
   gap: ^3.0.1

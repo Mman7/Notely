@@ -8,8 +8,10 @@ import 'package:melonote/src/provider/app_provider.dart';
 import 'package:melonote/src/widget/note_preview.dart';
 
 class NoteList extends StatefulWidget {
-  NoteList({super.key, this.folder});
+  NoteList({super.key, this.folder, this.isSearching});
   FolderModel? folder;
+  bool? isSearching;
+
   @override
   State<NoteList> createState() => _NoteListState();
 }
@@ -20,24 +22,35 @@ class _NoteListState extends State<NoteList> {
   List<Note> _noteList = [];
   List<Note> _backupList = [];
 
+  searchUp(List list) {
+    String seachText = _searchController.text;
+    return list.where((note) => note.title.contains(seachText)).toList();
+  }
+
+  List<Note> getData(folder) {
+    return Database()
+        .filterNoteByFolder(ids: widget.folder?.getNoteIncluded)
+        .whereType<Note>()
+        .toList();
+  }
+
   @override
   void initState() {
+    List<Note> allNotes = context.read<AppProvider>().noteList;
+    // intialize the note list based on whether a folder is provided
+    if (widget.folder == null) {
+      _noteList = allNotes;
+      _backupList = allNotes;
+    } else {
+      _noteList = getData(widget.folder);
+      _backupList = getData(widget.folder);
+    }
     super.initState();
-    // Initialize notes based on folder or all notes
-
+    // CHECK if the widget is searching show up search , else show up all notes
     _searchController.addListener(() {
-      if (_searchController.text.isEmpty) {
-        setState(() {
-          _noteList = _backupList;
-        });
-      } else {
-        List<Note> list = _backupList
-            .where((note) => note.title.contains(_searchController.text))
-            .toList();
-        setState(() {
-          _noteList = list;
-        });
-      }
+      String text = _searchController.text;
+      if (text.isNotEmpty) setState(() => _noteList = searchUp(_noteList));
+      if (text.isEmpty) setState(() => _noteList = _backupList);
     });
   }
 
@@ -52,25 +65,6 @@ class _NoteListState extends State<NoteList> {
   @override
   Widget build(BuildContext context) {
     DeviceType deviceType = context.watch<AppProvider>().getDeviceType();
-    final appProvider = context.watch<AppProvider>();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.folder != null) {
-        List<Note> data = Database()
-            .filterNoteByFolder(ids: widget.folder?.getNoteIncluded)
-            .whereType<Note>()
-            .toList();
-
-        setState(() {
-          _noteList = data;
-          _backupList = data;
-        });
-      } else {
-        setState(() {
-          _noteList = appProvider.noteList;
-          _backupList = appProvider.noteList;
-        });
-      }
-    });
 
     bool isMobileOrTable =
         deviceType == DeviceType.mobile || deviceType == DeviceType.tablet;

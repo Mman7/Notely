@@ -64,12 +64,6 @@ class _MainAppState extends State<MainApp> {
 
           return ToastificationWrapper(
             child: MaterialApp(
-              routes: {
-                // TODO implement these routes and functionalities
-                '/search': (context) => ListView(),
-                '/transfer': (context) => Container(),
-                '/settings': (context) => Container(),
-              },
               localizationsDelegates: const [
                 FlutterQuillLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,

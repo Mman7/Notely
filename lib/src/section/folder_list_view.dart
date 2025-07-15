@@ -13,8 +13,8 @@ class FolderListView extends StatelessWidget {
   final TextEditingController _controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    List<FolderModel> folderList = context.watch<AppProvider>().folderList;
-    List<Note> noteList = context.watch<AppProvider>().noteList;
+    List<FolderModel> allFolders = context.watch<AppProvider>().folderList;
+    List<Note> allNotes = context.watch<AppProvider>().noteList;
 
     int checkScreen() {
       DeviceType deviceType = context.read<AppProvider>().getDeviceType();
@@ -25,36 +25,52 @@ class FolderListView extends StatelessWidget {
       return 2;
     }
 
-    return Container(
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Folders',
+          style: TextStyle(
+              color: Colors.white,
+              fontSize: 25.sp,
+              fontWeight: FontWeight.bold),
+        ),
+        elevation: 10, // Adds shadow
+        backgroundColor: Theme.of(context)
+            .colorScheme
+            .primary, // Use theme color for better shadow appearance
+        shadowColor: Colors.black, // Optional: customize shadow color
       ),
-      child: SizedBox(
-        height: ScreenUtil().screenHeight * 0.85,
-        child: GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: checkScreen(),
-              mainAxisSpacing: 5,
-              crossAxisSpacing: 15,
-            ),
-            itemCount: folderList.length + 2, // 1 for header 1 for footer
-            itemBuilder: (context, index) {
-              // Header
-              if (index == 0) {
-                return FolderHeader(listCount: noteList.length);
-              }
-              // Footer
-              if (index == folderList.length + 1) {
-                return addNewFolderView(context);
-              }
-              var item = folderList[index - 1];
+      body: Container(
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+        ),
+        child: SizedBox(
+          height: ScreenUtil().screenHeight * 0.85,
+          child: GridView.builder(
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: checkScreen(),
+                mainAxisSpacing: 5,
+                crossAxisSpacing: 15,
+              ),
+              itemCount: allFolders.length + 2, // 1 for header 1 for footer
+              itemBuilder: (context, index) {
+                // Header
+                if (index == 0) {
+                  return FolderHeader(listCount: allNotes.length);
+                }
+                // Footer
+                if (index == allFolders.length + 1) {
+                  return addNewFolderView(context);
+                }
+                var item = allFolders[index - 1];
 
-              return FolderView(
-                folder: item,
-              );
-            }),
+                return FolderView(
+                  folder: item,
+                );
+              }),
+        ),
       ),
     );
   }

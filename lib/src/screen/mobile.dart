@@ -3,9 +3,26 @@ import 'package:melonote/src/model/note_model.dart';
 import 'package:melonote/src/section/editor.dart';
 import 'package:melonote/src/section/folder_list_view.dart';
 import 'package:melonote/src/section/note_list.dart';
+import 'package:melonote/src/section/settings_page.dart';
+import 'package:melonote/src/section/transfer_page.dart';
 
-class MobileLayout extends StatelessWidget {
+class MobileLayout extends StatefulWidget {
   const MobileLayout({super.key});
+
+  @override
+  State<MobileLayout> createState() => _MobileLayoutState();
+}
+
+class _MobileLayoutState extends State<MobileLayout> {
+  int _selectedIndex = 0;
+  List pages = [
+    FolderListView(),
+    NoteList(
+      isSearching: true,
+    ),
+    TransferPage(),
+    SettingsPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +58,7 @@ class MobileLayout extends StatelessWidget {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         showSelectedLabels: false,
-        currentIndex: 0, // Replace with your selected index logic
+        currentIndex: _selectedIndex,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Notes'),
           BottomNavigationBarItem(
@@ -51,36 +68,11 @@ class MobileLayout extends StatelessWidget {
               icon: Icon(Icons.settings), label: 'Settings'),
         ],
         onTap: (index) {
-          //TODO implement navigation logic
           // Handle navigation here
-          if (index == 0) {
-            // Navigator.pushNamed(context, '/transfer');
-          }
-          if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => NoteList(
-                        isSearching: true,
-                      )),
-            );
-          }
-          if (index == 2) {
-            // Navigator.pushNamed(context, '/transfer');
-          }
-          if (index == 2) {
-            // Navigator.pushNamed(context, '/settings');
-          }
+          setState(() => _selectedIndex = index);
         },
       ),
-      body: Container(
-        color: Theme.of(context).colorScheme.surface,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [FolderListView()],
-          ),
-        ),
-      ),
+      body: pages[_selectedIndex],
     );
   }
 }

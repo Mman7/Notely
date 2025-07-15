@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:melonote/src/model/folder_model.dart';
-
 import 'package:melonote/src/model/note_model.dart';
 import 'package:melonote/src/modules/local_database.dart';
 
 class AppProvider extends ChangeNotifier {
   List<Note> noteList = [];
   List<FolderModel> folderList = [];
-  final database = Database();
+  int pageIndex = 0;
+  Database database = Database();
+
+  setPageIndex(int index) {
+    pageIndex = index;
+    notifyListeners();
+  }
 
   getDeviceType() {
     double screenWidth = ScreenUtil().screenWidth;

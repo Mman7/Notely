@@ -12,6 +12,7 @@ import 'package:melonote/src/utils/myobjectbox.dart';
 import 'package:toastification/toastification.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:window_manager/window_manager.dart';
+import 'dart:io' show Platform;
 
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods like buildOverscrollIndicator and buildScrollbar
@@ -25,10 +26,10 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await windowManager.ensureInitialized();
 
   ///* Commented out for now
   // if (Platform.isWindows) {
+  //  await windowManager.ensureInitialized();
   //   WindowManager.instance.setMinimumSize(const Size(1200, 600));
   //   WindowManager.instance.setMaximumSize(const Size(1200, 600));
   // }

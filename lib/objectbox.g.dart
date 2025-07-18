@@ -81,7 +81,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(7, 803764365636331852),
     name: 'FolderModel',
-    lastPropertyId: const obx_int.IdUid(3, 4894203926291146665),
+    lastPropertyId: const obx_int.IdUid(4, 4222835027701047970),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -99,6 +99,12 @@ final _entities = <obx_int.ModelEntity>[
       obx_int.ModelProperty(
         id: const obx_int.IdUid(3, 4894203926291146665),
         name: 'noteInclude',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 4222835027701047970),
+        name: 'uuid',
         type: 9,
         flags: 0,
       ),
@@ -268,14 +274,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
           rootOffset,
           14,
         );
-        final dateCreatedParam =
-            dateCreatedValue == null
-                ? null
-                : DateTime.fromMillisecondsSinceEpoch(dateCreatedValue);
-        final lastestModifiedParam =
-            lastestModifiedValue == null
-                ? null
-                : DateTime.fromMillisecondsSinceEpoch(lastestModifiedValue);
+        final dateCreatedParam = dateCreatedValue == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(dateCreatedValue);
+        final lastestModifiedParam = lastestModifiedValue == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(lastestModifiedValue);
         final object = Note(
           id: idParam,
           uuid: uuidParam,
@@ -300,14 +304,15 @@ obx_int.ModelDefinition getObjectBoxModel() {
       },
       objectToFB: (FolderModel object, fb.Builder fbb) {
         final titleOffset = fbb.writeString(object.title);
-        final noteIncludeOffset =
-            object.noteInclude == null
-                ? null
-                : fbb.writeString(object.noteInclude!);
-        fbb.startTable(4);
+        final noteIncludeOffset = object.noteInclude == null
+            ? null
+            : fbb.writeString(object.noteInclude!);
+        final uuidOffset = fbb.writeString(object.uuid);
+        fbb.startTable(5);
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, titleOffset);
         fbb.addOffset(2, noteIncludeOffset);
+        fbb.addOffset(3, uuidOffset);
         fbb.finish(fbb.endTable());
         return object.id;
       },
@@ -326,11 +331,15 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final noteIncludeParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 8);
-        final object = FolderModel(
-          id: idParam,
-          title: titleParam,
-          noteInclude: noteIncludeParam,
-        );
+        final object =
+            FolderModel(
+                id: idParam,
+                title: titleParam,
+                noteInclude: noteIncludeParam,
+              )
+              ..uuid = const fb.StringReader(
+                asciiOptimization: true,
+              ).vTableGet(buffer, rootOffset, 10, '');
 
         return object;
       },
@@ -394,5 +403,10 @@ class FolderModel_ {
   /// See [FolderModel.noteInclude].
   static final noteInclude = obx.QueryStringProperty<FolderModel>(
     _entities[1].properties[2],
+  );
+
+  /// See [FolderModel.uuid].
+  static final uuid = obx.QueryStringProperty<FolderModel>(
+    _entities[1].properties[3],
   );
 }

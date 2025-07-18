@@ -2,7 +2,8 @@ import 'dart:io';
 
 import 'package:connectme/connectme.dart';
 
-class TCPServer {
+//TODO implement this in the main app
+class WebSocketServer {
   void startServer() async {
     final ConnectMeServer server = await ConnectMe.serve(
       InternetAddress.anyIPv4,
@@ -24,14 +25,13 @@ class TCPServer {
   }
 }
 
-class TCPClient {
+class WebSocketClient {
   String serverAddress;
-  TCPClient({required this.serverAddress});
+  WebSocketClient({required this.serverAddress});
 
   Future<ConnectMeClient> connect() async {
     final ConnectMeClient client =
         await ConnectMe.connect('ws://$serverAddress');
-
     // Listen for reverse String messages from the server.
     client.listen<String>((String message) {
       print('Client received: $message');

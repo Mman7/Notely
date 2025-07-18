@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:network_info_plus/network_info_plus.dart';
-import 'package:melonote/src/modules/tcp_socket.dart';
+import 'package:melonote/src/modules/web_socket.dart';
+// MAIN SOCKET
 
 // Phone → UDP broadcast → “Hello, server?”
 //
@@ -35,7 +36,7 @@ class SocketClient {
           print('from Cli Server found at $serverIp:$tcpPort');
           udpSocket.close();
           //TODO implement Data model and send it
-          TCPClient(serverAddress: '$serverIp:$tcpPort')
+          WebSocketClient(serverAddress: '$serverIp:$tcpPort')
               .connect()
               .then((client) => client.send('hey server im client'));
         }
@@ -46,9 +47,10 @@ class SocketClient {
 
 class SocketServer {
   startServer() async {
-    //// TCP
-    TCPServer().startServer();
-    //// UDP
+    /// Web Socket
+    WebSocketServer().startServer();
+
+    /// UDP
     final udpSocket =
         await RawDatagramSocket.bind(InternetAddress.anyIPv4, 8888);
     print('UDP server listening on port 8888');

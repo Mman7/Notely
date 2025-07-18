@@ -2,13 +2,20 @@ import 'dart:convert';
 import 'package:objectbox/objectbox.dart';
 import 'package:melonote/src/model/note_model.dart';
 import 'package:melonote/src/modules/local_database.dart';
+import 'package:melonote/objectbox.g.dart';
+import 'package:uuid/uuid.dart';
 
 @Entity()
 class FolderModel {
-  FolderModel({this.id = 0, required this.title, this.noteInclude});
+  FolderModel({
+    this.id = 0,
+    required this.title,
+    this.noteInclude,
+  });
   @Id()
   int id;
   String title;
+  String uuid = Uuid().v4(); // Unique identifier for the folder
   // List covert into string
   String? noteInclude;
   get getNoteIncluded => _getConvertNoteIncluded();
@@ -44,5 +51,15 @@ class FolderModel {
     }
     noteInclude = jsonEncode(newList);
     Database().updateFolder(folder: this);
+  }
+
+  //TODO
+  toJson() {
+    return {
+      'id': 0,
+      'title': title,
+      'uuid': uuid,
+      'noteInclude': noteInclude,
+    };
   }
 }

@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:melonote/src/model/folder_model.dart';
+import 'package:melonote/src/modules/local_database.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:melonote/src/modules/web_socket.dart';
 // MAIN SOCKET
@@ -37,8 +39,14 @@ class SocketClient {
           udpSocket.close();
           //TODO implement Data model and send it
           WebSocketClient(serverAddress: '$serverIp:$tcpPort')
+              // WebSocketClient(serverAddress: '192.168.0.109:${4040}')
               .connect()
-              .then((client) => client.send('hey server im client'));
+              .then((client) {
+            // TODO implement this data
+            List<FolderModel> notes = Database().getAllFolder();
+            client.send('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+            // client.send('hey server im client');
+          });
         }
       }
     });
@@ -46,9 +54,9 @@ class SocketClient {
 }
 
 class SocketServer {
+  String clientIp = '';
   startServer() async {
     /// Web Socket
-    WebSocketServer().startServer();
 
     /// UDP
     final udpSocket =
@@ -60,10 +68,18 @@ class SocketServer {
         if (datagram == null) return;
 
         final message = String.fromCharCodes(datagram.data);
+        clientIp = datagram.address.address;
         print(
             'from Serv Received: $message from ${datagram.address.address}:${datagram.port}');
 
         if (message == 'DISCOVER_SERVER') {
+          // setup server
+          WebSocketServer(clientIp: clientIp).startServer().then((server) {
+            server.listen<String>((data, client) {
+              print('Server received: $data');
+              client.send('FUCK YOU NI');
+            });
+          });
           final response = 'SERVER_HERE:4040'; // include TCP port
           udpSocket.send(response.codeUnits, datagram.address, datagram.port);
 

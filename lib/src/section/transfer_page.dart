@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:melonote/src/modules/socket.dart';
 
 class TransferPage extends StatelessWidget {
   const TransferPage({super.key});
-  //TODO implement
 
   @override
   Widget build(BuildContext context) {
@@ -20,18 +20,20 @@ class TransferPage extends StatelessWidget {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            TextField(
-              decoration: const InputDecoration(
-                labelText: 'Destination',
-                border: OutlineInputBorder(),
-              ),
+            ElevatedButton(
+              // Send Data
+              onPressed: () {
+                SocketClient().connect();
+              },
+              child: const Text('Send'),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
+              // Host and waiting for data
               onPressed: () {
-                // TODO: Implement transfer logic
+                SocketServer().startServer();
               },
-              child: const Text('Transfer'),
+              child: const Text('Receive'),
             ),
           ],
         ),

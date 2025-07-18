@@ -36,6 +36,9 @@ class _NoteListState extends State<NoteList> {
 
   @override
   void initState() {
+    if (widget.isSearching != null) {
+      _isSearching = widget.isSearching!;
+    }
     List<Note> allNotes = context.read<AppProvider>().noteList;
     // intialize the note list based on whether a folder is provided
     if (widget.folder == null) {
@@ -75,8 +78,15 @@ class _NoteListState extends State<NoteList> {
               Icons.arrow_back_ios_new_rounded,
             ),
             onPressed: () {
+              int index = context.read<AppProvider>().pageIndex;
               if (_isSearching) setState(() => _isSearching = !_isSearching);
-              Navigator.of(context).pop();
+              if (index != 0) {
+                context.read<AppProvider>().setPageIndex(0);
+                return;
+              } else {
+                context.read<AppProvider>().setPageIndex(0);
+                Navigator.of(context).pop();
+              }
             },
           ),
           elevation: 7.0,
@@ -159,7 +169,8 @@ class _NoteListState extends State<NoteList> {
                         Navigator.of(context).pop();
                         Navigator.of(context).pop();
                       },
-                      child: Text('Yes', style: TextStyle(color: Colors.white)),
+                      child: Text('Comfirm',
+                          style: TextStyle(color: Colors.white)),
                     ),
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),

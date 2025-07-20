@@ -118,8 +118,6 @@ class _EditorState extends State<Editor> {
       if (!editorFocusNode.hasFocus) setState(() => isEditing = false);
     });
 
-    Widget titleTextField = TitleWidget(titleController: _titleController);
-
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -165,22 +163,41 @@ class _EditorState extends State<Editor> {
           title: const Text('MeloEditor'),
         ),
         body: Container(
+          // padding: EdgeInsets.symmetric(horizontal: 20),
           color: Colors.white,
           child: Stack(
             children: [
               Column(
                 children: [
-                  Toolbar(controller: _controller, deviceType: deviceType),
-                  TitleWidget(titleController: _titleController),
+                  if (deviceType == DeviceType.windows)
+                    Toolbar(controller: _controller, deviceType: deviceType),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      children: [
+                        TitleWidget(titleController: _titleController),
+                        Divider(
+                          thickness: 1,
+                          height: 1,
+                          color: Colors.grey[300],
+                        ),
+                      ],
+                    ),
+                  ),
                   Expanded(
-                    child: QuillEditor.basic(
-                      controller: _controller,
-                      focusNode: editorFocusNode,
-                      config: const QuillEditorConfig(),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 16),
+                      child: QuillEditor.basic(
+                        controller: _controller,
+                        focusNode: editorFocusNode,
+                        config: const QuillEditorConfig(),
+                      ),
                     ),
                   ),
                 ],
               ),
+              //TODO fix when press on toolbar the editor will lose focus
               Align(
                   alignment: Alignment.bottomCenter,
                   child: mobileToolbar(deviceType))
@@ -391,6 +408,10 @@ class Toolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color color =
+        deviceType == DeviceType.mobile || deviceType == DeviceType.tablet
+            ? Colors.grey
+            : Colors.white;
     return Container(
         padding: EdgeInsets.symmetric(vertical: 10),
         width: double.infinity,
@@ -398,12 +419,10 @@ class Toolbar extends StatelessWidget {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-                color: deviceType == DeviceType.mobile
-                    ? Colors.white
-                    : Colors.grey,
-                blurRadius: 20,
+                color: color,
+                blurRadius: 15,
                 offset: Offset(0, 2),
-                spreadRadius: 3),
+                spreadRadius: 2),
           ],
         ),
         child: QuillSimpleToolbar(
@@ -437,7 +456,7 @@ class TitleWidget extends StatelessWidget {
       style: TextStyle(
           color: Theme.of(context).colorScheme.onSurface,
           fontSize: 30,
-          fontWeight: FontWeight.w500),
+          fontWeight: FontWeight.w700),
       controller: _titleController,
       decoration: InputDecoration(
         hintStyle: TextStyle(color: Colors.grey),

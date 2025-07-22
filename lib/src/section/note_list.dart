@@ -36,15 +36,9 @@ class _NoteListState extends State<NoteList> {
 
   @override
   void initState() {
-    if (widget.isSearching != null) {
-      _isSearching = widget.isSearching!;
-    }
-    List<Note> allNotes = context.read<AppProvider>().noteList;
     // intialize the note list based on whether a folder is provided
-    if (widget.folder == null) {
-      _noteList = allNotes;
-      _backupList = allNotes;
-    } else {
+
+    if (widget.folder != null) {
       _noteList = getData(widget.folder);
       _backupList = getData(widget.folder);
     }
@@ -68,6 +62,16 @@ class _NoteListState extends State<NoteList> {
   @override
   Widget build(BuildContext context) {
     DeviceType deviceType = context.watch<AppProvider>().getDeviceType();
+    if (widget.folder == null && !_isSearching) {
+      List<Note> allNotes = context.watch<AppProvider>().noteList;
+      _noteList = allNotes;
+      _backupList = allNotes;
+      // Initializing the note list based on the folder
+      // then check if the widget is searching
+      if (widget.isSearching != null) {
+        _isSearching = widget.isSearching!;
+      }
+    }
 
     bool isMobileOrTable =
         deviceType == DeviceType.mobile || deviceType == DeviceType.tablet;

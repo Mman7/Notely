@@ -15,6 +15,7 @@ class Note {
   });
   @Id()
   int id;
+  @Unique()
   String uuid;
   String previewContent;
   String content;
@@ -22,6 +23,18 @@ class Note {
   bool? isBookmark;
   DateTime? dateCreated;
   DateTime? lastestModified;
+
+  toJson() {
+    return {
+      'id': id,
+      'uuid': uuid,
+      'title': title,
+      'content': content,
+      'isBookmark': isBookmark,
+      'dateCreated': dateCreated?.toIso8601String(),
+      'lastestModified': lastestModified?.toIso8601String(),
+    };
+  }
 
   factory Note.newNote() {
     return Note(

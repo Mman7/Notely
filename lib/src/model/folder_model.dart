@@ -14,8 +14,10 @@ class FolderModel {
   });
   @Id()
   int id;
-  String title;
+  @Unique()
   String uuid = Uuid().v4(); // Unique identifier for the folder
+
+  String title;
   // List covert into string
   String? noteInclude;
   get getNoteIncluded => _getConvertNoteIncluded();
@@ -53,10 +55,9 @@ class FolderModel {
     Database().updateFolder(folder: this);
   }
 
-  //TODO
   toJson() {
     return {
-      'id': 0,
+      'id': id,
       'title': title,
       'uuid': uuid,
       'noteInclude': noteInclude,

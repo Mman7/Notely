@@ -80,6 +80,9 @@ class _EditorState extends State<Editor> {
     String title = _titleController.text;
     Delta content = _controller.document.toDelta();
     String preview = _controller.document.toPlainText();
+    preview = preview.length > 100
+        ? preview.substring(0, 100)
+        : preview; // Limit preview to 100 characters
     var json = jsonEncode(content);
 
     Database().saveNote(

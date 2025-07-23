@@ -11,10 +11,10 @@ class WebSocketServer {
       InternetAddress.anyIPv4,
       port: 4040,
       onConnect: (ConnectMeClient client) {
-        print('${clientIp} connected.');
+        print('$clientIp connected.');
       },
       onDisconnect: (ConnectMeClient client) {
-        print('${clientIp} disconnected.');
+        print('$clientIp disconnected.');
       },
       onLog: (p0) => print(p0),
       type: ConnectMeType
@@ -36,6 +36,7 @@ class WebSocketClient {
     client.listen<String>((String message) {
       print('Client received: $message');
     });
+    // client.send('Hello from client!');
     return client;
   }
 }

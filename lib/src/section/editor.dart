@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:provider/provider.dart';
 import 'package:melonote/src/model/folder_model.dart';
 import 'package:melonote/src/model/note_model.dart';
@@ -118,7 +117,6 @@ class _EditorState extends State<Editor> {
     // Check is editing
     editorFocusNode.addListener(() {
       if (editorFocusNode.hasFocus) setState(() => isEditing = true);
-      if (!editorFocusNode.hasFocus) setState(() => isEditing = false);
     });
 
     return Scaffold(
@@ -144,6 +142,7 @@ class _EditorState extends State<Editor> {
                       TextButton(
                         onPressed: () {
                           saveContent();
+                          setState(() => isEditing = false);
                           showToaster(text: 'Your note has been saved');
                           Navigator.of(context).pop();
                           Navigator.of(context).pop(); // Close editor
@@ -158,54 +157,48 @@ class _EditorState extends State<Editor> {
               }
             },
           ),
-          backgroundColor: Colors.white,
           surfaceTintColor: Colors.white,
           elevation: 6,
           shadowColor: Colors.grey.withAlpha(128),
           actions: [editorAction(), editorPopUp(folderList)],
           title: const Text('MeloEditor'),
         ),
-        body: Container(
-          // padding: EdgeInsets.symmetric(horizontal: 20),
-          color: Colors.white,
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  if (deviceType == DeviceType.windows)
-                    Toolbar(controller: _controller, deviceType: deviceType),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      children: [
-                        TitleWidget(titleController: _titleController),
-                        Divider(
-                          thickness: 1,
-                          height: 1,
-                          color: Colors.grey[300],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 16),
-                      child: QuillEditor.basic(
-                        controller: _controller,
-                        focusNode: editorFocusNode,
-                        config: const QuillEditorConfig(),
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                if (deviceType == DeviceType.windows)
+                  Toolbar(controller: _controller, deviceType: deviceType),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    children: [
+                      TitleWidget(titleController: _titleController),
+                      Divider(
+                        thickness: 1,
+                        height: 1,
+                        color: Colors.grey[300],
                       ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 16),
+                    child: QuillEditor.basic(
+                      controller: _controller,
+                      focusNode: editorFocusNode,
+                      config: const QuillEditorConfig(),
                     ),
                   ),
-                ],
-              ),
-              //TODO fix when press on toolbar the editor will lose focus
-              Align(
-                  alignment: Alignment.bottomCenter,
-                  child: mobileToolbar(deviceType))
-            ],
-          ),
+                ),
+              ],
+            ),
+            Align(
+                alignment: Alignment.bottomCenter,
+                child: mobileToolbar(deviceType))
+          ],
         ));
   }
 
@@ -416,7 +409,7 @@ class Toolbar extends StatelessWidget {
             ? Colors.grey
             : Colors.white;
     return Container(
-        padding: EdgeInsets.symmetric(vertical: 10),
+        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -428,20 +421,24 @@ class Toolbar extends StatelessWidget {
                 spreadRadius: 2),
           ],
         ),
-        child: QuillSimpleToolbar(
-            controller: _controller,
-            config: QuillSimpleToolbarConfig(
-              buttonOptions: QuillSimpleToolbarButtonOptions(
-                  base: QuillToolbarBaseButtonOptions(
-                      iconTheme: QuillIconTheme(
-                          iconButtonSelectedData: IconButtonData(
-                              style: ButtonStyle(
-                                  backgroundColor: WidgetStatePropertyAll(
-                                      Theme.of(context)
-                                          .colorScheme
-                                          .primary
-                                          .withAlpha(200))))))),
-            )));
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: QuillSimpleToolbar(
+              controller: _controller,
+              config: QuillSimpleToolbarConfig(
+                axis: Axis.horizontal,
+                buttonOptions: QuillSimpleToolbarButtonOptions(
+                    base: QuillToolbarBaseButtonOptions(
+                        iconTheme: QuillIconTheme(
+                            iconButtonSelectedData: IconButtonData(
+                                style: ButtonStyle(
+                                    backgroundColor: WidgetStatePropertyAll(
+                                        Theme.of(context)
+                                            .colorScheme
+                                            .primary
+                                            .withAlpha(200))))))),
+              )),
+        ));
   }
 }
 
@@ -465,7 +462,7 @@ class TitleWidget extends StatelessWidget {
         hintStyle: TextStyle(color: Colors.grey),
         contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
         border: InputBorder.none,
-        fillColor: HexColor('#FFFFFF'),
+        fillColor: Colors.transparent,
         hintText: 'Title',
         hoverColor: Colors.transparent,
         enabledBorder: InputBorder.none,

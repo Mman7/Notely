@@ -7,6 +7,41 @@ class Database {
   final noteBox = objectbox.store.box<Note>();
   final folderBox = objectbox.store.box<FolderModel>();
 
+  void applyNotes(
+      {required List<Note> notes, required List<FolderModel> folders}) {
+    print('Applying data to database..');
+    List<Note> localNotes = getAllNote();
+    List<FolderModel> localFolders = getAllFolder();
+
+    Set localNoteSet = localNotes.map((n) => n.uuid).toSet();
+    Set localFoldersSet = localFolders.map((n) => n.uuid).toSet();
+
+    // apply notes
+    for (Note i in notes) {
+      if (localNoteSet.contains(i.uuid)) {
+        // Update notes
+        int id = localNotes.where((x) => x.uuid == i.uuid).first.id;
+        i.id = id;
+        noteBox.put(i);
+      } else {
+        // Create a new one
+        noteBox.put(i);
+      }
+    }
+    // apply folders
+    for (FolderModel i in folders) {
+      if (localFoldersSet.contains(i.uuid)) {
+        // Update notes
+        int id = localFoldersSet.where((x) => x.uuid == i.uuid).first.id;
+        i.id = id;
+        folderBox.put(i, mode: PutMode.update);
+      } else {
+        // Create a new one
+        folderBox.put(i, mode: PutMode.insert);
+      }
+    }
+  }
+
   /// only for testing purpose
   wipeAllData() {
     noteBox.removeAll();
@@ -41,6 +76,7 @@ class Database {
     required name,
   }) {
     FolderModel notebook = FolderModel(
+      noteInclude: '',
       title: name,
     );
     folderBox.put(notebook);

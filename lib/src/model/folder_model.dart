@@ -10,7 +10,7 @@ class FolderModel {
   FolderModel({
     this.id = 0,
     required this.title,
-    this.noteInclude,
+    required this.noteInclude,
   });
   @Id()
   int id;

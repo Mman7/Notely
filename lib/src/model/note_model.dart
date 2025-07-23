@@ -30,6 +30,7 @@ class Note {
       'uuid': uuid,
       'title': title,
       'content': content,
+      'previewContent': previewContent,
       'isBookmark': isBookmark,
       'dateCreated': dateCreated?.toIso8601String(),
       'lastestModified': lastestModified?.toIso8601String(),

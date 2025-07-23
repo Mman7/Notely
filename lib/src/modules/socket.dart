@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:melonote/src/model/folder_model.dart';
+import 'package:melonote/src/model/note_model.dart';
 import 'package:melonote/src/modules/local_database.dart';
 import 'package:network_info_plus/network_info_plus.dart';
 import 'package:melonote/src/modules/web_socket.dart';
@@ -37,15 +39,19 @@ class SocketClient {
           final serverIp = datagram.address.address;
           print('from Cli Server found at $serverIp:$tcpPort');
           udpSocket.close();
-          //TODO implement Data model and send it
           WebSocketClient(serverAddress: '$serverIp:$tcpPort')
-              // WebSocketClient(serverAddress: '192.168.0.109:${4040}')
               .connect()
               .then((client) {
-            // TODO implement this data
-            List<FolderModel> notes = Database().getAllFolder();
-            client.send('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
-            // client.send('hey server im client');
+            print(
+                'from Cli Connected to WebSocket server at $serverIp:$tcpPort');
+            List<FolderModel> folders = Database().getAllFolder();
+            List<Note> notes = Database().getAllNote();
+            dynamic data = jsonEncode({
+              'type': 'sync',
+              'folders': folders,
+              'notes': notes,
+            });
+            client.send(data);
           });
         }
       }
@@ -56,7 +62,38 @@ class SocketClient {
 class SocketServer {
   String clientIp = '';
   startServer() async {
-    /// Web Socket
+    WebSocketServer(clientIp: clientIp).startServer().then((server) {
+      server.listen<String>((data, client) {
+        var decodedData = jsonDecode(data);
+        if (decodedData['type'] == 'sync') {
+          List<Note> notes = [];
+          for (var i = 0; i <= decodedData['notes'].length - 1; i++) {
+            dynamic noteFromData = decodedData['notes'][i];
+            Note note = Note(
+                content: noteFromData['content'],
+                title: noteFromData['title'],
+                previewContent: noteFromData['previewContent'],
+                uuid: noteFromData['uuid'],
+                isBookmark: noteFromData['isBookmark'] ?? false,
+                dateCreated: DateTime.parse(noteFromData['dateCreated'] ??
+                    DateTime.now().toIso8601String()),
+                lastestModified: DateTime.parse(
+                    noteFromData['lastestModified'] ??
+                        DateTime.now().toIso8601String()));
+            notes.add(note);
+          }
+          List<FolderModel> folders = [];
+          for (var i = 0; i <= decodedData['folders'].length - 1; i++) {
+            dynamic folderFromData = decodedData['folders'][i];
+            FolderModel folder = FolderModel(
+                title: folderFromData['title'],
+                noteInclude: folderFromData['noteInclude']);
+            folders.add(folder);
+          }
+          Database().applyNotes(notes: notes, folders: folders);
+        }
+      });
+    });
 
     /// UDP
     final udpSocket =
@@ -73,13 +110,6 @@ class SocketServer {
             'from Serv Received: $message from ${datagram.address.address}:${datagram.port}');
 
         if (message == 'DISCOVER_SERVER') {
-          // setup server
-          WebSocketServer(clientIp: clientIp).startServer().then((server) {
-            server.listen<String>((data, client) {
-              print('Server received: $data');
-              client.send('FUCK YOU NI');
-            });
-          });
           final response = 'SERVER_HERE:4040'; // include TCP port
           udpSocket.send(response.codeUnits, datagram.address, datagram.port);
 

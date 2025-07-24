@@ -30,14 +30,13 @@ class FolderListView extends StatelessWidget {
         title: Text(
           'Folders',
           style: TextStyle(
-              color: Colors.white,
+              color: Colors.black,
               fontSize: 25.sp,
               fontWeight: FontWeight.bold),
         ),
-        elevation: 10, // Adds shadow
-        backgroundColor: Theme.of(context)
-            .colorScheme
-            .primary, // Use theme color for better shadow appearance
+        elevation: 7, // Adds shadow
+        surfaceTintColor: Colors.white,
+        backgroundColor: Colors.white,
         shadowColor: Colors.black, // Optional: customize shadow color
       ),
       body: Container(

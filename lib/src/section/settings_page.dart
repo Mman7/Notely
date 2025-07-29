@@ -1,46 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class SettingsPage extends StatelessWidget {
-  //TODO implement this
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  bool _isSwitch = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text(
+          'Settings',
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                fontSize: 20.sp,
+                color: Theme.of(context).colorScheme.secondary,
+                fontWeight: FontWeight.w600,
+              ),
+        ),
       ),
-      body: ListView(
-        children: [
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text('Account'),
-            onTap: () {
-              // Navigate to account settings
-            },
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: FractionallySizedBox(
+          widthFactor: 0.5,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ListTile(
+                leading: Icon(
+                  Icons.dark_mode,
+                  size: 25.sp,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+                title: Text(
+                  'Dark Mode',
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                ),
+                trailing: Switch(
+                    value: _isSwitch,
+                    onChanged: (value) {
+                      setState(() => _isSwitch = !_isSwitch);
+                    }),
+                onTap: () {
+                  setState(() => _isSwitch = !_isSwitch);
+                },
+              ),
+            ],
           ),
-          ListTile(
-            leading: const Icon(Icons.palette),
-            title: const Text('Theme'),
-            onTap: () {
-              // Navigate to theme settings
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.notifications),
-            title: const Text('Notifications'),
-            onTap: () {
-              // Navigate to notification settings
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.info),
-            title: const Text('About'),
-            onTap: () {
-              // Navigate to about page
-            },
-          ),
-        ],
+        ),
       ),
     );
   }

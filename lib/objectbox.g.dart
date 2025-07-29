@@ -334,15 +334,15 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final noteIncludeParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 8);
-        final object =
-            FolderModel(
-                id: idParam,
-                title: titleParam,
-                noteInclude: noteIncludeParam,
-              )
-              ..uuid = const fb.StringReader(
-                asciiOptimization: true,
-              ).vTableGet(buffer, rootOffset, 10, '');
+        final uuidParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGet(buffer, rootOffset, 10, '');
+        final object = FolderModel(
+          id: idParam,
+          title: titleParam,
+          noteInclude: noteIncludeParam,
+          uuid: uuidParam,
+        );
 
         return object;
       },

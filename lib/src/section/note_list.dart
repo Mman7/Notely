@@ -52,7 +52,7 @@ class _NoteListState extends State<NoteList> {
   }
 
   int checkScreen(DeviceType deviceType) {
-    if (ScreenUtil().screenWidth > 1500) return 8;
+    if (ScreenUtil().screenWidth > 1200) return 7;
     if (deviceType == DeviceType.mobile) return 2;
     if (deviceType == DeviceType.tablet) return 3;
     if (deviceType == DeviceType.windows) return 5;
@@ -94,7 +94,7 @@ class _NoteListState extends State<NoteList> {
             },
           ),
           elevation: 7.0,
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           shadowColor: Colors.grey.shade100,
           surfaceTintColor:
               Colors.transparent, // Prevents color change due to elevation
@@ -105,20 +105,24 @@ class _NoteListState extends State<NoteList> {
           actions: [
             _isSearching
                 ? IconButton(
-                    onPressed: () =>
-                        setState(() => _isSearching = !_isSearching),
+                    onPressed: () {
+                      // print(widget.isSearching = false);
+                      setState(() {
+                        _isSearching = !_isSearching;
+                      });
+                    },
                     icon: Icon(Icons.cancel_sharp))
                 : menuOptions(),
           ],
         ),
         body: Padding(
-            padding: EdgeInsets.only(top: 20),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             child: GridView.builder(
                 padding: EdgeInsets.all(10.0),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: checkScreen(deviceType), // Number of columns
-                  crossAxisSpacing: 15.0,
-                  mainAxisSpacing: 15.0,
+                  crossAxisSpacing: 30,
+                  mainAxisSpacing: 15,
                   childAspectRatio: 3 / 4, // Adjust the aspect ratio as needed
                 ),
                 itemCount: _noteList.length, // Number of items
@@ -208,7 +212,8 @@ class _NoteListState extends State<NoteList> {
             decoration: InputDecoration(
               fillColor: Colors.white,
               hintText: 'Search notes...',
-              hintStyle: TextStyle(color: Colors.black),
+              hintStyle:
+                  TextStyle(color: Theme.of(context).colorScheme.secondary),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.0),
                 borderSide: BorderSide.none,
@@ -219,6 +224,12 @@ class _NoteListState extends State<NoteList> {
               // Implement search logic
             },
           )
-        : Text(overflow: TextOverflow.fade, folderName ?? 'Note List');
+        : Text(
+            overflow: TextOverflow.fade,
+            folderName ?? 'Note List',
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.secondary,
+                fontWeight: FontWeight.w600),
+          );
   }
 }

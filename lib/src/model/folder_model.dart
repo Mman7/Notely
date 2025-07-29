@@ -3,19 +3,18 @@ import 'package:objectbox/objectbox.dart';
 import 'package:melonote/src/model/note_model.dart';
 import 'package:melonote/src/modules/local_database.dart';
 import 'package:melonote/objectbox.g.dart';
-import 'package:uuid/uuid.dart';
 
 @Entity()
 class FolderModel {
-  FolderModel({
-    this.id = 0,
-    required this.title,
-    required this.noteInclude,
-  });
+  FolderModel(
+      {this.id = 0,
+      required this.title,
+      required this.noteInclude,
+      required this.uuid});
   @Id()
   int id;
   @Unique()
-  String uuid = Uuid().v4(); // Unique identifier for the folder
+  String uuid; // Unique identifier for the folder
 
   String title;
   // List covert into string

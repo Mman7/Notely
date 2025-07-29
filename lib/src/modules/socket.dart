@@ -86,6 +86,7 @@ class SocketServer {
           for (var i = 0; i <= decodedData['folders'].length - 1; i++) {
             dynamic folderFromData = decodedData['folders'][i];
             FolderModel folder = FolderModel(
+                uuid: folderFromData['uuid'],
                 title: folderFromData['title'],
                 noteInclude: folderFromData['noteInclude']);
             folders.add(folder);

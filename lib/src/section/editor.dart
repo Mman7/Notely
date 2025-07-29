@@ -9,7 +9,6 @@ import 'package:melonote/src/model/note_model.dart';
 import 'package:melonote/src/modules/local_database.dart';
 import 'package:melonote/src/provider/app_provider.dart';
 import 'package:toastification/toastification.dart';
-//TODO currently using not official quill editor, waiting platform bug fix
 
 class Editor extends StatefulWidget {
   Editor({
@@ -135,6 +134,7 @@ class _EditorState extends State<Editor> {
                     actions: [
                       TextButton(
                         onPressed: () {
+                          Navigator.of(context).pop();
                           Navigator.of(context).pop();
                         },
                         child: Text('Cancel'),
@@ -311,9 +311,6 @@ class _EditorState extends State<Editor> {
                                 title: Text(
                                   'Remove from Folder',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.pink[800],
-                                  ),
                                 ),
                                 children: [
                                   for (var folder in folderList)
@@ -347,8 +344,9 @@ class _EditorState extends State<Editor> {
                     value: 3,
                     child: Row(
                       children: [
-                        Icon(Icons.drive_file_move_rtl_outlined,
-                            color: Colors.pink[800]),
+                        Icon(
+                          Icons.drive_file_move_rtl_outlined,
+                        ),
                         SizedBox(width: 8),
                         Text('Remove from Folder'),
                       ],

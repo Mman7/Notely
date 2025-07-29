@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:hexcolor/hexcolor.dart';
 import 'package:melonote/src/model/note_model.dart';
 import 'package:melonote/src/provider/app_provider.dart';
 import 'package:melonote/src/section/editor.dart';
@@ -27,94 +26,105 @@ class _SideBarState extends State<SideBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(color: HexColor('#211C3A'), border: null),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: double.infinity,
-            child: TextButton.icon(
-              onPressed: () {
-                context.read<AppProvider>().setPageIndex(0);
-              },
-              icon: Icon(
-                Icons.home,
-                color: Colors.white,
-                size: Theme.of(context).textTheme.headlineSmall?.fontSize,
-              ),
-              label: Text(
-                'MeloNote',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25.sp,
-                ),
-              ),
-              style: TextButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 20.0, horizontal: 20.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.zero,
-                ),
-              ),
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        toolbarHeight: 65,
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+        title: ListTile(
+          leading: Icon(
+            Icons.home,
+            color: Theme.of(context).colorScheme.surface,
+            size: Theme.of(context).textTheme.headlineLarge?.fontSize,
+          ),
+          title: Text(
+            'MeloNote',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 25.sp,
             ),
           ),
-          Gap(15),
-          btn(
-              isNewNoteBtn: false,
-              context: context,
-              text: 'Search',
-              icon: Icons.search,
-              onpressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => NoteList(
-                      isSearching: true,
+        ),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.centerRight,
+              end: Alignment.bottomLeft,
+              colors: [
+                Theme.of(context).colorScheme.primary,
+                Theme.of(context).colorScheme.secondary
+              ]),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Gap(15),
+              btn(
+                  isNewNoteBtn: false,
+                  context: context,
+                  text: 'Search',
+                  icon: Icons.search,
+                  onpressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NoteList(
+                          isSearching: true,
+                        ),
+                      ),
+                    );
+                  }),
+              Gap(20),
+              btn(
+                isNewNoteBtn: true,
+                text: 'New Note',
+                icon: Icons.add,
+                context: context,
+                onpressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Editor(
+                        note: Note.newNote(),
+                        isNew: true,
+                      ),
                     ),
-                  ),
-                );
-              }),
-          Gap(20),
-          btn(
-            isNewNoteBtn: true,
-            text: 'New Note',
-            icon: Icons.add,
-            context: context,
-            onpressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Editor(
-                    note: Note.newNote(),
-                    isNew: true,
-                  ),
-                ),
-              );
-            },
+                  );
+                },
+              ),
+              Expanded(child: Container()),
+              btnStyless(
+                  context: context,
+                  icon: Icons.folder,
+                  text: 'All Folder',
+                  onpressed: () {
+                    context.read<AppProvider>().setPageIndex(0);
+                  }),
+              btnStyless(
+                  context: context,
+                  icon: Icons.ios_share,
+                  text: 'Share',
+                  onpressed: () {
+                    context.read<AppProvider>().setPageIndex(2);
+                  }),
+              btnStyless(
+                  context: context,
+                  icon: Icons.settings,
+                  text: 'Settings',
+                  onpressed: () {
+                    context.read<AppProvider>().setPageIndex(3);
+                  }),
+            ],
           ),
-          Expanded(child: Container()),
-          btnStyless(
-              context: context,
-              icon: Icons.ios_share,
-              text: 'Share',
-              onpressed: () {
-                context.read<AppProvider>().setPageIndex(2);
-              }),
-          btnStyless(
-              context: context,
-              icon: Icons.settings,
-              text: 'Settings',
-              onpressed: () {
-                context.read<AppProvider>().setPageIndex(3);
-              }),
-        ],
+        ),
       ),
     );
   }
 
-  SizedBox btnStyless(
+  Widget btnStyless(
       {required BuildContext context,
       required String text,
       required IconData icon,
@@ -125,7 +135,7 @@ class _SideBarState extends State<SideBar> {
         onPressed: () => onpressed(),
         icon: Icon(
           icon,
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           size: Theme.of(context).textTheme.headlineSmall?.fontSize,
         ),
         label: Text(
@@ -155,16 +165,18 @@ class _SideBarState extends State<SideBar> {
     return SizedBox(
       width: double.infinity,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 15.0,
+        ),
         child: Container(
           decoration: BoxDecoration(
             boxShadow: [
               if (isNewNoteBtn)
                 BoxShadow(
-                  color: Theme.of(context).primaryColor.withAlpha(255),
+                  color: Theme.of(context).primaryColor,
                   spreadRadius: 2,
-                  blurRadius: 21,
-                  offset: const Offset(0, 3),
+                  blurRadius: 16,
+                  offset: const Offset(0, 0),
                 ),
             ],
           ),
@@ -188,8 +200,8 @@ class _SideBarState extends State<SideBar> {
             ),
             icon: Icon(
               icon,
-              color: Colors.white,
-              size: Theme.of(context).textTheme.headlineSmall?.fontSize,
+              color: Theme.of(context).colorScheme.surface,
+              size: Theme.of(context).textTheme.headlineLarge?.fontSize,
             ),
           ),
         ),

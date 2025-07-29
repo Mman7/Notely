@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:melonote/myobjectbox.dart';
 import 'package:melonote/objectbox.g.dart';
 import 'package:melonote/src/model/folder_model.dart';
 import 'package:melonote/src/model/note_model.dart';
+import 'package:uuid/uuid.dart';
 
 class Database {
   final noteBox = objectbox.store.box<Note>();
@@ -9,7 +11,7 @@ class Database {
 
   void applyNotes(
       {required List<Note> notes, required List<FolderModel> folders}) {
-    print('Applying data to database..');
+    debugPrint('Applying data to database..');
     List<Note> localNotes = getAllNote();
     List<FolderModel> localFolders = getAllFolder();
 
@@ -76,6 +78,7 @@ class Database {
     required name,
   }) {
     FolderModel notebook = FolderModel(
+      uuid: Uuid().v4(),
       noteInclude: '',
       title: name,
     );

@@ -31,9 +31,23 @@ class NotePreview extends StatelessWidget {
         ),
       ),
       child: Container(
-        padding: EdgeInsets.all(15.0),
+        padding: EdgeInsets.all(20.0),
         decoration: BoxDecoration(
-          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(85, 158, 158, 158),
+              offset: Offset(0, 0),
+              spreadRadius: 1,
+              blurRadius: 20,
+            ),
+          ],
+          gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Theme.of(context).colorScheme.surfaceBright,
+                Theme.of(context).colorScheme.primary
+              ]),
           borderRadius: BorderRadius.circular(8.0),
         ),
         child: Column(
@@ -44,21 +58,29 @@ class NotePreview extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
               style: TextStyle(
-                fontSize: 18.0,
+                fontSize: 20.0,
+                color: Theme.of(context).colorScheme.surface,
                 fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: 8.0),
             Text(
               note.previewContent,
-              style: TextStyle(fontSize: 14.0),
+              style: TextStyle(
+                  fontSize: 14.0,
+                  color: Theme.of(context).colorScheme.surface.withAlpha(225),
+                  fontWeight: FontWeight.w500),
               maxLines: 4,
               overflow: TextOverflow.ellipsis,
             ),
             Spacer(),
             Text(
               lastModifiedText(),
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.surface,
+              ),
             ),
           ],
         ),

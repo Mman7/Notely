@@ -15,10 +15,7 @@ dependencies:
   flutter_localization: ^0.3.2
   flutter_localizations:
     sdk: flutter
-  flutter_quill:
-    git:
-      url: https://github.com/theniceboy/flutter-quill
-      ref: 5ff5967
+  flutter_quill: ^11.4.2
   flutter_screenutil: ^5.9.1
   flutter_svg: ^2.1.0
   gap: ^3.0.1

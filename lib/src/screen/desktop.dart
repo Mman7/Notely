@@ -31,15 +31,16 @@ class _DesktopLayoutState extends State<DesktopLayout> {
   Widget build(BuildContext context) {
     int pageIndex = context.watch<AppProvider>().pageIndex;
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Flexible(
-          flex: 2,
+          flex: 3,
           child: SideBar(),
         ),
         Flexible(
-            flex: 9,
+            flex: 11,
             child: Container(
-              color: Theme.of(context).colorScheme.surface,
+              // color: Theme.of(context).colorScheme.surface,
               child: pages[pageIndex],
             )),
       ],

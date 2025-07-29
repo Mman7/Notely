@@ -15,26 +15,41 @@ class FolderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Stack(alignment: Alignment.centerLeft, children: [
-        SvgPicture.asset(
-          "assets/images/folder.svg",
-        ),
+    return LayoutBuilder(builder: (context, constraints) {
+      double parentWidth = constraints.maxWidth;
+
+      double fontSize = parentWidth * 0.15; //
+      return Stack(alignment: Alignment.centerLeft, children: [
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.sp),
+          decoration: BoxDecoration(boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(50, 158, 158, 158),
+              offset: Offset(0, 0),
+              spreadRadius: 1,
+              blurRadius: 20,
+            )
+          ]),
+          child: SvgPicture.asset(
+            "assets/images/folder.svg",
+            height: 150.sp,
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: fontSize * 0.75),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(10.sp),
+                padding: EdgeInsets.all(fontSize * 0.5),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(50),
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).primaryColor.withAlpha(100),
                 ),
                 child: Icon(
+                  color: Theme.of(context).colorScheme.surface,
+                  size: fontSize * 1.1,
                   Icons.file_copy_sharp,
-                  size: 20.sp,
                 ),
               ),
               Gap(10),
@@ -42,20 +57,24 @@ class FolderWidget extends StatelessWidget {
                 folderTitle,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(fontSize: 16.5, fontWeight: FontWeight.w700),
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color:
+                        Theme.of(context).colorScheme.secondary.withAlpha(200),
+                    fontSize: fontSize * 0.75,
+                    fontWeight: FontWeight.w800),
               ),
               Text('$folderCount note',
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey[400])),
+                      fontSize: fontSize * 0.6,
+                      fontWeight: FontWeight.w700,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withAlpha(100))),
             ],
           ),
         )
-      ]),
-    );
+      ]);
+    });
   }
 }

@@ -18,57 +18,57 @@ class FolderListView extends StatelessWidget {
 
     int checkScreen() {
       DeviceType deviceType = context.read<AppProvider>().getDeviceType();
-      if (ScreenUtil().screenWidth > 1500) return 7;
+      if (ScreenUtil().screenWidth > 1400) return 7;
       if (deviceType == DeviceType.mobile) return 2;
-      if (deviceType == DeviceType.tablet) return 3;
+      if (deviceType == DeviceType.tablet) return 4;
       if (deviceType == DeviceType.windows) return 5;
       return 2;
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Folders',
-          style: TextStyle(
-              color: Colors.black,
-              fontSize: 25.sp,
-              fontWeight: FontWeight.bold),
+    return ClipRRect(
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 65,
+          title: Text(
+            'Folders',
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.secondary,
+                fontWeight: FontWeight.bold),
+          ),
+          elevation: 6, // Adds shadow
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          surfaceTintColor: Colors.white,
+          shadowColor: Colors.black, // Optional: customize shadow color
         ),
-        elevation: 7, // Adds shadow
-        surfaceTintColor: Colors.white,
-        backgroundColor: Colors.white,
-        shadowColor: Colors.black, // Optional: customize shadow color
-      ),
-      body: Container(
-        padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
+        body: Container(
           color: Theme.of(context).colorScheme.surface,
-        ),
-        child: SizedBox(
-          height: ScreenUtil().screenHeight * 0.85,
-          child: GridView.builder(
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: checkScreen(),
-                mainAxisSpacing: 5,
-                crossAxisSpacing: 15,
-              ),
-              itemCount: allFolders.length + 2, // 1 for header 1 for footer
-              itemBuilder: (context, index) {
-                // Header
-                if (index == 0) {
-                  return FolderHeader(listCount: allNotes.length);
-                }
-                // Footer
-                if (index == allFolders.length + 1) {
-                  return addNewFolderView(context);
-                }
-                var item = allFolders[index - 1];
+          padding: const EdgeInsets.all(30),
+          child: SizedBox(
+            // height: ScreenUtil().screenHeight * 0.85,
+            child: GridView.builder(
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: checkScreen(),
+                  mainAxisSpacing: 15,
+                  crossAxisSpacing: 30,
+                ),
+                itemCount: allFolders.length + 2, // 1 for header 1 for footer
+                itemBuilder: (context, index) {
+                  // Header
+                  if (index == 0) {
+                    return FolderHeader(listCount: allNotes.length);
+                  }
+                  // Footer
+                  if (index == allFolders.length + 1) {
+                    return addNewFolderView(context);
+                  }
+                  var item = allFolders[index - 1];
 
-                return FolderView(
-                  folder: item,
-                );
-              }),
+                  return FolderView(
+                    folder: item,
+                  );
+                }),
+          ),
         ),
       ),
     );
@@ -78,7 +78,7 @@ class FolderListView extends StatelessWidget {
     return Container(
       margin: EdgeInsets.all(20.sp),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondary,
+        color: Theme.of(context).colorScheme.primary.withAlpha(100),
         borderRadius: BorderRadius.circular(15),
       ),
       child: InkWell(

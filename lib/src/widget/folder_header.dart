@@ -8,13 +8,12 @@ class FolderHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => NoteList()),
-        );
-      },
-      child: FolderWidget(folderTitle: 'All notes', folderCount: listCount),
-    );
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => NoteList()),
+          );
+        },
+        child: FolderWidget(folderTitle: 'All notes', folderCount: listCount));
   }
 }

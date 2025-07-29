@@ -18,8 +18,8 @@ class AppProvider extends ChangeNotifier {
   getDeviceType() {
     double screenWidth = ScreenUtil().screenWidth;
     if (screenWidth < 450) return DeviceType.mobile;
-    if (screenWidth < 850) return DeviceType.tablet;
-    if (screenWidth > 850) return DeviceType.windows;
+    if (screenWidth < 900) return DeviceType.tablet;
+    if (screenWidth > 900) return DeviceType.windows;
     return DeviceType.mobile;
   }
 

@@ -52,10 +52,10 @@ class _NoteListState extends State<NoteList> {
   }
 
   int checkScreen(DeviceType deviceType) {
-    if (ScreenUtil().screenWidth > 1200) return 7;
+    if (ScreenUtil().screenWidth > 1200) return 5;
     if (deviceType == DeviceType.mobile) return 2;
     if (deviceType == DeviceType.tablet) return 3;
-    if (deviceType == DeviceType.windows) return 5;
+    if (deviceType == DeviceType.windows) return 4;
     return 2;
   }
 
@@ -115,20 +115,21 @@ class _NoteListState extends State<NoteList> {
                 : menuOptions(),
           ],
         ),
-        body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: GridView.builder(
-                padding: EdgeInsets.all(10.0),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: checkScreen(deviceType), // Number of columns
-                  crossAxisSpacing: 30,
-                  mainAxisSpacing: 15,
-                  childAspectRatio: 3 / 4, // Adjust the aspect ratio as needed
-                ),
-                itemCount: _noteList.length, // Number of items
-                itemBuilder: (context, index) {
-                  return NotePreview(index: index, note: _noteList[index]);
-                })));
+        body: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+          child: GridView.builder(
+              padding: EdgeInsets.all(30.0),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: checkScreen(deviceType), // Number of columns
+                crossAxisSpacing: 20,
+                mainAxisSpacing: 30,
+                childAspectRatio: 3 / 4, // Adjust the aspect ratio as needed
+              ),
+              itemCount: _noteList.length, // Number of items
+              itemBuilder: (context, index) {
+                return NotePreview(index: index, note: _noteList[index]);
+              }),
+        ));
   }
 
   PopupMenuButton<String> menuOptions() {

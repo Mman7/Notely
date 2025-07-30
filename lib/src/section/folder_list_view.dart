@@ -18,57 +18,55 @@ class FolderListView extends StatelessWidget {
 
     int checkScreen() {
       DeviceType deviceType = context.read<AppProvider>().getDeviceType();
-      if (ScreenUtil().screenWidth > 1400) return 7;
+      if (ScreenUtil().screenWidth > 1400) return 6;
       if (deviceType == DeviceType.mobile) return 2;
       if (deviceType == DeviceType.tablet) return 4;
       if (deviceType == DeviceType.windows) return 5;
       return 2;
     }
 
-    return ClipRRect(
-      child: Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 65,
-          title: Text(
-            'Folders',
-            style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
-                fontWeight: FontWeight.bold),
-          ),
-          elevation: 6, // Adds shadow
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          surfaceTintColor: Colors.white,
-          shadowColor: Colors.black, // Optional: customize shadow color
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 65,
+        title: Text(
+          'Folders',
+          style: TextStyle(
+              color: Theme.of(context).colorScheme.secondary,
+              fontWeight: FontWeight.bold),
         ),
-        body: Container(
-          color: Theme.of(context).colorScheme.surface,
-          padding: const EdgeInsets.all(30),
-          child: SizedBox(
-            // height: ScreenUtil().screenHeight * 0.85,
-            child: GridView.builder(
-                shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: checkScreen(),
-                  mainAxisSpacing: 15,
-                  crossAxisSpacing: 30,
-                ),
-                itemCount: allFolders.length + 2, // 1 for header 1 for footer
-                itemBuilder: (context, index) {
-                  // Header
-                  if (index == 0) {
-                    return FolderHeader(listCount: allNotes.length);
-                  }
-                  // Footer
-                  if (index == allFolders.length + 1) {
-                    return addNewFolderView(context);
-                  }
-                  var item = allFolders[index - 1];
+        elevation: 6, // Adds shadow
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        surfaceTintColor: Colors.white,
+        shadowColor: Colors.black, // Optional: customize shadow color
+      ),
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+          child: GridView.builder(
+              padding: EdgeInsets.all(30),
+              shrinkWrap: true,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: checkScreen(),
+                mainAxisSpacing: 15,
+                crossAxisSpacing: 30,
+              ),
+              itemCount: allFolders.length + 2, // 1 for header 1 for footer
+              itemBuilder: (context, index) {
+                // Header
+                if (index == 0) {
+                  return FolderHeader(listCount: allNotes.length);
+                }
+                // Footer
+                if (index == allFolders.length + 1) {
+                  return addNewFolderView(context);
+                }
+                var item = allFolders[index - 1];
 
-                  return FolderView(
-                    folder: item,
-                  );
-                }),
-          ),
+                return FolderView(
+                  folder: item,
+                );
+              }),
         ),
       ),
     );
@@ -76,10 +74,10 @@ class FolderListView extends StatelessWidget {
 
   Container addNewFolderView(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(20.sp),
+      margin: EdgeInsets.all(10.sp),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primary.withAlpha(100),
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(13),
       ),
       child: InkWell(
         onTap: () {
@@ -131,7 +129,7 @@ class FolderListView extends StatelessWidget {
           child: Icon(
             Icons.add,
             color: Colors.white,
-            size: 30,
+            size: 50.sp,
           ),
         ),
       ),

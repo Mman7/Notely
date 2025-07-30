@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:melonote/src/provider/app_provider.dart';
+import 'package:provider/provider.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -12,6 +14,7 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _isSwitch = false;
   @override
   Widget build(BuildContext context) {
+    DeviceType deviceType = context.read<AppProvider>().getDeviceType();
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -26,7 +29,10 @@ class _SettingsPageState extends State<SettingsPage> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: FractionallySizedBox(
-          widthFactor: 0.5,
+          widthFactor: deviceType == DeviceType.windows ||
+                  deviceType == DeviceType.tablet
+              ? 0.7
+              : 1,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

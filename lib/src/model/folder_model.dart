@@ -22,7 +22,11 @@ class FolderModel {
   get getNoteIncluded => _getConvertNoteIncluded();
 
   List<int> _getConvertNoteIncluded() {
-    return List<int>.from(jsonDecode(noteInclude ?? '[]'));
+    try {
+      return List<int>.from(jsonDecode(noteInclude ?? '[]'));
+    } catch (err) {
+      return [];
+    }
   }
 
   addNote({required int noteId}) {

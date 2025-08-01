@@ -6,7 +6,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   file_selector_windows
   flutter_localization
   objectbox_flutter_libs
-  rive_common
   screen_retriever_windows
   url_launcher_windows
   window_manager

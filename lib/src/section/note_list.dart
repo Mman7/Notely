@@ -80,6 +80,7 @@ class _NoteListState extends State<NoteList> {
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back_ios_new_rounded,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
             ),
             onPressed: () {
               int index = context.read<AppProvider>().pageIndex;
@@ -94,8 +95,7 @@ class _NoteListState extends State<NoteList> {
             },
           ),
           elevation: 7.0,
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          shadowColor: Colors.grey.shade100,
+          backgroundColor: Theme.of(context).colorScheme.tertiary,
           surfaceTintColor:
               Colors.transparent, // Prevents color change due to elevation
           title: title(
@@ -121,7 +121,7 @@ class _NoteListState extends State<NoteList> {
               padding: EdgeInsets.all(30.0),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: checkScreen(deviceType), // Number of columns
-                crossAxisSpacing: 20,
+                crossAxisSpacing: 30,
                 mainAxisSpacing: 30,
                 childAspectRatio: 3 / 4, // Adjust the aspect ratio as needed
               ),
@@ -221,15 +221,13 @@ class _NoteListState extends State<NoteList> {
               ),
             ),
             style: TextStyle(color: Colors.black),
-            onChanged: (value) {
-              // Implement search logic
-            },
+            onChanged: (value) {},
           )
         : Text(
             overflow: TextOverflow.fade,
             folderName ?? 'Note List',
             style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 fontWeight: FontWeight.w600),
           );
   }

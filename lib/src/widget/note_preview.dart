@@ -35,20 +35,17 @@ class NotePreview extends StatelessWidget {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: const Color.fromARGB(85, 158, 158, 158),
+              color:
+                  MediaQuery.of(context).platformBrightness == Brightness.dark
+                      ? Colors.transparent
+                      : Colors.grey.withAlpha(200),
               offset: Offset(0, 0),
               spreadRadius: 1,
               blurRadius: 20,
             ),
           ],
-          gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Theme.of(context).colorScheme.surfaceBright,
-                Theme.of(context).colorScheme.primary
-              ]),
-          borderRadius: BorderRadius.circular(8.0),
+          color: Theme.of(context).colorScheme.tertiary,
+          borderRadius: BorderRadius.circular(10.0),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +56,7 @@ class NotePreview extends StatelessWidget {
               maxLines: 1,
               style: TextStyle(
                 fontSize: 20.0,
-                color: Theme.of(context).colorScheme.surface,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -68,7 +65,7 @@ class NotePreview extends StatelessWidget {
               note.previewContent,
               style: TextStyle(
                   fontSize: 14.0,
-                  color: Theme.of(context).colorScheme.surface.withAlpha(225),
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
                   fontWeight: FontWeight.w500),
               maxLines: 4,
               overflow: TextOverflow.ellipsis,
@@ -79,7 +76,7 @@ class NotePreview extends StatelessWidget {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.surface,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
               ),
             ),
           ],

@@ -7,6 +7,7 @@ import 'package:melonote/src/modules/local_database.dart';
 import 'package:melonote/src/provider/app_provider.dart';
 import 'package:melonote/src/widget/folder_view.dart';
 import 'package:melonote/src/widget/folder_header.dart';
+import 'package:toastification/toastification.dart';
 
 class FolderListView extends StatelessWidget {
   FolderListView({super.key});
@@ -25,48 +26,52 @@ class FolderListView extends StatelessWidget {
       return 2;
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 65,
-        title: Text(
-          'Folders',
-          style: TextStyle(
-              color: Theme.of(context).colorScheme.secondary,
-              fontWeight: FontWeight.bold),
+    return ClipRRect(
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 65,
+          title: Text(
+            'Folders',
+            style: TextStyle(
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+                fontWeight: FontWeight.bold),
+          ),
+          elevation: 12,
+          backgroundColor: Theme.of(context).colorScheme.tertiary,
+          surfaceTintColor: Theme.of(context).colorScheme.tertiary,
+          shadowColor: Colors.black.withAlpha(50),
         ),
-        elevation: 6, // Adds shadow
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        surfaceTintColor: Colors.white,
-        shadowColor: Colors.black, // Optional: customize shadow color
-      ),
-      body: Container(
-        color: Theme.of(context).colorScheme.surface,
-        child: ScrollConfiguration(
-          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-          child: GridView.builder(
-              padding: EdgeInsets.all(30),
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: checkScreen(),
-                mainAxisSpacing: 15,
-                crossAxisSpacing: 30,
-              ),
-              itemCount: allFolders.length + 2, // 1 for header 1 for footer
-              itemBuilder: (context, index) {
-                // Header
-                if (index == 0) {
-                  return FolderHeader(listCount: allNotes.length);
-                }
-                // Footer
-                if (index == allFolders.length + 1) {
-                  return addNewFolderView(context);
-                }
-                var item = allFolders[index - 1];
+        body: Container(
+          color: Theme.of(context).colorScheme.surface,
+          height: 100.sh,
+          child: ScrollConfiguration(
+            behavior:
+                ScrollConfiguration.of(context).copyWith(scrollbars: false),
+            child: GridView.builder(
+                padding: EdgeInsets.all(30),
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: checkScreen(),
+                  mainAxisSpacing: 15,
+                  crossAxisSpacing: 30,
+                ),
+                itemCount: allFolders.length + 2, // 1 for header 1 for footer
+                itemBuilder: (context, index) {
+                  // Header
+                  if (index == 0) {
+                    return FolderHeader(listCount: allNotes.length);
+                  }
+                  // Footer
+                  if (index == allFolders.length + 1) {
+                    return addNewFolderView(context);
+                  }
+                  var item = allFolders[index - 1];
 
-                return FolderView(
-                  folder: item,
-                );
-              }),
+                  return FolderView(
+                    folder: item,
+                  );
+                }),
+          ),
         ),
       ),
     );
@@ -107,15 +112,44 @@ class FolderListView extends StatelessWidget {
                 ),
                 actions: [
                   TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () {
+                      _controller.text = '';
+                      Navigator.of(context).pop();
+                    },
                     child: Text('Cancel'),
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Database().addFolder(name: _controller.text);
-                      context.read<AppProvider>().refresh();
-                      _controller.text = '';
-                      Navigator.of(context).pop();
+                      if (_controller.text == '') {
+                        toastification.show(
+                            title: Text("Name can't be emtpy"),
+                            context:
+                                context, // optional if ToastificationWrapper is in widget tree
+                            alignment: Alignment.center,
+                            style: ToastificationStyle.simple,
+                            backgroundColor: Colors.red[400],
+                            foregroundColor: Colors.white,
+                            animationDuration: Duration(milliseconds: 200),
+                            autoCloseDuration: Duration(milliseconds: 1300),
+                            pauseOnHover: false,
+                            type: ToastificationType.error);
+                        return;
+                      } else {
+                        Database().addFolder(name: _controller.text);
+                        context.read<AppProvider>().refresh();
+                        // set text to nothing
+                        _controller.text = '';
+                        toastification.show(
+                            style: ToastificationStyle.minimal,
+                            primaryColor: Colors.lightGreen,
+                            icon: Icon(Icons.done),
+                            context:
+                                context, // optional if you use ToastificationWrapper
+                            title: Text('Your folder has been created'),
+                            pauseOnHover: false,
+                            autoCloseDuration: const Duration(seconds: 2));
+                        Navigator.of(context).pop();
+                      }
                     },
                     child: Text('Create'),
                   ),

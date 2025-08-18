@@ -35,13 +35,13 @@ class _SideBarState extends State<SideBar> {
         title: ListTile(
           leading: Icon(
             Icons.home,
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).textTheme.headlineLarge?.color,
             size: Theme.of(context).textTheme.headlineLarge?.fontSize,
           ),
           title: Text(
             'MeloNote',
             style: TextStyle(
-              color: Colors.white,
+              color: Theme.of(context).textTheme.headlineLarge?.color,
               fontWeight: FontWeight.bold,
               fontSize: 25.sp,
             ),
@@ -50,13 +50,7 @@ class _SideBarState extends State<SideBar> {
       ),
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.centerRight,
-              end: Alignment.bottomLeft,
-              colors: [
-                Theme.of(context).colorScheme.primary,
-                Theme.of(context).colorScheme.secondary
-              ]),
+          color: Theme.of(context).colorScheme.tertiary,
         ),
         child: SafeArea(
           child: Column(
@@ -135,14 +129,14 @@ class _SideBarState extends State<SideBar> {
         onPressed: () => onpressed(),
         icon: Icon(
           icon,
-          color: Theme.of(context).colorScheme.surface,
-          size: Theme.of(context).textTheme.headlineSmall?.fontSize,
+          color: Theme.of(context).textTheme.headlineSmall?.color,
+          size: 20.sp,
         ),
         label: Text(
           text,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontSize: 20.sp,
-                color: Colors.white,
+                color: Theme.of(context).textTheme.headlineSmall?.color,
                 fontWeight: FontWeight.w600,
               ),
         ),
@@ -200,7 +194,7 @@ class _SideBarState extends State<SideBar> {
             ),
             icon: Icon(
               icon,
-              color: Theme.of(context).colorScheme.surface,
+              color: Colors.white,
               size: Theme.of(context).textTheme.headlineLarge?.fontSize,
             ),
           ),

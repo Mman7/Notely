@@ -112,7 +112,6 @@ class _EditorState extends State<Editor> {
   Widget build(BuildContext context) {
     List<FolderModel> folderList = context.watch<AppProvider>().folderList;
     DeviceType deviceType = context.read<AppProvider>().getDeviceType();
-
     // Check is editing
     editorFocusNode.addListener(() {
       if (editorFocusNode.hasFocus) setState(() => isEditing = true);
@@ -122,17 +121,22 @@ class _EditorState extends State<Editor> {
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
+            color: Theme.of(context).textTheme.bodyLarge?.color,
             onPressed: () {
               if (isChanged.value) {
                 // Show confirmation dialog
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
+                    backgroundColor: Theme.of(context).colorScheme.tertiary,
                     title: Text('Unsaved Changes'),
                     content: Text(
                         'You have unsaved changes. Do you want to save them?'),
                     actions: [
                       TextButton(
+                        style: ButtonStyle(
+                          foregroundColor: WidgetStateProperty.all(Colors.red),
+                        ),
                         onPressed: () {
                           Navigator.of(context).pop();
                           Navigator.of(context).pop();
@@ -140,6 +144,10 @@ class _EditorState extends State<Editor> {
                         child: Text('Cancel'),
                       ),
                       TextButton(
+                        style: ButtonStyle(
+                          foregroundColor: WidgetStateProperty.all(
+                              Theme.of(context).textTheme.bodyLarge?.color),
+                        ),
                         onPressed: () {
                           saveContent();
                           setState(() => isEditing = false);
@@ -157,55 +165,67 @@ class _EditorState extends State<Editor> {
               }
             },
           ),
-          surfaceTintColor: Colors.white,
-          elevation: 6,
-          shadowColor: Colors.grey.withAlpha(128),
+          elevation: 7.0,
+          backgroundColor: Theme.of(context).colorScheme.tertiary,
+          surfaceTintColor: Colors.transparent,
           actions: [editorAction(), editorPopUp(folderList)],
-          title: const Text('MeloEditor'),
+          title: Text(
+            'MeloEditor',
+            style:
+                TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
+          ),
         ),
-        body: Stack(
-          children: [
-            Column(
-              children: [
-                if (deviceType == DeviceType.windows)
-                  Toolbar(controller: _controller, deviceType: deviceType),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    children: [
-                      TitleWidget(titleController: _titleController),
-                      Divider(
-                        thickness: 1,
-                        height: 1,
-                        color: Colors.grey[300],
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 16),
-                    child: QuillEditor.basic(
-                      controller: _controller,
-                      focusNode: editorFocusNode,
-                      config: const QuillEditorConfig(),
+        body: Container(
+          color: Theme.of(context).brightness != Brightness.dark
+              ? Theme.of(context).colorScheme.tertiary
+              : Colors.white,
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  if (deviceType == DeviceType.windows)
+                    Toolbar(controller: _controller, deviceType: deviceType),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      children: [
+                        TitleWidget(titleController: _titleController),
+                        Divider(
+                          thickness: 1,
+                          height: 1,
+                          color: Colors.grey[300],
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ],
-            ),
-            Align(
-                alignment: Alignment.bottomCenter,
-                child: mobileToolbar(deviceType))
-          ],
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 16),
+                      child: QuillEditor.basic(
+                        controller: _controller,
+                        focusNode: editorFocusNode,
+                        config: const QuillEditorConfig(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Align(
+                  alignment: Alignment.bottomCenter,
+                  child: mobileToolbar(deviceType))
+            ],
+          ),
         ));
   }
 
   Widget editorPopUp(List<FolderModel> folderList) {
     return !widget.isNew
         ? PopupMenuButton<int>(
-            icon: Icon(Icons.more_vert),
+            icon: Icon(
+              Icons.more_vert,
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+            ),
             itemBuilder: (context) => [
                   PopupMenuItem(
                     onTap: () {
@@ -368,7 +388,10 @@ class _EditorState extends State<Editor> {
                 showToaster(text: 'Your note has been saved');
                 refreshWhenSave();
               },
-              icon: const Icon(Icons.done),
+              icon: Icon(
+                Icons.done,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
             )
           : Container(),
     );
@@ -399,24 +422,19 @@ class Toolbar extends StatelessWidget {
 
   final QuillController _controller;
   DeviceType deviceType;
-
   @override
   Widget build(BuildContext context) {
-    Color color =
-        deviceType == DeviceType.mobile || deviceType == DeviceType.tablet
-            ? Colors.grey
-            : Colors.white;
     return Container(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.tertiary,
           boxShadow: [
             BoxShadow(
-                color: color,
+                color: Colors.black.withAlpha(25),
                 blurRadius: 15,
                 offset: Offset(0, 2),
-                spreadRadius: 2),
+                spreadRadius: 1),
           ],
         ),
         child: SingleChildScrollView(
@@ -428,13 +446,13 @@ class Toolbar extends StatelessWidget {
                 buttonOptions: QuillSimpleToolbarButtonOptions(
                     base: QuillToolbarBaseButtonOptions(
                         iconTheme: QuillIconTheme(
-                            iconButtonSelectedData: IconButtonData(
-                                style: ButtonStyle(
-                                    backgroundColor: WidgetStatePropertyAll(
-                                        Theme.of(context)
-                                            .colorScheme
-                                            .primary
-                                            .withAlpha(200))))))),
+                            iconButtonUnselectedData: IconButtonData(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color),
+                            iconButtonSelectedData:
+                                IconButtonData(style: ButtonStyle())))),
               )),
         ));
   }
@@ -452,7 +470,7 @@ class TitleWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurface,
+          color: Theme.of(context).textTheme.bodyLarge?.color,
           fontSize: 30,
           fontWeight: FontWeight.w700),
       controller: _titleController,

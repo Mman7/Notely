@@ -9,9 +9,12 @@ class TransferPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Transfer',
-          style: TextStyle(fontSize: 30, fontWeight: FontWeight.w500),
+          style: TextStyle(
+              fontSize: 30,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).textTheme.bodyLarge?.color),
         ),
       ),
       body: Padding(
@@ -19,9 +22,12 @@ class TransferPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Transfer Notes',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).textTheme.bodyLarge?.color),
             ),
             const SizedBox(height: 16),
             btn(
@@ -57,13 +63,21 @@ class TransferPage extends StatelessWidget {
   }) {
     return Container(
       decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black26,
+            spreadRadius: 2,
+            blurRadius: 16,
+            offset: const Offset(0, 0),
+          ),
+        ],
         borderRadius: BorderRadius.all(Radius.circular(15)),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Theme.of(context).colorScheme.primary,
-            Theme.of(context).colorScheme.secondary.withAlpha(200)
+            Theme.of(context).colorScheme.primary.withAlpha(175),
+            Theme.of(context).colorScheme.primary
           ],
         ),
       ),
@@ -85,7 +99,7 @@ class TransferPage extends StatelessWidget {
         ),
         icon: Icon(
           icon,
-          color: Theme.of(context).colorScheme.surface,
+          color: Colors.white,
           size: Theme.of(context).textTheme.headlineLarge?.fontSize,
         ),
       ),

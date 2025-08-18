@@ -60,6 +60,7 @@ class _MobileLayoutState extends State<MobileLayout> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Theme.of(context).colorScheme.tertiary,
         type: BottomNavigationBarType.fixed,
         showSelectedLabels: false,
         currentIndex: _selectedIndex,

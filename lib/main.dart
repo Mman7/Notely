@@ -49,12 +49,17 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
+  bool isDarkmode = false;
+  @override
+  void initState() {
+    context.read<AppProvider>().intializeData();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Database().wipeAllData(); // Uncomment to wipe all data for testing
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AppProvider>().intializeData();
-    });
+    bool darkMode = context.watch<AppProvider>().isDarkMode;
+
     return ScreenUtilInit(
         minTextAdapt: true,
         builder: (ctx, child) {
@@ -72,7 +77,9 @@ class _MainAppState extends State<MainApp> {
                 GlobalCupertinoLocalizations.delegate,
               ],
               scrollBehavior: MyCustomScrollBehavior(),
+              themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
               theme: myTheme,
+              darkTheme: myDarkTheme,
               home: Scaffold(
                 body: Container(
                   color: Colors.black,

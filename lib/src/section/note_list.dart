@@ -6,6 +6,7 @@ import 'package:melonote/src/model/note_model.dart';
 import 'package:melonote/src/modules/local_database.dart';
 import 'package:melonote/src/provider/app_provider.dart';
 import 'package:melonote/src/widget/note_preview.dart';
+import 'package:toastification/toastification.dart';
 
 class NoteList extends StatefulWidget {
   NoteList({super.key, this.folder, this.isSearching});
@@ -24,7 +25,10 @@ class _NoteListState extends State<NoteList> {
 
   searchUp(List list) {
     String seachText = _searchController.text;
-    return list.where((note) => note.title.contains(seachText)).toList();
+    return list
+        .where((note) =>
+            note.title.toLowerCase().contains(seachText.toLowerCase()))
+        .toList();
   }
 
   List<Note> getData(folder) {
@@ -106,9 +110,11 @@ class _NoteListState extends State<NoteList> {
             _isSearching
                 ? IconButton(
                     onPressed: () {
-                      // print(widget.isSearching = false);
                       setState(() {
                         _isSearching = !_isSearching;
+                        if (widget.isSearching != null) {
+                          widget.isSearching = false;
+                        }
                       });
                     },
                     icon: Icon(Icons.cancel_sharp))
@@ -153,6 +159,7 @@ class _NoteListState extends State<NoteList> {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
+                  backgroundColor: Theme.of(context).colorScheme.tertiary,
                   title: Text('Delete Folder'),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -177,13 +184,28 @@ class _NoteListState extends State<NoteList> {
                         context.read<AppProvider>().refresh();
                         Navigator.of(context).pop();
                         Navigator.of(context).pop();
+                        toastification.show(
+                          style: ToastificationStyle.minimal,
+                          primaryColor: Colors.lightGreen,
+                          icon: Icon(Icons.done),
+                          context:
+                              context, // optional if you use ToastificationWrapper
+                          title: Text('Folder deleted'),
+                          pauseOnHover: false,
+                          autoCloseDuration: const Duration(seconds: 2),
+                        );
                       },
                       child: Text('Comfirm',
                           style: TextStyle(color: Colors.white)),
                     ),
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      child: Text('Cancel'),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                            color:
+                                Theme.of(context).textTheme.bodyLarge?.color),
+                      ),
                     ),
                   ],
                 ),
@@ -211,16 +233,18 @@ class _NoteListState extends State<NoteList> {
             controller: _searchController,
             autofocus: true,
             decoration: InputDecoration(
-              fillColor: Colors.white,
-              hintText: 'Search notes...',
-              hintStyle:
-                  TextStyle(color: Theme.of(context).colorScheme.secondary),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.0),
-                borderSide: BorderSide.none,
-              ),
-            ),
-            style: TextStyle(color: Colors.black),
+                hintText: 'Search notes...',
+                fillColor: Colors.transparent,
+                hintStyle: TextStyle(
+                    color: Theme.of(context).textTheme.bodyLarge?.color),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: EdgeInsets.all(12)),
+            cursorColor: Theme.of(context).textTheme.bodyLarge?.color,
+            style:
+                TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
             onChanged: (value) {},
           )
         : Text(

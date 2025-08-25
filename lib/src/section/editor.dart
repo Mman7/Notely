@@ -201,7 +201,7 @@ class _EditorState extends State<Editor> {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 16),
+                          horizontal: 18, vertical: 16),
                       child: QuillEditor.basic(
                         controller: _controller,
                         focusNode: editorFocusNode,

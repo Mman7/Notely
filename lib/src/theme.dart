@@ -12,7 +12,6 @@ final myTheme = ThemeData(
         labelLarge: TextStyle(color: Colors.white70),
         bodySmall: TextStyle(color: Color(0xFF44339D))),
     inputDecorationTheme: InputDecorationTheme(
-        fillColor: Colors.orange,
         filled: true,
         hintStyle: TextStyle(color: Colors.grey),
         labelStyle: TextStyle(color: Color(0xFF44339D))),
@@ -41,7 +40,6 @@ final myDarkTheme = ThemeData(
         labelLarge: TextStyle(color: Colors.grey),
         bodySmall: TextStyle(color: Colors.white)),
     inputDecorationTheme: InputDecorationTheme(
-        fillColor: Colors.orange,
         filled: true,
         hintStyle: TextStyle(color: Colors.grey),
         labelStyle: TextStyle(color: Colors.black)),

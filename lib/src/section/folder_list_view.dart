@@ -48,12 +48,12 @@ class FolderListView extends StatelessWidget {
             behavior:
                 ScrollConfiguration.of(context).copyWith(scrollbars: false),
             child: GridView.builder(
-                padding: EdgeInsets.all(30),
+                padding: EdgeInsets.all(15),
                 shrinkWrap: true,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: checkScreen(),
-                  mainAxisSpacing: 15,
-                  crossAxisSpacing: 30,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 20,
                 ),
                 itemCount: allFolders.length + 2, // 1 for header 1 for footer
                 itemBuilder: (context, index) {
@@ -90,21 +90,34 @@ class FolderListView extends StatelessWidget {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
+                backgroundColor: Theme.of(context).colorScheme.surface,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
-                title: Text('Create New Folder'),
+                title: Text(
+                  'Create New Folder',
+                  style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyMedium?.color),
+                ),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextField(
-                      style: TextStyle(color: Colors.black),
+                      style: TextStyle(
+                          color: Theme.of(context).textTheme.bodyMedium?.color),
                       controller: _controller,
                       decoration: InputDecoration(
-                        hintStyle: TextStyle(color: Colors.grey),
-                        fillColor: Colors.white,
                         labelText: 'Folder Name',
-                        border: OutlineInputBorder(),
+                        labelStyle: TextStyle(
+                            color:
+                                Theme.of(context).textTheme.bodyMedium?.color),
+                        fillColor: Theme.of(context).colorScheme.surface,
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
                       ),
                     ),
                     SizedBox(height: 16),
@@ -112,6 +125,7 @@ class FolderListView extends StatelessWidget {
                 ),
                 actions: [
                   TextButton(
+                    style: TextButton.styleFrom(foregroundColor: Colors.grey),
                     onPressed: () {
                       _controller.text = '';
                       Navigator.of(context).pop();
@@ -127,8 +141,10 @@ class FolderListView extends StatelessWidget {
                                 context, // optional if ToastificationWrapper is in widget tree
                             alignment: Alignment.center,
                             style: ToastificationStyle.simple,
-                            backgroundColor: Colors.red[400],
-                            foregroundColor: Colors.white,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.surface,
+                            foregroundColor:
+                                Theme.of(context).textTheme.bodyMedium?.color,
                             animationDuration: Duration(milliseconds: 200),
                             autoCloseDuration: Duration(milliseconds: 1300),
                             pauseOnHover: false,

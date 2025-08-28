@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:melonote/src/modules/local_database.dart';
 import 'package:provider/provider.dart';
 import 'package:melonote/myobjectbox.dart';
 import 'package:melonote/src/theme.dart';

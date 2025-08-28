@@ -307,9 +307,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       },
       objectToFB: (FolderModel object, fb.Builder fbb) {
         final titleOffset = fbb.writeString(object.title);
-        final noteIncludeOffset = object.noteInclude == null
-            ? null
-            : fbb.writeString(object.noteInclude!);
+        final noteIncludeOffset = fbb.writeString(object.noteInclude);
         final uuidOffset = fbb.writeString(object.uuid);
         fbb.startTable(5);
         fbb.addInt64(0, object.id);
@@ -333,7 +331,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
         ).vTableGet(buffer, rootOffset, 6, '');
         final noteIncludeParam = const fb.StringReader(
           asciiOptimization: true,
-        ).vTableGetNullable(buffer, rootOffset, 8);
+        ).vTableGet(buffer, rootOffset, 8, '');
         final uuidParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 10, '');

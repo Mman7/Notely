@@ -10,18 +10,19 @@ class Database {
   final folderBox = objectbox.store.box<FolderModel>();
 
   void applyNotes(
-      {required List<Note> notes, required List<FolderModel> folders}) {
+      {required List<Note> notesFromRemote,
+      required List<FolderModel> remoteFolders}) {
     debugPrint('Applying data to database..');
     List<Note> localNotes = getAllNote();
     List<FolderModel> localFolders = getAllFolder();
 
     Set localNoteSet = localNotes.map((n) => n.uuid).toSet();
     Set localFoldersSet = localFolders.map((n) => n.uuid).toSet();
-
     // apply notes
-    for (Note i in notes) {
+    for (Note i in notesFromRemote) {
       if (localNoteSet.contains(i.uuid)) {
         // Update notes
+        // local is x, remote is i
         int id = localNotes.where((x) => x.uuid == i.uuid).first.id;
         i.id = id;
         noteBox.put(i);
@@ -31,10 +32,10 @@ class Database {
       }
     }
     // apply folders
-    for (FolderModel i in folders) {
+    for (FolderModel i in remoteFolders) {
       if (localFoldersSet.contains(i.uuid)) {
         // Update notes
-        int id = localFoldersSet.where((x) => x.uuid == i.uuid).first.id;
+        int id = localFolders.where((x) => x.uuid == i.uuid).first.id;
         i.id = id;
         folderBox.put(i, mode: PutMode.update);
       } else {

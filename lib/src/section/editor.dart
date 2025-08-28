@@ -43,6 +43,7 @@ class _EditorState extends State<Editor> {
 
     if (!widget.isNew) {
       // load content
+      if (originalContent.isEmpty) originalContent = r'[{"insert":"\n"}]';
       List json = jsonDecode(originalContent);
       _controller.document = Document.fromJson(json);
     }
@@ -232,11 +233,17 @@ class _EditorState extends State<Editor> {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.surface,
                           title: Text('Delete Note'),
                           content: Text(
                               'Are you sure you want to delete this note?'),
                           actions: [
                             TextButton(
+                              style: ButtonStyle(
+                                foregroundColor:
+                                    WidgetStateProperty.all(Colors.grey),
+                              ),
                               onPressed: () => Navigator.of(context).pop(),
                               child: Text('Cancel'),
                             ),
@@ -275,7 +282,16 @@ class _EditorState extends State<Editor> {
                             context: context,
                             builder: (context) {
                               return SimpleDialog(
-                                title: Text('Select Folder'),
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.surface,
+                                title: Text(
+                                  'Select Folder',
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color),
+                                ),
                                 children: [
                                   ...folderList.map((folder) {
                                     return SimpleDialogOption(
@@ -328,7 +344,14 @@ class _EditorState extends State<Editor> {
                           context: context,
                           builder: (context) {
                             return SimpleDialog(
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.surface,
                                 title: Text(
+                                  style: TextStyle(
+                                      color: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.color),
                                   'Remove from Folder',
                                   textAlign: TextAlign.center,
                                 ),
@@ -385,8 +408,8 @@ class _EditorState extends State<Editor> {
               onPressed: () {
                 // Save the content
                 saveContent();
-                showToaster(text: 'Your note has been saved');
                 refreshWhenSave();
+                showToaster(text: 'Your note has been saved');
               },
               icon: Icon(
                 Icons.done,

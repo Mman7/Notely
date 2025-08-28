@@ -15,15 +15,16 @@ class FolderModel {
   int id;
   @Unique()
   String uuid; // Unique identifier for the folder
-
   String title;
   // List covert into string
-  String? noteInclude;
+  String noteInclude;
   get getNoteIncluded => _getConvertNoteIncluded();
 
   List<int> _getConvertNoteIncluded() {
     try {
-      return List<int>.from(jsonDecode(noteInclude ?? '[]'));
+      // prevent nothing to parse
+      if (noteInclude.length <= 2) return [];
+      return List<int>.from(jsonDecode(noteInclude));
     } catch (err) {
       return [];
     }

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
 
-//TODO set dark editor text color
-
 final myTheme = ThemeData(
     textTheme: TextTheme(
         bodyLarge: TextStyle(color: Color(0xFF44339D)),
@@ -26,7 +24,7 @@ final myTheme = ThemeData(
     primaryColor: Color(0xFFA291FF),
     colorScheme: ColorScheme.light().copyWith(
         tertiary: Color(0xFFFFFFFF),
-        primary: const Color.fromARGB(255, 163, 145, 255),
+        primary: const Color(0xFFA391FF),
         secondary: const Color(0xFF44339D),
         surfaceBright: Color(0xFF44339D),
         surface: const Color(0xFAFAFAFA)));
@@ -40,9 +38,9 @@ final myDarkTheme = ThemeData(
         labelLarge: TextStyle(color: Colors.grey),
         bodySmall: TextStyle(color: Colors.white)),
     inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        hintStyle: TextStyle(color: Colors.grey),
-        labelStyle: TextStyle(color: Colors.black)),
+      filled: true,
+      hintStyle: TextStyle(color: Colors.grey),
+    ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: Colors.white,
       selectedItemColor: HexColor('#504099'),
@@ -52,10 +50,15 @@ final myDarkTheme = ThemeData(
       unselectedItemColor: HexColor('#E9E6FD'),
       showUnselectedLabels: false,
     ),
+    useMaterial3: true,
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: Colors.white,
+    ),
     primaryColor: Color(0xFFA291FF),
     colorScheme: ColorScheme.light().copyWith(
-        primary: const Color(0xFF44339C),
+        primary: const Color(0xFF543EBE),
         secondary: const Color(0xFF0F0F41),
         tertiary: Color(0xFF333333),
         surfaceBright: Color(0xFFD1CCFC),
+        onSurface: Colors.white,
         surface: const Color(0xFF222222)));

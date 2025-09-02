@@ -1,8 +1,7 @@
 import 'dart:io';
-
 import 'package:connectme/connectme.dart';
+import 'package:flutter/material.dart';
 
-//TODO implement this in the main app
 class WebSocketServer {
   WebSocketServer({required this.clientIp});
   String clientIp;
@@ -11,12 +10,12 @@ class WebSocketServer {
       InternetAddress.anyIPv4,
       port: 4040,
       onConnect: (ConnectMeClient client) {
-        print('$clientIp connected.');
+        debugPrint('$clientIp connected.');
       },
       onDisconnect: (ConnectMeClient client) {
-        print('$clientIp disconnected.');
+        debugPrint('$clientIp disconnected.');
       },
-      onLog: (p0) => print(p0),
+      onLog: (p0) => debugPrint(p0),
       type: ConnectMeType
           .ws, // by default, means using WebSocket server, can be also pure TCP
     );
@@ -32,11 +31,9 @@ class WebSocketClient {
     final ConnectMeClient client =
         await ConnectMe.connect('ws://$serverAddress');
     // Listen for reverse String messages from the server.
-
     client.listen<String>((String message) {
-      print('Client received: $message');
+      debugPrint('Client received: $message');
     });
-    // client.send('Hello from client!');
     return client;
   }
 }

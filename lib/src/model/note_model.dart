@@ -9,9 +9,8 @@ class Note {
     required this.title,
     required this.content,
     required this.previewContent,
-    this.isBookmark = false,
-    this.dateCreated,
-    this.lastestModified,
+    required this.dateCreated,
+    required this.lastestModified,
   });
   @Id()
   int id;
@@ -20,9 +19,8 @@ class Note {
   String previewContent;
   String content;
   String title;
-  bool? isBookmark;
-  DateTime? dateCreated;
-  DateTime? lastestModified;
+  DateTime dateCreated;
+  DateTime lastestModified;
 
   toJson() {
     return {
@@ -31,18 +29,18 @@ class Note {
       'title': title,
       'content': content,
       'previewContent': previewContent,
-      'isBookmark': isBookmark,
-      'dateCreated': dateCreated?.toIso8601String(),
-      'lastestModified': lastestModified?.toIso8601String(),
+      'dateCreated': dateCreated.toIso8601String(),
+      'lastestModified': lastestModified.toIso8601String(),
     };
   }
 
   factory Note.newNote() {
     return Note(
-      uuid: Uuid().v4(),
-      title: '',
-      content: '',
-      previewContent: '',
-    );
+        uuid: Uuid().v4(),
+        title: '',
+        content: '',
+        previewContent: '',
+        dateCreated: DateTime.now(),
+        lastestModified: DateTime.now());
   }
 }

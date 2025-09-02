@@ -2,19 +2,19 @@ import 'dart:ui';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:melonote/src/modules/local_database.dart';
 import 'package:provider/provider.dart';
-import 'package:melonote/myobjectbox.dart';
-import 'package:melonote/src/theme.dart';
-import 'package:melonote/src/provider/app_provider.dart';
-import 'package:melonote/src/screen/desktop.dart';
-import 'package:melonote/src/screen/mobile.dart';
-import 'package:melonote/src/utils/myobjectbox.dart';
+import 'package:notely/myobjectbox.dart';
+import 'package:notely/src/theme.dart';
+import 'package:notely/src/provider/app_provider.dart';
+import 'package:notely/src/screen/desktop.dart';
+import 'package:notely/src/screen/mobile.dart';
+import 'package:notely/src/utils/myobjectbox.dart';
 import 'package:toastification/toastification.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:window_manager/window_manager.dart';
 import 'dart:io' show Platform;
 
+//  flutter build apk --target-platform android-arm64
 class MyCustomScrollBehavior extends MaterialScrollBehavior {
   // Override behavior methods like buildOverscrollIndicator and buildScrollbar
   @override
@@ -28,12 +28,13 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  ///* Commented out for now
-  // if (Platform.isWindows) {
-  //  await windowManager.ensureInitialized();
-  //   WindowManager.instance.setMinimumSize(const Size(1200, 600));
-  //   WindowManager.instance.setMaximumSize(const Size(1200, 600));
-  // }
+  // if developing change it to false
+  if (true) {
+    if (Platform.isWindows) {
+      await windowManager.ensureInitialized();
+      WindowManager.instance.setMinimumSize(const Size(1200, 600));
+    }
+  }
   objectbox = await ObjectBox.create();
 
   runApp(ChangeNotifierProvider(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:melonote/src/model/folder_model.dart';
-import 'package:melonote/src/model/note_model.dart';
-import 'package:melonote/src/modules/local_database.dart';
+import 'package:notely/src/model/folder_model.dart';
+import 'package:notely/src/model/note_model.dart';
+import 'package:notely/src/modules/local_database.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppProvider extends ChangeNotifier {
@@ -21,7 +21,6 @@ class AppProvider extends ChangeNotifier {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     isDarkMode = !isDarkMode;
     prefs.setBool('darkmode', isDarkMode);
-    print(isDarkMode);
     notifyListeners();
   }
 
@@ -58,7 +57,7 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  refresh() {
+  refreshAll() {
     intializeData();
     notifyListeners();
   }

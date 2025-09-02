@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:melonote/src/model/note_model.dart';
-import 'package:melonote/src/section/editor.dart';
+import 'package:notely/src/model/note_model.dart';
+import 'package:notely/src/section/editor.dart';
 
 class NotePreview extends StatelessWidget {
   const NotePreview({
@@ -13,8 +13,7 @@ class NotePreview extends StatelessWidget {
   final int index;
 
   String lastModifiedText() {
-    if (note.lastestModified == null) return '';
-    List<String> date = note.lastestModified!.toLocal().toString().split('-');
+    List<String> date = note.lastestModified.toLocal().toString().split('-');
     return '${date[0]}.${date[1]}.${date[2].split(' ')[0]}';
   }
 
@@ -35,10 +34,7 @@ class NotePreview extends StatelessWidget {
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color:
-                  MediaQuery.of(context).platformBrightness == Brightness.dark
-                      ? Colors.transparent
-                      : Colors.grey.withAlpha(200),
+              color: Colors.black12,
               offset: Offset(0, 0),
               spreadRadius: 1,
               blurRadius: 20,
@@ -65,7 +61,11 @@ class NotePreview extends StatelessWidget {
               note.previewContent,
               style: TextStyle(
                   fontSize: 14.0,
-                  color: Theme.of(context).textTheme.bodyMedium?.color,
+                  color: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.color
+                      ?.withAlpha(175),
                   fontWeight: FontWeight.w500),
               maxLines: 4,
               overflow: TextOverflow.ellipsis,

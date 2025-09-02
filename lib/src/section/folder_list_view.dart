@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:melonote/src/model/folder_model.dart';
-import 'package:melonote/src/model/note_model.dart';
-import 'package:melonote/src/modules/local_database.dart';
-import 'package:melonote/src/provider/app_provider.dart';
-import 'package:melonote/src/widget/folder_view.dart';
-import 'package:melonote/src/widget/folder_header.dart';
+import 'package:notely/src/model/folder_model.dart';
+import 'package:notely/src/model/note_model.dart';
+import 'package:notely/src/modules/local_database.dart';
+import 'package:notely/src/provider/app_provider.dart';
+import 'package:notely/src/widget/folder_view.dart';
+import 'package:notely/src/widget/folder_header.dart';
 import 'package:toastification/toastification.dart';
 
 class FolderListView extends StatelessWidget {
@@ -79,9 +79,9 @@ class FolderListView extends StatelessWidget {
 
   Container addNewFolderView(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(10.sp),
+      margin: EdgeInsets.all(20.sp),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary.withAlpha(100),
+        color: Theme.of(context).textTheme.bodyMedium?.color?.withAlpha(50),
         borderRadius: BorderRadius.circular(13),
       ),
       child: InkWell(
@@ -152,7 +152,7 @@ class FolderListView extends StatelessWidget {
                         return;
                       } else {
                         Database().addFolder(name: _controller.text);
-                        context.read<AppProvider>().refresh();
+                        context.read<AppProvider>().refreshAll();
                         // set text to nothing
                         _controller.text = '';
                         toastification.show(

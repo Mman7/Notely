@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:melonote/src/model/folder_model.dart';
-import 'package:melonote/src/model/note_model.dart';
-import 'package:melonote/src/modules/local_database.dart';
-import 'package:melonote/src/provider/app_provider.dart';
-import 'package:melonote/src/widget/note_preview.dart';
+import 'package:notely/src/model/folder_model.dart';
+import 'package:notely/src/model/note_model.dart';
+import 'package:notely/src/modules/local_database.dart';
+import 'package:notely/src/provider/app_provider.dart';
+import 'package:notely/src/widget/note_preview.dart';
 import 'package:toastification/toastification.dart';
 
 class NoteList extends StatefulWidget {
@@ -56,10 +56,10 @@ class _NoteListState extends State<NoteList> {
   }
 
   int checkScreen(DeviceType deviceType) {
-    if (ScreenUtil().screenWidth > 1200) return 5;
+    if (ScreenUtil().screenWidth > 1400) return 8;
     if (deviceType == DeviceType.mobile) return 2;
     if (deviceType == DeviceType.tablet) return 3;
-    if (deviceType == DeviceType.windows) return 4;
+    if (deviceType == DeviceType.windows) return 5;
     return 2;
   }
 
@@ -117,18 +117,21 @@ class _NoteListState extends State<NoteList> {
                         }
                       });
                     },
-                    icon: Icon(Icons.cancel_sharp))
+                    icon: Icon(
+                      Icons.cancel_sharp,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
+                    ))
                 : menuOptions(),
           ],
         ),
         body: ScrollConfiguration(
           behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
           child: GridView.builder(
-              padding: EdgeInsets.all(30.0),
+              padding: EdgeInsets.all(16.0),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: checkScreen(deviceType), // Number of columns
-                crossAxisSpacing: 30,
-                mainAxisSpacing: 30,
+                crossAxisSpacing: 15,
+                mainAxisSpacing: 15,
                 childAspectRatio: 3 / 4, // Adjust the aspect ratio as needed
               ),
               itemCount: _noteList.length, // Number of items
@@ -140,7 +143,8 @@ class _NoteListState extends State<NoteList> {
 
   PopupMenuButton<String> menuOptions() {
     return PopupMenuButton(
-      icon: Icon(Icons.more_vert, color: Colors.black),
+      icon: Icon(Icons.more_vert,
+          color: Theme.of(context).textTheme.bodyLarge?.color),
       itemBuilder: (context) => [
         PopupMenuItem(
           onTap: () => setState(() => _isSearching = !_isSearching),
@@ -181,7 +185,7 @@ class _NoteListState extends State<NoteList> {
                       onPressed: () {
                         if (widget.folder?.id == null) return;
                         Database().deleteFolder(id: widget.folder?.id);
-                        context.read<AppProvider>().refresh();
+                        context.read<AppProvider>().refreshAll();
                         Navigator.of(context).pop();
                         Navigator.of(context).pop();
                         toastification.show(

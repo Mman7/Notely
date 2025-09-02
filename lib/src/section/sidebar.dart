@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:melonote/src/model/note_model.dart';
-import 'package:melonote/src/provider/app_provider.dart';
-import 'package:melonote/src/section/editor.dart';
-import 'package:melonote/src/section/note_list.dart';
+import 'package:notely/src/model/note_model.dart';
+import 'package:notely/src/provider/app_provider.dart';
+import 'package:notely/src/section/editor.dart';
+import 'package:notely/src/section/note_list.dart';
 import 'package:provider/provider.dart';
 
 class SideBar extends StatefulWidget {
@@ -39,7 +39,7 @@ class _SideBarState extends State<SideBar> {
             size: Theme.of(context).textTheme.headlineLarge?.fontSize,
           ),
           title: Text(
-            'MeloNote',
+            'Notely',
             style: TextStyle(
               color: Theme.of(context).textTheme.headlineLarge?.color,
               fontWeight: FontWeight.bold,
@@ -167,7 +167,7 @@ class _SideBarState extends State<SideBar> {
             boxShadow: [
               if (isNewNoteBtn)
                 BoxShadow(
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).primaryColor.withAlpha(175),
                   spreadRadius: 2,
                   blurRadius: 16,
                   offset: const Offset(0, 0),

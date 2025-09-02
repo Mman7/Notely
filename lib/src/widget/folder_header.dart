@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:melonote/src/section/note_list.dart';
-import 'package:melonote/src/widget/folder_widget.dart';
+import 'package:notely/src/section/note_list.dart';
+import 'package:notely/src/widget/folder_widget.dart';
 
 class FolderHeader extends StatefulWidget {
   const FolderHeader({super.key, required this.listCount});

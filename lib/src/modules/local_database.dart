@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:melonote/myobjectbox.dart';
-import 'package:melonote/objectbox.g.dart';
-import 'package:melonote/src/model/folder_model.dart';
-import 'package:melonote/src/model/note_model.dart';
+import 'package:notely/myobjectbox.dart';
+import 'package:notely/objectbox.g.dart';
+import 'package:notely/src/model/folder_model.dart';
+import 'package:notely/src/model/note_model.dart';
 import 'package:uuid/uuid.dart';
 
 class Database {
@@ -22,13 +22,22 @@ class Database {
     for (Note i in notesFromRemote) {
       if (localNoteSet.contains(i.uuid)) {
         // Update notes
+        // get note
         // local is x, remote is i
-        int id = localNotes.where((x) => x.uuid == i.uuid).first.id;
-        i.id = id;
-        noteBox.put(i);
+        Note note = localNotes.where((x) => x.uuid == i.uuid).first;
+        // compare lastestModified
+        bool isRemoteNewer = note.lastestModified.isBefore(i.lastestModified);
+        if (isRemoteNewer) {
+          note.title = i.title;
+          note.content = i.content;
+          note.previewContent = i.previewContent;
+          note.lastestModified = i.lastestModified;
+          note.dateCreated = i.dateCreated;
+          noteBox.put(note, mode: PutMode.update);
+        }
       } else {
         // Create a new one
-        noteBox.put(i);
+        noteBox.put(i, mode: PutMode.insert);
       }
     }
     // apply folders

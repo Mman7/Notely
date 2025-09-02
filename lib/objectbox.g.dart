@@ -46,12 +46,6 @@ final _entities = <obx_int.ModelEntity>[
         flags: 0,
       ),
       obx_int.ModelProperty(
-        id: const obx_int.IdUid(6, 6019034536151155963),
-        name: 'isBookmark',
-        type: 1,
-        flags: 0,
-      ),
-      obx_int.ModelProperty(
         id: const obx_int.IdUid(8, 6821778788273882308),
         name: 'dateCreated',
         type: 10,
@@ -208,6 +202,7 @@ obx_int.ModelDefinition getObjectBoxModel() {
       7527307426686352931,
       3694927225866095609,
       8811746142163413985,
+      6019034536151155963,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -233,9 +228,8 @@ obx_int.ModelDefinition getObjectBoxModel() {
         fbb.addInt64(0, object.id);
         fbb.addOffset(1, uuidOffset);
         fbb.addOffset(3, titleOffset);
-        fbb.addBool(5, object.isBookmark);
-        fbb.addInt64(7, object.dateCreated?.millisecondsSinceEpoch);
-        fbb.addInt64(11, object.lastestModified?.millisecondsSinceEpoch);
+        fbb.addInt64(7, object.dateCreated.millisecondsSinceEpoch);
+        fbb.addInt64(11, object.lastestModified.millisecondsSinceEpoch);
         fbb.addOffset(12, contentOffset);
         fbb.addOffset(14, previewContentOffset);
         fbb.finish(fbb.endTable());
@@ -244,16 +238,6 @@ obx_int.ModelDefinition getObjectBoxModel() {
       objectFromFB: (obx.Store store, ByteData fbData) {
         final buffer = fb.BufferContext(fbData);
         final rootOffset = buffer.derefObject(0);
-        final dateCreatedValue = const fb.Int64Reader().vTableGetNullable(
-          buffer,
-          rootOffset,
-          18,
-        );
-        final lastestModifiedValue = const fb.Int64Reader().vTableGetNullable(
-          buffer,
-          rootOffset,
-          26,
-        );
         final idParam = const fb.Int64Reader().vTableGet(
           buffer,
           rootOffset,
@@ -272,24 +256,18 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final previewContentParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGet(buffer, rootOffset, 32, '');
-        final isBookmarkParam = const fb.BoolReader().vTableGetNullable(
-          buffer,
-          rootOffset,
-          14,
+        final dateCreatedParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 18, 0),
         );
-        final dateCreatedParam = dateCreatedValue == null
-            ? null
-            : DateTime.fromMillisecondsSinceEpoch(dateCreatedValue);
-        final lastestModifiedParam = lastestModifiedValue == null
-            ? null
-            : DateTime.fromMillisecondsSinceEpoch(lastestModifiedValue);
+        final lastestModifiedParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 26, 0),
+        );
         final object = Note(
           id: idParam,
           uuid: uuidParam,
           title: titleParam,
           content: contentParam,
           previewContent: previewContentParam,
-          isBookmark: isBookmarkParam,
           dateCreated: dateCreatedParam,
           lastestModified: lastestModifiedParam,
         );
@@ -363,29 +341,24 @@ class Note_ {
     _entities[0].properties[2],
   );
 
-  /// See [Note.isBookmark].
-  static final isBookmark = obx.QueryBooleanProperty<Note>(
-    _entities[0].properties[3],
-  );
-
   /// See [Note.dateCreated].
   static final dateCreated = obx.QueryDateProperty<Note>(
-    _entities[0].properties[4],
+    _entities[0].properties[3],
   );
 
   /// See [Note.lastestModified].
   static final lastestModified = obx.QueryDateProperty<Note>(
-    _entities[0].properties[5],
+    _entities[0].properties[4],
   );
 
   /// See [Note.content].
   static final content = obx.QueryStringProperty<Note>(
-    _entities[0].properties[6],
+    _entities[0].properties[5],
   );
 
   /// See [Note.previewContent].
   static final previewContent = obx.QueryStringProperty<Note>(
-    _entities[0].properties[7],
+    _entities[0].properties[6],
   );
 }
 

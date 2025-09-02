@@ -4,10 +4,10 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:melonote/src/model/folder_model.dart';
-import 'package:melonote/src/model/note_model.dart';
-import 'package:melonote/src/modules/local_database.dart';
-import 'package:melonote/src/provider/app_provider.dart';
+import 'package:notely/src/model/folder_model.dart';
+import 'package:notely/src/model/note_model.dart';
+import 'package:notely/src/modules/local_database.dart';
+import 'package:notely/src/provider/app_provider.dart';
 import 'package:toastification/toastification.dart';
 
 class Editor extends StatefulWidget {
@@ -27,7 +27,9 @@ class _EditorState extends State<Editor> {
   final _titleController = TextEditingController();
   FocusNode editorFocusNode = FocusNode();
   ValueNotifier<bool> isChanged = ValueNotifier(false);
+  Note? _note;
   bool isEditing = false;
+  bool isNew = false;
 
   @override
   void dispose() {
@@ -40,6 +42,8 @@ class _EditorState extends State<Editor> {
   void initState() {
     _titleController.text = widget.note.title;
     String originalContent = widget.note.content;
+    isNew = widget.isNew;
+    _note = widget.note;
 
     if (!widget.isNew) {
       // load content
@@ -82,31 +86,34 @@ class _EditorState extends State<Editor> {
     preview = preview.length > 100
         ? preview.substring(0, 100)
         : preview; // Limit preview to 100 characters
-    var json = jsonEncode(content);
+
+    String json = jsonEncode(content);
 
     Database().saveNote(
       note: Note(
-        id: widget.note.id,
-        title: title,
-        content: json,
-        dateCreated: DateTime.now(),
-        uuid: widget.note.uuid,
-        previewContent: preview,
-      ),
+          id: _note?.id ?? 0,
+          title: title,
+          content: json,
+          dateCreated: DateTime.now(),
+          uuid: widget.note.uuid,
+          previewContent: preview,
+          lastestModified: DateTime.now()),
     );
-    context.read<AppProvider>().refresh();
+    editorFocusNode.unfocus();
+    context.read<AppProvider>().refreshAll();
   }
 
   /// Updates the widget's properties with the latest note data from the provider.
-  void refreshWhenSave() {
-    Note note = context.read<AppProvider>().noteList.last;
-    widget.note.title = note.title;
-    widget.note.content = note.content;
-    widget.note.id = note.id;
-    widget.isNew = false;
-    widget.note.uuid = note.uuid;
-    isChanged.value = false;
-    setState(() => isEditing = false);
+  void bindLastestNote() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Note lastestNote = context.read<AppProvider>().noteList.last;
+      setState(() {
+        _note = lastestNote;
+        isEditing = false;
+        isNew = false;
+        isChanged.value = false;
+      });
+    });
   }
 
   @override
@@ -151,6 +158,7 @@ class _EditorState extends State<Editor> {
                         ),
                         onPressed: () {
                           saveContent();
+                          bindLastestNote();
                           setState(() => isEditing = false);
                           showToaster(text: 'Your note has been saved');
                           Navigator.of(context).pop();
@@ -171,9 +179,11 @@ class _EditorState extends State<Editor> {
           surfaceTintColor: Colors.transparent,
           actions: [editorAction(), editorPopUp(folderList)],
           title: Text(
-            'MeloEditor',
-            style:
-                TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
+            'NotelyEditor',
+            style: TextStyle(
+              color: Theme.of(context).textTheme.bodyLarge?.color,
+              fontWeight: FontWeight.w500,
+            ),
           ),
         ),
         body: Container(
@@ -221,7 +231,8 @@ class _EditorState extends State<Editor> {
   }
 
   Widget editorPopUp(List<FolderModel> folderList) {
-    return !widget.isNew
+    // if isnew show popupmenu else nothing
+    return !isNew
         ? PopupMenuButton<int>(
             icon: Icon(
               Icons.more_vert,
@@ -250,9 +261,9 @@ class _EditorState extends State<Editor> {
                             TextButton(
                               onPressed: () {
                                 Database database = Database();
-                                database.deleteNote(id: widget.note.id);
-                                context.read<AppProvider>().refresh();
-                                context.read<AppProvider>().refreshFolder();
+                                database.deleteNote(id: _note?.id);
+                                context.read<AppProvider>().refreshAll();
+
                                 showToaster(text: 'Your note has been deleted');
                                 // Close dialog and leave editor
                                 Navigator.of(context).pop();
@@ -368,7 +379,9 @@ class _EditorState extends State<Editor> {
                                           showToaster(
                                               text:
                                                   'Your note has been removed from ${folder.title}');
-                                          context.read<AppProvider>().refresh();
+                                          context
+                                              .read<AppProvider>()
+                                              .refreshAll();
                                           context
                                               .read<AppProvider>()
                                               .refreshFolder();
@@ -403,12 +416,13 @@ class _EditorState extends State<Editor> {
   ValueListenableBuilder<bool> editorAction() {
     return ValueListenableBuilder(
       valueListenable: isChanged,
-      builder: (context, changed, child) => changed || widget.isNew
+      builder: (context, changed, child) => changed
           ? IconButton(
               onPressed: () {
                 // Save the content
                 saveContent();
-                refreshWhenSave();
+                bindLastestNote();
+
                 showToaster(text: 'Your note has been saved');
               },
               icon: Icon(

@@ -15,6 +15,7 @@ dependencies:
   flutter_localization: ^0.3.2
   flutter_localizations:
     sdk: flutter
+  flutter_native_splash: ^2.4.6
   flutter_quill: ^11.4.2
   flutter_screenutil: ^5.9.1
   flutter_svg: ^2.1.0
@@ -42,6 +43,21 @@ dev_dependencies:
     sdk: flutter
   objectbox_generator: ^4.3.0
 
+flutter_native_splash:
+  color: "#ffffff"
+  image: ./assets/images/logo.png
+  branding: ./assets/images/logo.png
+  color_dark: "#121212"
+  image_dark: ./assets/images/logo.png
+  branding_dark: ./assets/images/logo.png
+
+  android_12:
+    image: ./assets/images/logo.png
+    icon_background_color: "#ffffff"
+    image_dark: ./assets/images/logo.png
+    icon_background_color_dark: "#121212"
+
+  web: false
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true

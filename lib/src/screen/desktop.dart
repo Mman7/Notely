@@ -38,7 +38,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
           child: SideBar(),
         ),
         Flexible(
-            flex: 11,
+            flex: 13,
             child: Container(
               // color: Theme.of(context).colorScheme.surface,
               child: pages[pageIndex],

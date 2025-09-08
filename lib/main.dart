@@ -11,6 +11,7 @@ import 'package:notely/src/screen/mobile.dart';
 import 'package:notely/src/utils/myobjectbox.dart';
 import 'package:toastification/toastification.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:double_tap_to_exit/double_tap_to_exit.dart';
 import 'package:window_manager/window_manager.dart';
 import 'dart:io' show Platform;
 
@@ -82,35 +83,37 @@ class _MainAppState extends State<MainApp> {
               themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
               theme: myTheme,
               darkTheme: myDarkTheme,
-              home: Scaffold(
-                body: Container(
-                  color: Colors.black,
-                  child: Builder(
-                    builder: (ctx) {
-                      if (deviceType == DeviceType.mobile) {
-                        return ScreenUtilInit(
-                            designSize: const Size(360, 1080),
-                            builder: (ctx, child) {
-                              return const MobileLayout();
-                            });
-                      }
-                      if (deviceType == DeviceType.tablet) {
-                        return ScreenUtilInit(
-                            designSize: const Size(600, 1080),
-                            builder: (ctx, child) {
-                              return const MobileLayout();
-                            });
-                      }
-                      if (deviceType == DeviceType.windows) {
-                        return ScreenUtilInit(
-                            designSize: const Size(1200, 1080),
-                            builder: (ctx, child) {
-                              return const DesktopLayout();
-                            });
-                      }
-                      return const SizedBox
-                          .shrink(); // Default return statement
-                    },
+              home: DoubleTapToExit(
+                child: Scaffold(
+                  body: Container(
+                    color: Colors.black,
+                    child: Builder(
+                      builder: (ctx) {
+                        if (deviceType == DeviceType.mobile) {
+                          return ScreenUtilInit(
+                              designSize: const Size(360, 1080),
+                              builder: (ctx, child) {
+                                return const MobileLayout();
+                              });
+                        }
+                        if (deviceType == DeviceType.tablet) {
+                          return ScreenUtilInit(
+                              designSize: const Size(600, 1080),
+                              builder: (ctx, child) {
+                                return const MobileLayout();
+                              });
+                        }
+                        if (deviceType == DeviceType.windows) {
+                          return ScreenUtilInit(
+                              designSize: const Size(1200, 1080),
+                              builder: (ctx, child) {
+                                return const DesktopLayout();
+                              });
+                        }
+                        return const SizedBox
+                            .shrink(); // Default return statement
+                      },
+                    ),
                   ),
                 ),
               ),

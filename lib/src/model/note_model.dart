@@ -37,7 +37,7 @@ class Note {
   factory Note.newNote() {
     return Note(
         uuid: Uuid().v4(),
-        title: '',
+        title: 'New note',
         content: '',
         previewContent: '',
         dateCreated: DateTime.now(),

@@ -20,6 +20,7 @@ class NoteList extends StatefulWidget {
 class _NoteListState extends State<NoteList> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   List<Note> _noteList = [];
   List<Note> _backupList = [];
 
@@ -38,16 +39,19 @@ class _NoteListState extends State<NoteList> {
         .toList();
   }
 
-  @override
-  void initState() {
+  intializeNoteFromFolder() {
     // intialize the note list based on whether a folder is provided
-
     if (widget.folder != null) {
       _noteList = getData(widget.folder);
       _backupList = getData(widget.folder);
     }
+  }
+
+  @override
+  void initState() {
     super.initState();
-    // CHECK if the widget is searching show up search , else show up all notes
+    intializeNoteFromFolder();
+
     _searchController.addListener(() {
       String text = _searchController.text;
       if (text.isNotEmpty) setState(() => _noteList = searchUp(_noteList));
@@ -63,11 +67,17 @@ class _NoteListState extends State<NoteList> {
     return 2;
   }
 
+  scrollToBtm() {
+    _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 275), curve: Curves.bounceInOut);
+  }
+
   @override
   Widget build(BuildContext context) {
     DeviceType deviceType = context.watch<AppProvider>().getDeviceType();
+    List<Note> allNotes = context.watch<AppProvider>().noteList;
+
     if (widget.folder == null && !_isSearching) {
-      List<Note> allNotes = context.watch<AppProvider>().noteList;
       _noteList = allNotes;
       _backupList = allNotes;
       // Initializing the note list based on the folder
@@ -79,6 +89,7 @@ class _NoteListState extends State<NoteList> {
 
     bool isMobileOrTable =
         deviceType == DeviceType.mobile || deviceType == DeviceType.tablet;
+
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -121,12 +132,13 @@ class _NoteListState extends State<NoteList> {
                       Icons.cancel_sharp,
                       color: Theme.of(context).textTheme.bodyLarge?.color,
                     ))
-                : menuOptions(),
+                : menuOptions(_noteList),
           ],
         ),
         body: ScrollConfiguration(
           behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
           child: GridView.builder(
+              controller: _scrollController,
               padding: EdgeInsets.all(16.0),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: checkScreen(deviceType), // Number of columns
@@ -141,8 +153,9 @@ class _NoteListState extends State<NoteList> {
         ));
   }
 
-  PopupMenuButton<String> menuOptions() {
+  PopupMenuButton<String> menuOptions(List<Note> noteList) {
     return PopupMenuButton(
+      color: Theme.of(context).colorScheme.surface,
       icon: Icon(Icons.more_vert,
           color: Theme.of(context).textTheme.bodyLarge?.color),
       itemBuilder: (context) => [
@@ -151,9 +164,40 @@ class _NoteListState extends State<NoteList> {
           value: 'search',
           child: Row(
             children: [
-              Icon(Icons.search),
+              Icon(
+                Icons.search,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
               SizedBox(width: 8),
               Text('Search'),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          onTap: () {
+            if (widget.folder == null) {
+              Database().addNote(note: Note.newNote());
+              scrollToBtm();
+              context.read<AppProvider>().refreshNote();
+            } else {
+              if (widget.folder == null) throw Error();
+              Database().addNote(note: Note.newNote());
+              Note lastestNote = context.read<AppProvider>().noteList.last;
+              widget.folder?.addNote(noteId: lastestNote.id);
+              scrollToBtm();
+              intializeNoteFromFolder();
+              context.read<AppProvider>().refreshAll();
+            }
+          },
+          value: 'search',
+          child: Row(
+            children: [
+              Icon(
+                Icons.add_box_outlined,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
+              ),
+              SizedBox(width: 8),
+              Text('Add note'),
             ],
           ),
         ),
@@ -218,7 +262,10 @@ class _NoteListState extends State<NoteList> {
             value: 'delete_folder',
             child: Row(
               children: [
-                Icon(Icons.delete),
+                Icon(
+                  Icons.delete,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
+                ),
                 SizedBox(width: 8),
                 Text('Delete Folder'),
               ],

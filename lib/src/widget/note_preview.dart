@@ -58,7 +58,9 @@ class NotePreview extends StatelessWidget {
             ),
             SizedBox(height: 8.0),
             Text(
-              note.previewContent,
+              note.previewContent == ''
+                  ? 'nothing in here...'
+                  : note.previewContent,
               style: TextStyle(
                   fontSize: 14.0,
                   color: Theme.of(context)

@@ -13,6 +13,9 @@ class NotePreview extends StatelessWidget {
   final int index;
 
   String lastModifiedText() {
+    Duration a = DateTime.now().difference(note.lastestModified);
+    if (a.inMinutes > 24 && a.inDays < 1) return '${a.inHours} hours ago';
+    if (a.inMinutes <= 24) return '${a.inMinutes} minutes ago';
     List<String> date = note.lastestModified.toLocal().toString().split('-');
     return '${date[0]}.${date[1]}.${date[2].split(' ')[0]}';
   }

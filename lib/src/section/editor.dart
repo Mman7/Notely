@@ -89,7 +89,7 @@ class _EditorState extends State<Editor> {
 
     String json = jsonEncode(content);
 
-    Database().saveNote(
+    Database().addNote(
       note: Note(
           id: _note?.id ?? 0,
           title: title,
@@ -234,6 +234,8 @@ class _EditorState extends State<Editor> {
     // if isnew show popupmenu else nothing
     return !isNew
         ? PopupMenuButton<int>(
+            iconColor: Theme.of(context).textTheme.bodyLarge?.color,
+            color: Theme.of(context).colorScheme.surface,
             icon: Icon(
               Icons.more_vert,
               color: Theme.of(context).textTheme.bodyLarge?.color,
@@ -279,7 +281,10 @@ class _EditorState extends State<Editor> {
                     value: 1,
                     child: Row(
                       children: [
-                        Icon(Icons.delete, color: Colors.black),
+                        Icon(
+                          Icons.delete,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        ),
                         SizedBox(width: 8),
                         Text('Delete Note'),
                       ],
@@ -342,7 +347,10 @@ class _EditorState extends State<Editor> {
                     value: 2,
                     child: Row(
                       children: [
-                        Icon(Icons.folder, color: Colors.black),
+                        Icon(
+                          Icons.folder,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        ),
                         SizedBox(width: 8),
                         Text('Add to folder'),
                       ],
@@ -402,6 +410,7 @@ class _EditorState extends State<Editor> {
                       children: [
                         Icon(
                           Icons.drive_file_move_rtl_outlined,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
                         ),
                         SizedBox(width: 8),
                         Text('Remove from Folder'),

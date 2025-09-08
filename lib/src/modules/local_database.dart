@@ -80,7 +80,7 @@ class Database {
     noteBox.put(note, mode: PutMode.update);
   }
 
-  saveNote({required Note note}) {
+  addNote({required Note note}) {
     noteBox.put(note);
   }
 

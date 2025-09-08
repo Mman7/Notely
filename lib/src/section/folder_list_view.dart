@@ -19,7 +19,7 @@ class FolderListView extends StatelessWidget {
 
     int checkScreen() {
       DeviceType deviceType = context.read<AppProvider>().getDeviceType();
-      if (ScreenUtil().screenWidth > 1400) return 6;
+      if (ScreenUtil().screenWidth > 1400) return 7;
       if (deviceType == DeviceType.mobile) return 2;
       if (deviceType == DeviceType.tablet) return 4;
       if (deviceType == DeviceType.windows) return 5;
@@ -52,8 +52,8 @@ class FolderListView extends StatelessWidget {
                 shrinkWrap: true,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: checkScreen(),
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 15,
+                  crossAxisSpacing: 30,
                 ),
                 itemCount: allFolders.length + 2, // 1 for header 1 for footer
                 itemBuilder: (context, index) {

@@ -7,8 +7,8 @@ environment:
   sdk: ">=3.3.3 <4.0.0"
 
 dependencies:
+  double_tap_to_exit: ^1.0.3
   connectme: ^2.2.3
-  dart_promise: ^0.0.1+1
   flutter:
     sdk: flutter
   flutter_animate: ^4.5.0
@@ -44,20 +44,20 @@ dev_dependencies:
   objectbox_generator: ^4.3.0
 
 flutter_native_splash:
-  color: "#ffffff"
+  color: "#FFFFFF"
   image: ./assets/images/logo.png
-  branding: ./assets/images/logo.png
-  color_dark: "#121212"
+  color_dark: "#1a1a1a"
   image_dark: ./assets/images/logo.png
-  branding_dark: ./assets/images/logo.png
 
+  # add this
   android_12:
+    icon_background_color: "#FFFFFF"
     image: ./assets/images/logo.png
-    icon_background_color: "#ffffff"
+    icon_background_color_dark: "#1a1a1a"
     image_dark: ./assets/images/logo.png
-    icon_background_color_dark: "#121212"
 
   web: false
+
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true

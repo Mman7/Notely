@@ -243,56 +243,6 @@ class _EditorState extends State<Editor> {
             itemBuilder: (context) => [
                   PopupMenuItem(
                     onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.surface,
-                          title: Text('Delete Note'),
-                          content: Text(
-                              'Are you sure you want to delete this note?'),
-                          actions: [
-                            TextButton(
-                              style: ButtonStyle(
-                                foregroundColor:
-                                    WidgetStateProperty.all(Colors.grey),
-                              ),
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: Text('Cancel'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Database database = Database();
-                                database.deleteNote(id: _note?.id);
-                                context.read<AppProvider>().refreshAll();
-
-                                showToaster(text: 'Your note has been deleted');
-                                // Close dialog and leave editor
-                                Navigator.of(context).pop();
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('Delete',
-                                  style: TextStyle(color: Colors.red)),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                    value: 1,
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.delete,
-                          color: Theme.of(context).textTheme.bodyLarge?.color,
-                        ),
-                        SizedBox(width: 8),
-                        Text('Delete Note'),
-                      ],
-                    ),
-                  ),
-                  // Add to Folder
-                  PopupMenuItem(
-                    onTap: () {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         showDialog(
                             context: context,
@@ -414,6 +364,55 @@ class _EditorState extends State<Editor> {
                         ),
                         SizedBox(width: 8),
                         Text('Remove from Folder'),
+                      ],
+                    ),
+                  ),
+                  PopupMenuItem(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.surface,
+                          title: Text('Delete Note'),
+                          content: Text(
+                              'Are you sure you want to delete this note?'),
+                          actions: [
+                            TextButton(
+                              style: ButtonStyle(
+                                foregroundColor:
+                                    WidgetStateProperty.all(Colors.grey),
+                              ),
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Database database = Database();
+                                database.deleteNote(id: _note?.id);
+                                context.read<AppProvider>().refreshAll();
+
+                                showToaster(text: 'Your note has been deleted');
+                                // Close dialog and leave editor
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('Delete',
+                                  style: TextStyle(color: Colors.red)),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    value: 1,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.delete,
+                          color: Theme.of(context).textTheme.bodyLarge?.color,
+                        ),
+                        SizedBox(width: 8),
+                        Text('Delete Note'),
                       ],
                     ),
                   ),

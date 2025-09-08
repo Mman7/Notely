@@ -112,6 +112,10 @@ class _TransferPageState extends State<TransferPage> {
               },
             ),
             const SizedBox(height: 16),
+            Divider(
+              color: Colors.grey.withAlpha(50),
+            ),
+            const SizedBox(height: 16),
             btn(
                 icon: Icons.download,
                 context: context,
@@ -168,35 +172,25 @@ class _TransferPageState extends State<TransferPage> {
             offset: const Offset(0, 0),
           ),
         ],
-        borderRadius: BorderRadius.all(Radius.circular(15)),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Theme.of(context).colorScheme.primary.withAlpha(175),
-            Theme.of(context).colorScheme.primary
-          ],
-        ),
+        color: Theme.of(context).textTheme.bodyLarge?.color,
+        borderRadius: BorderRadius.all(Radius.circular(5)),
       ),
       child: TextButton.icon(
         onPressed: () => onpressed(),
         style: TextButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 20.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50),
-          ),
         ),
         label: Text(
           text,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontSize: 20.sp,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 fontWeight: FontWeight.w600,
               ),
         ),
         icon: Icon(
           icon,
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           size: Theme.of(context).textTheme.headlineLarge?.fontSize,
         ),
       ),

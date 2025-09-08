@@ -43,7 +43,7 @@ class _SideBarState extends State<SideBar> {
             style: TextStyle(
               color: Theme.of(context).textTheme.headlineLarge?.color,
               fontWeight: FontWeight.bold,
-              fontSize: 25.sp,
+              fontSize: Theme.of(context).textTheme.headlineSmall?.fontSize,
             ),
           ),
         ),
@@ -187,7 +187,8 @@ class _SideBarState extends State<SideBar> {
             label: Text(
               text,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontSize: 20.sp,
+                    fontSize:
+                        Theme.of(context).textTheme.headlineSmall?.fontSize,
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
                   ),

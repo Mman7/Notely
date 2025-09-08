@@ -32,6 +32,12 @@ class _NoteListState extends State<NoteList> {
         .toList();
   }
 
+  sortListbyDate() {
+    setState(() {
+      _noteList.sort((a, b) => b.lastestModified.compareTo(a.lastestModified));
+    });
+  }
+
   List<Note> getData(folder) {
     return Database()
         .filterNoteByFolder(ids: widget.folder?.getNoteIncluded)
@@ -76,6 +82,7 @@ class _NoteListState extends State<NoteList> {
   Widget build(BuildContext context) {
     DeviceType deviceType = context.watch<AppProvider>().getDeviceType();
     List<Note> allNotes = context.watch<AppProvider>().noteList;
+    sortListbyDate();
 
     if (widget.folder == null && !_isSearching) {
       _noteList = allNotes;

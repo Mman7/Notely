@@ -52,6 +52,10 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  refreshNote() {
+    intializeNote();
+  }
+
   refreshFolder() {
     intializeFolder();
     notifyListeners();

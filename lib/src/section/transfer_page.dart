@@ -150,6 +150,13 @@ class _TransferPageState extends State<TransferPage> {
                     }
                   }
                 }),
+            Expanded(child: Container()),
+            Center(
+              child: Text(
+                'The Windows device must allow this application through the firewall; otherwise, data transfer may fail',
+                style: TextStyle(color: Colors.grey.shade600),
+              ),
+            )
           ],
         ),
       ),

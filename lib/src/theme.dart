@@ -3,16 +3,16 @@ import 'package:hexcolor/hexcolor.dart';
 
 final myTheme = ThemeData(
     textTheme: TextTheme(
-        bodyLarge: TextStyle(color: Color(0xFF44339D)),
-        bodyMedium: TextStyle(color: Color(0xFF44339D)),
-        headlineSmall: TextStyle(color: Color(0xFF44339D)),
-        headlineLarge: TextStyle(color: Color(0xFF44339D)),
+        bodyLarge: TextStyle(color: Color(0xFF333333)),
+        bodyMedium: TextStyle(color: Color(0xFF333333)),
+        headlineSmall: TextStyle(color: Color(0xFF333333)),
+        headlineLarge: TextStyle(color: Color(0xFF333333)),
         labelLarge: TextStyle(color: Colors.white70),
-        bodySmall: TextStyle(color: Color(0xFF44339D))),
+        bodySmall: TextStyle(color: Color(0xFF333333))),
     inputDecorationTheme: InputDecorationTheme(
         filled: true,
         hintStyle: TextStyle(color: Colors.grey),
-        labelStyle: TextStyle(color: Color(0xFF44339D))),
+        labelStyle: TextStyle(color: Color(0xFF333333))),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       selectedItemColor: HexColor('#504099'),
       selectedLabelStyle: TextStyle(
@@ -25,8 +25,8 @@ final myTheme = ThemeData(
     colorScheme: ColorScheme.light().copyWith(
         tertiary: Color(0xFFFFFFFF),
         primary: const Color(0xFFA391FF),
-        secondary: const Color(0xFF44339D),
-        surfaceBright: Color(0xFF44339D),
+        secondary: const Color(0xFF333333),
+        surfaceBright: Color(0xFF333333),
         surface: const Color(0xFAFAFAFA)));
 
 final myDarkTheme = ThemeData(

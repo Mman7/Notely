@@ -17,11 +17,30 @@ import 'package:notely/src/modules/web_socket.dart';
 // Phone → TCP connect → 192.168.1.5:4040
 
 class SocketClient {
-  void connect() async {
+  connectWithTcp({serverIp, tcpPort}) {
+    WebSocketClient(serverAddress: '$serverIp:$tcpPort')
+        .connect()
+        .then((client) {
+      debugPrint(
+          'from Cli Connected to WebSocket server at $serverIp:$tcpPort');
+
+      List<FolderModel> folders = Database().getAllFolder();
+      List<Note> notes = Database().getAllNote();
+      dynamic data = jsonEncode({
+        'type': 'sync',
+        'folders': folders,
+        'notes': notes,
+      });
+      client.send(data);
+    });
+  }
+
+  void connect({required Completer connector}) async {
     final udpSocket = await RawDatagramSocket.bind(InternetAddress.anyIPv4, 0);
     udpSocket.broadcastEnabled = true;
     final broadcastAddress = await getBroadcastAddress();
     final broadcastPort = 8888;
+
     udpSocket.send(
         'DISCOVER_SERVER'.codeUnits, broadcastAddress, broadcastPort);
     debugPrint('Broadcast message sent');
@@ -30,31 +49,16 @@ class SocketClient {
       if (event == RawSocketEvent.read) {
         final datagram = udpSocket.receive();
         if (datagram == null) return;
-
         final message = String.fromCharCodes(datagram.data);
         debugPrint(
             'from Cli Received: $message from ${datagram.address.address}:${datagram.port}');
-
         if (message.startsWith('SERVER_HERE')) {
           final parts = message.split(':');
           final tcpPort = int.parse(parts[1]);
           final serverIp = datagram.address.address;
+          connectWithTcp(serverIp: serverIp, tcpPort: tcpPort);
           debugPrint('from Cli Server found at $serverIp:$tcpPort');
           udpSocket.close();
-          WebSocketClient(serverAddress: '$serverIp:$tcpPort')
-              .connect()
-              .then((client) {
-            debugPrint(
-                'from Cli Connected to WebSocket server at $serverIp:$tcpPort');
-            List<FolderModel> folders = Database().getAllFolder();
-            List<Note> notes = Database().getAllNote();
-            dynamic data = jsonEncode({
-              'type': 'sync',
-              'folders': folders,
-              'notes': notes,
-            });
-            client.send(data);
-          });
         }
       }
     });
@@ -107,7 +111,6 @@ class SocketServer {
       server.listen<String>((data, client) async {
         handleData(data);
         callback();
-        // completer.complete('Data received and applied');
         await client.close();
         await server.close();
       });

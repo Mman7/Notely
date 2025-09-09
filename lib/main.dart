@@ -29,7 +29,7 @@ class MyCustomScrollBehavior extends MaterialScrollBehavior {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // if developing change it to false
+  // if developing change it t;o false
   if (true) {
     if (Platform.isWindows) {
       await windowManager.ensureInitialized();
@@ -52,7 +52,6 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  bool isDarkmode = false;
   @override
   void initState() {
     context.read<AppProvider>().intializeData();

@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "syncnote" "\0"
+            VALUE "FileDescription", "notely" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "syncnote" "\0"
+            VALUE "InternalName", "notely" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "syncnote.exe" "\0"
-            VALUE "ProductName", "syncnote" "\0"
+            VALUE "OriginalFilename", "notely.exe" "\0"
+            VALUE "ProductName", "notely" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

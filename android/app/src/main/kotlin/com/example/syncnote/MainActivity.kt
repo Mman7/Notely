@@ -1,4 +1,4 @@
-package com.example.syncnote
+package com.example.notely
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,13 +1,15 @@
 import 'dart:convert';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:notely/src/provider/app_data.dart';
 import 'package:provider/provider.dart';
 import 'package:notely/src/model/folder_model.dart';
 import 'package:notely/src/model/note_model.dart';
 import 'package:notely/src/modules/local_database.dart';
-import 'package:notely/src/provider/app_provider.dart';
+import 'package:notely/src/provider/app_status.dart';
 import 'package:toastification/toastification.dart';
 
 class Editor extends StatefulWidget {
@@ -27,7 +29,7 @@ class _EditorState extends State<Editor> {
   final _titleController = TextEditingController();
   FocusNode editorFocusNode = FocusNode();
   ValueNotifier<bool> isChanged = ValueNotifier(false);
-  Note? _note;
+  late Note _note;
   bool isEditing = false;
   bool isNew = false;
 
@@ -47,9 +49,12 @@ class _EditorState extends State<Editor> {
 
     if (!widget.isNew) {
       // load content
-      if (originalContent.isEmpty) originalContent = r'[{"insert":"\n"}]';
-      List json = jsonDecode(originalContent);
-      _controller.document = Document.fromJson(json);
+      if (originalContent.isEmpty) {
+        originalContent = r'[{"insert":"\n"}]';
+      } else {
+        List json = jsonDecode(originalContent);
+        _controller.document = Document.fromJson(json);
+      }
     }
 
     // Check if title has changed
@@ -83,15 +88,14 @@ class _EditorState extends State<Editor> {
     String title = _titleController.text;
     Delta content = _controller.document.toDelta();
     String preview = _controller.document.toPlainText();
-    preview = preview.length > 100
-        ? preview.substring(0, 100)
-        : preview; // Limit preview to 100 characters
+    preview = preview.length > 70
+        ? preview.substring(0, 70)
+        : preview; // Limit preview to 70 characters
 
     String json = jsonEncode(content);
-
-    Database().addNote(
+    Database.addNote(
       note: Note(
-          id: _note?.id ?? 0,
+          id: _note.id,
           title: title,
           content: json,
           dateCreated: DateTime.now(),
@@ -99,14 +103,15 @@ class _EditorState extends State<Editor> {
           previewContent: preview,
           lastestModified: DateTime.now()),
     );
+    setState(() => isChanged.value = false);
     editorFocusNode.unfocus();
-    context.read<AppProvider>().refreshAll();
+    context.read<AppData>().refreshAll();
   }
 
   /// Updates the widget's properties with the latest note data from the provider.
   void bindLastestNote() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Note lastestNote = context.read<AppProvider>().noteList.last;
+      Note lastestNote = context.read<AppData>().noteList.last;
       setState(() {
         _note = lastestNote;
         isEditing = false;
@@ -118,8 +123,8 @@ class _EditorState extends State<Editor> {
 
   @override
   Widget build(BuildContext context) {
-    List<FolderModel> folderList = context.watch<AppProvider>().folderList;
-    DeviceType deviceType = context.read<AppProvider>().getDeviceType();
+    List<FolderModel> folderList = context.watch<AppData>().folderList;
+    DeviceType deviceType = context.read<AppStatus>().getDeviceType();
     // Check is editing
     editorFocusNode.addListener(() {
       if (editorFocusNode.hasFocus) setState(() => isEditing = true);
@@ -158,7 +163,7 @@ class _EditorState extends State<Editor> {
                         ),
                         onPressed: () {
                           saveContent();
-                          bindLastestNote();
+                          if (isNew) bindLastestNote();
                           setState(() => isEditing = false);
                           showToaster(text: 'Your note has been saved');
                           Navigator.of(context).pop();
@@ -235,7 +240,7 @@ class _EditorState extends State<Editor> {
     return !isNew
         ? PopupMenuButton<int>(
             iconColor: Theme.of(context).textTheme.bodyLarge?.color,
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(context).colorScheme.surfaceContainer,
             icon: Icon(
               Icons.more_vert,
               color: Theme.of(context).textTheme.bodyLarge?.color,
@@ -248,8 +253,9 @@ class _EditorState extends State<Editor> {
                             context: context,
                             builder: (context) {
                               return SimpleDialog(
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.surface,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainer,
                                 title: Text(
                                   'Select Folder',
                                   style: TextStyle(
@@ -274,11 +280,10 @@ class _EditorState extends State<Editor> {
                                           Navigator.of(context).pop();
                                           return;
                                         } else {
-                                          folder.addNote(
-                                              noteId: widget.note.id);
+                                          folder.addNote(noteId: _note.id);
                                           context
-                                              .read<AppProvider>()
-                                              .refreshFolder();
+                                              .read<AppData>()
+                                              .intializeFolder();
                                           showToaster(
                                               text:
                                                   'Your note has been added ${folder.title}');
@@ -302,7 +307,12 @@ class _EditorState extends State<Editor> {
                           color: Theme.of(context).textTheme.bodyLarge?.color,
                         ),
                         SizedBox(width: 8),
-                        Text('Add to folder'),
+                        Text('Add to folder',
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color)),
                       ],
                     ),
                   ),
@@ -313,8 +323,9 @@ class _EditorState extends State<Editor> {
                           context: context,
                           builder: (context) {
                             return SimpleDialog(
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.surface,
+                                backgroundColor: Theme.of(context)
+                                    .colorScheme
+                                    .surfaceContainer,
                                 title: Text(
                                   style: TextStyle(
                                       color: Theme.of(context)
@@ -337,13 +348,7 @@ class _EditorState extends State<Editor> {
                                           showToaster(
                                               text:
                                                   'Your note has been removed from ${folder.title}');
-                                          context
-                                              .read<AppProvider>()
-                                              .refreshAll();
-                                          context
-                                              .read<AppProvider>()
-                                              .refreshFolder();
-
+                                          context.read<AppData>().refreshAll();
                                           Navigator.of(context).pop();
                                           Navigator.of(context).pop();
                                         },
@@ -363,7 +368,12 @@ class _EditorState extends State<Editor> {
                           color: Theme.of(context).textTheme.bodyLarge?.color,
                         ),
                         SizedBox(width: 8),
-                        Text('Remove from Folder'),
+                        Text('Remove from Folder',
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color)),
                       ],
                     ),
                   ),
@@ -373,7 +383,7 @@ class _EditorState extends State<Editor> {
                         context: context,
                         builder: (context) => AlertDialog(
                           backgroundColor:
-                              Theme.of(context).colorScheme.surface,
+                              Theme.of(context).colorScheme.surfaceContainer,
                           title: Text('Delete Note'),
                           content: Text(
                               'Are you sure you want to delete this note?'),
@@ -388,9 +398,8 @@ class _EditorState extends State<Editor> {
                             ),
                             TextButton(
                               onPressed: () {
-                                Database database = Database();
-                                database.deleteNote(id: _note?.id);
-                                context.read<AppProvider>().refreshAll();
+                                Database.deleteNote(note: widget.note);
+                                context.read<AppData>().refreshAll();
 
                                 showToaster(text: 'Your note has been deleted');
                                 // Close dialog and leave editor
@@ -412,7 +421,12 @@ class _EditorState extends State<Editor> {
                           color: Theme.of(context).textTheme.bodyLarge?.color,
                         ),
                         SizedBox(width: 8),
-                        Text('Delete Note'),
+                        Text('Delete Note',
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .textTheme
+                                    .bodyLarge
+                                    ?.color)),
                       ],
                     ),
                   ),
@@ -429,8 +443,9 @@ class _EditorState extends State<Editor> {
               onPressed: () {
                 // Save the content
                 saveContent();
-                bindLastestNote();
-
+                if (isNew) {
+                  bindLastestNote();
+                }
                 showToaster(text: 'Your note has been saved');
               },
               icon: Icon(
@@ -484,21 +499,34 @@ class Toolbar extends StatelessWidget {
         ),
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          child: QuillSimpleToolbar(
-              controller: _controller,
-              config: QuillSimpleToolbarConfig(
-                axis: Axis.horizontal,
-                buttonOptions: QuillSimpleToolbarButtonOptions(
-                    base: QuillToolbarBaseButtonOptions(
-                        iconTheme: QuillIconTheme(
-                            iconButtonUnselectedData: IconButtonData(
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.color),
-                            iconButtonSelectedData:
-                                IconButtonData(style: ButtonStyle())))),
-              )),
+          physics: ScrollPhysics(),
+          controller: ScrollController(),
+          child: ScrollConfiguration(
+            behavior: ScrollConfiguration.of(context).copyWith(
+              dragDevices: {
+                PointerDeviceKind.touch,
+                PointerDeviceKind.mouse, // 👈 allow mouse scroll wheel
+                PointerDeviceKind.trackpad,
+              },
+            ),
+            child: QuillSimpleToolbar(
+                controller: _controller,
+                config: QuillSimpleToolbarConfig(
+                  color: Colors.red,
+                  axis: Axis.horizontal,
+                  buttonOptions: QuillSimpleToolbarButtonOptions(
+                      backgroundColor: QuillToolbarColorButtonOptions(),
+                      base: QuillToolbarBaseButtonOptions(
+                          iconTheme: QuillIconTheme(
+                              iconButtonUnselectedData: IconButtonData(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.color),
+                              iconButtonSelectedData:
+                                  IconButtonData(style: ButtonStyle())))),
+                )),
+          ),
         ));
   }
 }

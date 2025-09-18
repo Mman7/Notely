@@ -16,6 +16,7 @@ class NotePreview extends StatelessWidget {
     Duration a = DateTime.now().difference(note.lastestModified);
     if (a.inMinutes > 24 && a.inDays < 1) return '${a.inHours} hours ago';
     if (a.inMinutes <= 24) return '${a.inMinutes} minutes ago';
+    if (a.inDays < 7) return '${a.inDays} days ago';
     List<String> date = note.lastestModified.toLocal().toString().split('-');
     return '${date[0]}.${date[1]}.${date[2].split(' ')[0]}';
   }
@@ -79,9 +80,13 @@ class NotePreview extends StatelessWidget {
             Text(
               lastModifiedText(),
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.w500,
-                color: Theme.of(context).textTheme.bodyMedium?.color,
+                color: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.color
+                    ?.withAlpha(150),
               ),
             ),
           ],

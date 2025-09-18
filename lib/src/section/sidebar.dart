@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:notely/src/model/note_model.dart';
-import 'package:notely/src/provider/app_provider.dart';
+import 'package:notely/src/provider/app_status.dart';
 import 'package:notely/src/section/editor.dart';
 import 'package:notely/src/section/note_list.dart';
 import 'package:provider/provider.dart';
@@ -27,10 +27,11 @@ class _SideBarState extends State<SideBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.tertiary,
+        surfaceTintColor: Theme.of(context).colorScheme.tertiary,
+        shape: Border.all(color: Theme.of(context).colorScheme.tertiary),
         toolbarHeight: 65,
-        backgroundColor: Colors.transparent,
         centerTitle: true,
         title: ListTile(
           leading: Icon(
@@ -50,69 +51,70 @@ class _SideBarState extends State<SideBar> {
       ),
       body: Container(
         decoration: BoxDecoration(
+          border: Border.all(
+            color: Theme.of(context).colorScheme.tertiary,
+          ),
           color: Theme.of(context).colorScheme.tertiary,
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              Gap(15),
-              btn(
-                  isNewNoteBtn: false,
-                  context: context,
-                  text: 'Search',
-                  icon: Icons.search,
-                  onpressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => NoteList(
-                          isSearching: true,
-                        ),
-                      ),
-                    );
-                  }),
-              Gap(20),
-              btn(
-                isNewNoteBtn: true,
-                text: 'New Note',
-                icon: Icons.add,
+        child: Column(
+          children: [
+            Gap(15),
+            btn(
+                isNewNoteBtn: false,
                 context: context,
+                text: 'Search',
+                icon: Icons.search,
                 onpressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Editor(
-                        note: Note.newNote(),
-                        isNew: true,
+                      builder: (context) => NoteList(
+                        isSearching: true,
                       ),
                     ),
                   );
-                },
-              ),
-              Expanded(child: Container()),
-              btnStyless(
-                  context: context,
-                  icon: Icons.folder,
-                  text: 'All Folder',
-                  onpressed: () {
-                    context.read<AppProvider>().setPageIndex(0);
-                  }),
-              btnStyless(
-                  context: context,
-                  icon: Icons.ios_share,
-                  text: 'Share',
-                  onpressed: () {
-                    context.read<AppProvider>().setPageIndex(2);
-                  }),
-              btnStyless(
-                  context: context,
-                  icon: Icons.settings,
-                  text: 'Settings',
-                  onpressed: () {
-                    context.read<AppProvider>().setPageIndex(3);
-                  }),
-            ],
-          ),
+                }),
+            Gap(20),
+            btn(
+              isNewNoteBtn: true,
+              text: 'New Note',
+              icon: Icons.add,
+              context: context,
+              onpressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Editor(
+                      note: Note.newNote(),
+                      isNew: true,
+                    ),
+                  ),
+                );
+              },
+            ),
+            Expanded(child: Container()),
+            btnStyless(
+                context: context,
+                icon: Icons.folder,
+                text: 'All Folder',
+                onpressed: () {
+                  context.read<AppStatus>().setPageIndex(0);
+                }),
+            btnStyless(
+                context: context,
+                icon: Icons.ios_share,
+                text: 'Share',
+                onpressed: () {
+                  context.read<AppStatus>().setPageIndex(2);
+                }),
+            btnStyless(
+                context: context,
+                icon: Icons.settings,
+                text: 'Settings',
+                onpressed: () {
+                  context.read<AppStatus>().setPageIndex(3);
+                }),
+          ],
         ),
       ),
     );

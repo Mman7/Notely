@@ -30,6 +30,13 @@ final myTheme = ThemeData(
         surface: const Color(0xFAFAFAFA)));
 
 final myDarkTheme = ThemeData(
+    canvasColor: Colors.red,
+    menuBarTheme: MenuBarThemeData(
+      style: MenuStyle(
+        backgroundColor: WidgetStatePropertyAll<Color>(
+            Colors.black), // Set your desired color here
+      ),
+    ),
     textTheme: TextTheme(
         bodyLarge: TextStyle(color: Colors.white),
         headlineLarge: TextStyle(color: Colors.white),
@@ -50,15 +57,20 @@ final myDarkTheme = ThemeData(
       unselectedItemColor: HexColor('#E9E6FD'),
       showUnselectedLabels: false,
     ),
-    useMaterial3: true,
-    textSelectionTheme: TextSelectionThemeData(
-      cursorColor: Colors.white,
+    textSelectionTheme: const TextSelectionThemeData(
+      cursorColor: Colors.white, // blinking caret
+      selectionColor: Colors.white30, // text highlight
+      selectionHandleColor: Colors.green, // drag handles
     ),
     primaryColor: Color(0xFFA291FF),
+    popupMenuTheme: PopupMenuThemeData(
+      textStyle: TextStyle(color: Colors.white), // menu item text color
+    ),
     colorScheme: ColorScheme.light().copyWith(
-        primary: const Color(0xFF543EBE),
-        secondary: const Color(0xFF0F0F41),
-        tertiary: Color(0xFF333333),
-        surfaceBright: Color(0xFFD1CCFC),
-        onSurface: Colors.white,
-        surface: const Color(0xFF222222)));
+      primary: const Color(0xFF543EBE),
+      secondary: const Color(0xFF0F0F41),
+      tertiary: Color(0xFF333333),
+      surfaceContainer: const Color(0xFF222222),
+      surfaceBright: Color(0xFFD1CCFC),
+      onSurface: Color(0xFFFFFFFF),
+    ));

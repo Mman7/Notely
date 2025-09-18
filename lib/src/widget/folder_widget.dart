@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
-import 'package:notely/src/provider/app_provider.dart';
+import 'package:notely/src/provider/app_status.dart';
 import 'package:provider/provider.dart';
 
 class FolderWidget extends StatefulWidget {
@@ -23,7 +23,7 @@ class _FolderWidgetState extends State<FolderWidget> {
   bool isHover = false;
   @override
   Widget build(BuildContext context) {
-    bool isDarkmode = context.read<AppProvider>().isDarkMode;
+    bool isDarkmode = context.read<AppStatus>().isDarkMode;
     return MouseRegion(
       onEnter: (value) {
         setState(() => isHover = true);

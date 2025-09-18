@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notely/src/provider/app_provider.dart';
+import 'package:notely/src/provider/app_status.dart';
 import 'package:notely/src/section/folder_list_view.dart';
 import 'package:notely/src/section/note_list.dart';
 import 'package:notely/src/section/settings_page.dart';
@@ -15,11 +15,6 @@ class DesktopLayout extends StatefulWidget {
 }
 
 class _DesktopLayoutState extends State<DesktopLayout> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   List pages = [
     FolderListView(),
     NoteList(isSearching: true),
@@ -29,21 +24,20 @@ class _DesktopLayoutState extends State<DesktopLayout> {
 
   @override
   Widget build(BuildContext context) {
-    int pageIndex = context.watch<AppProvider>().pageIndex;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Flexible(
-          flex: 3,
-          child: SideBar(),
-        ),
-        Flexible(
-            flex: 13,
-            child: Container(
-              // color: Theme.of(context).colorScheme.surface,
-              child: pages[pageIndex],
-            )),
-      ],
+    int pageIndex = context.watch<AppStatus>().pageIndex;
+    return Container(
+      color: Colors.black,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+            flex: 3,
+            child: SideBar(),
+          ),
+          Expanded(flex: 13, child: pages[pageIndex]),
+        ],
+      ),
     );
   }
 }

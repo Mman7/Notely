@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:notely/src/provider/app_data.dart';
 import 'package:provider/provider.dart';
 import 'package:notely/src/model/folder_model.dart';
 import 'package:notely/src/model/note_model.dart';
 import 'package:notely/src/modules/local_database.dart';
-import 'package:notely/src/provider/app_provider.dart';
+import 'package:notely/src/provider/app_status.dart';
 import 'package:notely/src/widget/note_preview.dart';
 import 'package:toastification/toastification.dart';
 
@@ -39,8 +40,7 @@ class _NoteListState extends State<NoteList> {
   }
 
   List<Note> getData(folder) {
-    return Database()
-        .filterNoteByFolder(ids: widget.folder?.getNoteIncluded)
+    return Database.filterNoteByFolder(ids: widget.folder?.getNoteIncluded)
         .whereType<Note>()
         .toList();
   }
@@ -80,8 +80,8 @@ class _NoteListState extends State<NoteList> {
 
   @override
   Widget build(BuildContext context) {
-    DeviceType deviceType = context.watch<AppProvider>().getDeviceType();
-    List<Note> allNotes = context.watch<AppProvider>().noteList;
+    DeviceType deviceType = context.watch<AppStatus>().getDeviceType();
+    List<Note> allNotes = context.watch<AppData>().noteList;
     sortListbyDate();
 
     if (widget.folder == null && !_isSearching) {
@@ -105,13 +105,13 @@ class _NoteListState extends State<NoteList> {
               color: Theme.of(context).textTheme.bodyLarge?.color,
             ),
             onPressed: () {
-              int index = context.read<AppProvider>().pageIndex;
+              int index = context.read<AppStatus>().pageIndex;
               if (_isSearching) setState(() => _isSearching = !_isSearching);
               if (index != 0) {
-                context.read<AppProvider>().setPageIndex(0);
+                context.read<AppStatus>().setPageIndex(0);
                 return;
               } else {
-                context.read<AppProvider>().setPageIndex(0);
+                context.read<AppStatus>().setPageIndex(0);
                 Navigator.of(context).pop();
               }
             },
@@ -139,30 +139,35 @@ class _NoteListState extends State<NoteList> {
                       Icons.cancel_sharp,
                       color: Theme.of(context).textTheme.bodyLarge?.color,
                     ))
-                : menuOptions(_noteList),
+                : menuOptions(_noteList, context),
           ],
         ),
-        body: ScrollConfiguration(
-          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-          child: GridView.builder(
-              controller: _scrollController,
-              padding: EdgeInsets.all(16.0),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: checkScreen(deviceType), // Number of columns
-                crossAxisSpacing: 15,
-                mainAxisSpacing: 15,
-                childAspectRatio: 3 / 4, // Adjust the aspect ratio as needed
-              ),
-              itemCount: _noteList.length, // Number of items
-              itemBuilder: (context, index) {
-                return NotePreview(index: index, note: _noteList[index]);
-              }),
+        body: Container(
+          color: Theme.of(context).colorScheme.surfaceContainer,
+          child: ScrollConfiguration(
+            behavior:
+                ScrollConfiguration.of(context).copyWith(scrollbars: false),
+            child: GridView.builder(
+                controller: _scrollController,
+                padding: EdgeInsets.all(16.0),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: checkScreen(deviceType), // Number of columns
+                  crossAxisSpacing: 15,
+                  mainAxisSpacing: 15,
+                  childAspectRatio: 3 / 4, // Adjust the aspect ratio as needed
+                ),
+                itemCount: _noteList.length, // Number of items
+                itemBuilder: (context, index) {
+                  return NotePreview(index: index, note: _noteList[index]);
+                }),
+          ),
         ));
   }
 
-  PopupMenuButton<String> menuOptions(List<Note> noteList) {
+  PopupMenuButton<String> menuOptions(
+      List<Note> noteList, BuildContext context) {
     return PopupMenuButton(
-      color: Theme.of(context).colorScheme.surface,
+      color: Theme.of(context).colorScheme.surfaceContainer,
       icon: Icon(Icons.more_vert,
           color: Theme.of(context).textTheme.bodyLarge?.color),
       itemBuilder: (context) => [
@@ -176,24 +181,42 @@ class _NoteListState extends State<NoteList> {
                 color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
               SizedBox(width: 8),
-              Text('Search'),
+              Text('Search',
+                  style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyLarge?.color)),
             ],
           ),
         ),
         PopupMenuItem(
           onTap: () {
             if (widget.folder == null) {
-              Database().addNote(note: Note.newNote());
+              Database.addNote(note: Note.newNote());
               scrollToBtm();
-              context.read<AppProvider>().refreshNote();
+              context.read<AppData>().intializeNote();
+              toastification.show(
+                  style: ToastificationStyle.minimal,
+                  primaryColor: Colors.lightGreen,
+                  icon: Icon(Icons.done),
+                  context: context, // optional if you use ToastificationWrapper
+                  title: Text('Your note has been created'),
+                  pauseOnHover: false,
+                  autoCloseDuration: const Duration(seconds: 2));
             } else {
               if (widget.folder == null) throw Error();
-              Database().addNote(note: Note.newNote());
-              Note lastestNote = context.read<AppProvider>().noteList.last;
+              Database.addNote(note: Note.newNote());
+              Note lastestNote = context.read<AppData>().noteList.last;
               widget.folder?.addNote(noteId: lastestNote.id);
               scrollToBtm();
               intializeNoteFromFolder();
-              context.read<AppProvider>().refreshAll();
+              toastification.show(
+                  style: ToastificationStyle.minimal,
+                  primaryColor: Colors.lightGreen,
+                  icon: Icon(Icons.done),
+                  context: context, // optional if you use ToastificationWrapper
+                  title: Text('Your note has been created'),
+                  pauseOnHover: false,
+                  autoCloseDuration: const Duration(seconds: 2));
+              context.read<AppData>().refreshAll();
             }
           },
           value: 'search',
@@ -204,7 +227,9 @@ class _NoteListState extends State<NoteList> {
                 color: Theme.of(context).textTheme.bodyLarge?.color,
               ),
               SizedBox(width: 8),
-              Text('Add note'),
+              Text('Add note',
+                  style: TextStyle(
+                      color: Theme.of(context).textTheme.bodyLarge?.color)),
             ],
           ),
         ),
@@ -235,8 +260,8 @@ class _NoteListState extends State<NoteList> {
                       ),
                       onPressed: () {
                         if (widget.folder?.id == null) return;
-                        Database().deleteFolder(id: widget.folder?.id);
-                        context.read<AppProvider>().refreshAll();
+                        Database.deleteFolder(id: widget.folder?.id);
+                        context.read<AppData>().refreshAll();
                         Navigator.of(context).pop();
                         Navigator.of(context).pop();
                         toastification.show(
@@ -274,7 +299,9 @@ class _NoteListState extends State<NoteList> {
                   color: Theme.of(context).textTheme.bodyLarge?.color,
                 ),
                 SizedBox(width: 8),
-                Text('Delete Folder'),
+                Text('Delete Folder',
+                    style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyLarge?.color)),
               ],
             ),
           )

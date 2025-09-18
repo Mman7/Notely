@@ -61,8 +61,10 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 class _MainAppState extends State<MainApp> {
   @override
   void initState() {
-    context.read<AppStatus>().intializeData();
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AppStatus>().intializeStatus();
+      context.read<AppData>().intializeData();
+    });
     super.initState();
   }
 

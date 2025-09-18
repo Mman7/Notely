@@ -12,7 +12,7 @@ class FolderView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    folder.refreshNoteIncluded();
+    folder.checkNull();
 
     return InkWell(
       onTap: () {

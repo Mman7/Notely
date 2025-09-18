@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:notely/src/provider/app_data.dart';
 import 'package:provider/provider.dart';
 import 'package:notely/src/model/folder_model.dart';
 import 'package:notely/src/model/note_model.dart';
 import 'package:notely/src/modules/local_database.dart';
-import 'package:notely/src/provider/app_provider.dart';
+import 'package:notely/src/provider/app_status.dart';
 import 'package:notely/src/widget/folder_view.dart';
 import 'package:notely/src/widget/folder_header.dart';
 import 'package:toastification/toastification.dart';
@@ -14,11 +15,11 @@ class FolderListView extends StatelessWidget {
   final TextEditingController _controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    List<FolderModel> allFolders = context.watch<AppProvider>().folderList;
-    List<Note> allNotes = context.watch<AppProvider>().noteList;
+    List<FolderModel> allFolders = context.watch<AppData>().folderList;
+    List<Note> allNotes = context.watch<AppData>().noteList;
 
     int checkScreen() {
-      DeviceType deviceType = context.read<AppProvider>().getDeviceType();
+      DeviceType deviceType = context.read<AppStatus>().getDeviceType();
       if (ScreenUtil().screenWidth > 1400) return 7;
       if (deviceType == DeviceType.mobile) return 2;
       if (deviceType == DeviceType.tablet) return 4;
@@ -26,10 +27,12 @@ class FolderListView extends StatelessWidget {
       return 2;
     }
 
-    return ClipRRect(
+    return ClipRect(
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 65,
+          shape: Border(
+              left: BorderSide(color: Theme.of(context).colorScheme.tertiary)),
           title: Text(
             'Folders',
             style: TextStyle(
@@ -42,7 +45,12 @@ class FolderListView extends StatelessWidget {
           shadowColor: Colors.black.withAlpha(50),
         ),
         body: Container(
-          color: Theme.of(context).colorScheme.surface,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Theme.of(context).colorScheme.surfaceContainer,
+            ),
+            color: Theme.of(context).colorScheme.surfaceContainer,
+          ),
           height: 100.sh,
           child: ScrollConfiguration(
             behavior:
@@ -65,6 +73,7 @@ class FolderListView extends StatelessWidget {
                   if (index == allFolders.length + 1) {
                     return addNewFolderView(context);
                   }
+
                   var item = allFolders[index - 1];
 
                   return FolderView(
@@ -90,7 +99,7 @@ class FolderListView extends StatelessWidget {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                backgroundColor: Theme.of(context).colorScheme.surface,
+                backgroundColor: Theme.of(context).colorScheme.surfaceContainer,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
@@ -111,7 +120,8 @@ class FolderListView extends StatelessWidget {
                         labelStyle: TextStyle(
                             color:
                                 Theme.of(context).textTheme.bodyMedium?.color),
-                        fillColor: Theme.of(context).colorScheme.surface,
+                        fillColor:
+                            Theme.of(context).colorScheme.surfaceContainer,
                         border: OutlineInputBorder(
                           borderSide: BorderSide(color: Colors.white),
                         ),
@@ -142,7 +152,7 @@ class FolderListView extends StatelessWidget {
                             alignment: Alignment.center,
                             style: ToastificationStyle.simple,
                             backgroundColor:
-                                Theme.of(context).colorScheme.surface,
+                                Theme.of(context).colorScheme.surfaceContainer,
                             foregroundColor:
                                 Theme.of(context).textTheme.bodyMedium?.color,
                             animationDuration: Duration(milliseconds: 200),
@@ -151,8 +161,8 @@ class FolderListView extends StatelessWidget {
                             type: ToastificationType.error);
                         return;
                       } else {
-                        Database().addFolder(name: _controller.text);
-                        context.read<AppProvider>().refreshAll();
+                        Database.addFolder(name: _controller.text);
+                        context.read<AppData>().refreshAll();
                         // set text to nothing
                         _controller.text = '';
                         toastification.show(

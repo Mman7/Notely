@@ -6,11 +6,12 @@ import 'package:notely/objectbox.g.dart';
 
 @Entity()
 class FolderModel {
-  FolderModel(
-      {this.id = 0,
-      required this.title,
-      required this.noteInclude,
-      required this.uuid});
+  FolderModel({
+    this.id = 0,
+    required this.title,
+    required this.noteInclude,
+    required this.uuid,
+  });
   @Id()
   int id;
   @Unique()
@@ -18,7 +19,7 @@ class FolderModel {
   String title;
   // List covert into string
   String noteInclude;
-  get getNoteIncluded => _getConvertNoteIncluded();
+  List<int> get getNoteIncluded => _getConvertNoteIncluded();
 
   List<int> _getConvertNoteIncluded() {
     try {
@@ -32,31 +33,31 @@ class FolderModel {
 
   addNote({required int noteId}) {
     List<int> newList = List.from(getNoteIncluded);
-    if (newList.contains(noteId)) {
-      return; // Folder already included
-    }
+    if (newList.contains(noteId)) return; // Folder already included
     newList.add(noteId);
     noteInclude = jsonEncode(newList);
-    Database().updateFolder(folder: this);
+    Database.updateFolder(folder: this);
   }
 
   void removeNote({required int noteId}) {
     List<int> newList = getNoteIncluded;
     newList.remove(noteId);
     noteInclude = jsonEncode(newList);
-    Database().updateFolder(folder: this);
+    Database.updateFolder(folder: this);
   }
 
   /// Filter out [null]
-  void refreshNoteIncluded() {
-    Database database = Database();
-    List result = database.getManyNote(list: getNoteIncluded);
-    List newList = [];
-    for (Note? e in result) {
-      if (e != null) newList.add(e.id);
+  void checkNull() {
+    if (getNoteIncluded.isEmpty || getNoteIncluded.first == 0) return;
+
+    List newlist = [];
+    final List<Note?> notes = Database.getManyNote(list: getNoteIncluded);
+    for (Note? e in notes) {
+      if (e != null) newlist.add(e.id);
     }
-    noteInclude = jsonEncode(newList);
-    Database().updateFolder(folder: this);
+    if (newlist.length == notes.length) return;
+    noteInclude = jsonEncode(newlist);
+    Database.updateFolder(folder: this);
   }
 
   toJson() {

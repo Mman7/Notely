@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notely/src/model/note_model.dart';
-import 'package:notely/src/provider/app_provider.dart';
+import 'package:notely/src/provider/app_status.dart';
 import 'package:notely/src/section/editor.dart';
 import 'package:notely/src/section/folder_list_view.dart';
 import 'package:notely/src/section/note_list.dart';
@@ -28,7 +28,7 @@ class _MobileLayoutState extends State<MobileLayout> {
 
   @override
   Widget build(BuildContext context) {
-    int pageIndex = context.watch<AppProvider>().pageIndex;
+    int pageIndex = context.watch<AppStatus>().pageIndex;
     if (_selectedIndex != pageIndex) setState(() => _selectedIndex = pageIndex);
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -73,7 +73,7 @@ class _MobileLayoutState extends State<MobileLayout> {
               icon: Icon(Icons.settings), label: 'Settings'),
         ],
         onTap: (index) {
-          context.read<AppProvider>().setPageIndex(index);
+          context.read<AppStatus>().setPageIndex(index);
         },
       ),
       body: pages[pageIndex],

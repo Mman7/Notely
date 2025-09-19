@@ -125,6 +125,30 @@ class _NoteListState extends State<NoteList> {
               isMobileOrTable: isMobileOrTable,
               isSearching: _isSearching),
           actions: [
+            if (!_isSearching)
+              IconButton(
+                  onPressed: () {
+                    // Add note
+                    Database.addNote(note: Note.newNote());
+                    if (widget.folder == null) {
+                      scrollToBtm();
+                      showToast(context);
+                      context.read<AppData>().refreshAll();
+                    } else {
+                      if (widget.folder == null) throw Error();
+                      // get lastest item
+                      Note lastestNote = context.read<AppData>().noteList.last;
+                      widget.folder?.addNote(noteId: lastestNote.id);
+                      scrollToBtm();
+                      intializeNoteFromFolder();
+                      showToast(context);
+                      context.read<AppData>().refreshAll();
+                    }
+                  },
+                  icon: Icon(
+                    Icons.add,
+                    color: Theme.of(context).textTheme.bodyLarge?.color,
+                  )),
             _isSearching
                 ? IconButton(
                     onPressed: () {
@@ -164,6 +188,17 @@ class _NoteListState extends State<NoteList> {
         ));
   }
 
+  void showToast(BuildContext context) {
+    toastification.show(
+        style: ToastificationStyle.minimal,
+        primaryColor: Colors.lightGreen,
+        icon: Icon(Icons.done),
+        context: context, // optional if you use ToastificationWrapper
+        title: Text('Your note has been created'),
+        pauseOnHover: false,
+        autoCloseDuration: const Duration(seconds: 2));
+  }
+
   PopupMenuButton<String> menuOptions(
       List<Note> noteList, BuildContext context) {
     return PopupMenuButton(
@@ -182,52 +217,6 @@ class _NoteListState extends State<NoteList> {
               ),
               SizedBox(width: 8),
               Text('Search',
-                  style: TextStyle(
-                      color: Theme.of(context).textTheme.bodyLarge?.color)),
-            ],
-          ),
-        ),
-        PopupMenuItem(
-          onTap: () {
-            if (widget.folder == null) {
-              Database.addNote(note: Note.newNote());
-              scrollToBtm();
-              context.read<AppData>().intializeNote();
-              toastification.show(
-                  style: ToastificationStyle.minimal,
-                  primaryColor: Colors.lightGreen,
-                  icon: Icon(Icons.done),
-                  context: context, // optional if you use ToastificationWrapper
-                  title: Text('Your note has been created'),
-                  pauseOnHover: false,
-                  autoCloseDuration: const Duration(seconds: 2));
-            } else {
-              if (widget.folder == null) throw Error();
-              Database.addNote(note: Note.newNote());
-              Note lastestNote = context.read<AppData>().noteList.last;
-              widget.folder?.addNote(noteId: lastestNote.id);
-              scrollToBtm();
-              intializeNoteFromFolder();
-              toastification.show(
-                  style: ToastificationStyle.minimal,
-                  primaryColor: Colors.lightGreen,
-                  icon: Icon(Icons.done),
-                  context: context, // optional if you use ToastificationWrapper
-                  title: Text('Your note has been created'),
-                  pauseOnHover: false,
-                  autoCloseDuration: const Duration(seconds: 2));
-              context.read<AppData>().refreshAll();
-            }
-          },
-          value: 'search',
-          child: Row(
-            children: [
-              Icon(
-                Icons.add_box_outlined,
-                color: Theme.of(context).textTheme.bodyLarge?.color,
-              ),
-              SizedBox(width: 8),
-              Text('Add note',
                   style: TextStyle(
                       color: Theme.of(context).textTheme.bodyLarge?.color)),
             ],

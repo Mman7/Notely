@@ -27,7 +27,7 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       ),
       body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 30),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainer,
             border: Border.all(

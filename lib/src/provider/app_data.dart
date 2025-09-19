@@ -10,11 +10,13 @@ class AppData extends ChangeNotifier {
   /// intialize or refresh notes
   void intializeNote() {
     noteList = Database.getAllNote();
+    notifyListeners();
   }
 
   /// intialize or refresh folders
   void intializeFolder() {
     folderList = Database.getAllFolder();
+    notifyListeners();
   }
 
   void intializeData() {

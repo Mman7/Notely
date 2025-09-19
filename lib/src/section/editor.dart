@@ -509,23 +509,31 @@ class Toolbar extends StatelessWidget {
                 PointerDeviceKind.trackpad,
               },
             ),
-            child: QuillSimpleToolbar(
-                controller: _controller,
-                config: QuillSimpleToolbarConfig(
-                  color: Colors.red,
-                  axis: Axis.horizontal,
-                  buttonOptions: QuillSimpleToolbarButtonOptions(
-                      backgroundColor: QuillToolbarColorButtonOptions(),
-                      base: QuillToolbarBaseButtonOptions(
-                          iconTheme: QuillIconTheme(
-                              iconButtonUnselectedData: IconButtonData(
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
-                                      ?.color),
-                              iconButtonSelectedData:
-                                  IconButtonData(style: ButtonStyle())))),
-                )),
+            child: Theme(
+              data: ThemeData(
+                  colorScheme: Theme.of(context).colorScheme.copyWith(
+                        onSurface: Colors.white, // text/icons in that menu
+                        primary: Colors
+                            .blue, // (optional) keep your main brand color
+                      )),
+              child: QuillSimpleToolbar(
+                  controller: _controller,
+                  config: QuillSimpleToolbarConfig(
+                    color: Colors.red,
+                    axis: Axis.horizontal,
+                    buttonOptions: QuillSimpleToolbarButtonOptions(
+                        backgroundColor: QuillToolbarColorButtonOptions(),
+                        base: QuillToolbarBaseButtonOptions(
+                            iconTheme: QuillIconTheme(
+                                iconButtonUnselectedData: IconButtonData(
+                                    color: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.color),
+                                iconButtonSelectedData:
+                                    IconButtonData(style: ButtonStyle())))),
+                  )),
+            ),
           ),
         ));
   }

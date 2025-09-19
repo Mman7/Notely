@@ -58,7 +58,8 @@ final myDarkTheme = ThemeData(
       showUnselectedLabels: false,
     ),
     textSelectionTheme: const TextSelectionThemeData(
-      cursorColor: Colors.white, // blinking caret
+      // cursorColor: Colors.white, // blinking caret
+
       selectionColor: Colors.white30, // text highlight
       selectionHandleColor: Colors.green, // drag handles
     ),
@@ -67,10 +68,10 @@ final myDarkTheme = ThemeData(
       textStyle: TextStyle(color: Colors.white), // menu item text color
     ),
     colorScheme: ColorScheme.light().copyWith(
-      primary: const Color(0xFF543EBE),
-      secondary: const Color(0xFF0F0F41),
-      tertiary: Color(0xFF333333),
-      surfaceContainer: const Color(0xFF222222),
-      surfaceBright: Color(0xFFD1CCFC),
-      onSurface: Color(0xFFFFFFFF),
-    ));
+        primary: const Color(0xFF543EBE),
+        secondary: const Color(0xFF0F0F41),
+        tertiary: Color(0xFF333333),
+        surfaceContainer: const Color(0xFF222222),
+        surfaceBright: Color(0xFFD1CCFC),
+        // onSurface: Color(0xFFFFFFFF),
+        surface: Colors.white));

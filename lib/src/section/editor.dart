@@ -512,7 +512,9 @@ class Toolbar extends StatelessWidget {
             child: Theme(
               data: ThemeData(
                   colorScheme: Theme.of(context).colorScheme.copyWith(
-                        onSurface: Colors.white, // text/icons in that menu
+                        onSurface: context.watch<AppStatus>().isDarkMode
+                            ? Colors.white
+                            : Colors.black, // text/icons in that menu
                         primary: Colors
                             .blue, // (optional) keep your main brand color
                       )),

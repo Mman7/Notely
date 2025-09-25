@@ -2,15 +2,14 @@
 
 A modern, cross-platform note-taking app built with **Flutter**.  
 Notely gives you **local-first synchronization** without relying on cloud servers or third-party infrastructure — your notes, your device, your control.  
-
----
+<br/>
 
 ## ✨ About  
 
 Notely is designed for people who want to capture ideas quickly and keep them safe **without depending on the internet or external services**.  
 Whether you’re jotting down thoughts, drafting plans, or keeping personal journals, Notely ensures your data stays **private, lightweight, and always available offline**.  
 
----
+<br/>
 
 ## 🚀 Key Features  
 
@@ -20,7 +19,7 @@ Whether you’re jotting down thoughts, drafting plans, or keeping personal jour
 - 🔒 **Privacy-Focused** – No hidden cloud, no data leaks — everything stays on your device.  
 - ⚡ **Fast & Lightweight** – Minimal overhead, maximum performance.  
 
----
+<br/>
 
 ## 💻 Supported Platforms  
 
@@ -29,13 +28,13 @@ Whether you’re jotting down thoughts, drafting plans, or keeping personal jour
 
 (More platforms coming soon!)  
 
----
+<br/>
 
 ## 📸 App Showcase  
 
 <img width="720" height="1024" alt="app-showcase" src="https://github.com/user-attachments/assets/5df9939b-9750-4c63-a34b-0f4df162efac" />  
 
----
+<br/>
 
 ## 🛠️ Getting Started  
 
@@ -55,11 +54,11 @@ Make sure you have the following:
    cd Notely
    ```
 2. Install dependencies
- ```bash
-flutter pub get
-```
+    ```bash
+   flutter pub get
+   ```
 
 3. Run the app on your preferred platform
- ```bash
-flutter run
-```
+    ```bash
+   flutter run
+   ```

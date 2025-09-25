@@ -37,7 +37,7 @@ class _FolderWidgetState extends State<FolderWidget> {
           Container(
             decoration: BoxDecoration(boxShadow: [
               BoxShadow(
-                color: const Color(0x319E9E9E).withAlpha(20),
+                color: Colors.black12,
                 offset: Offset(0, 0),
                 spreadRadius: 1,
                 blurRadius: 20,

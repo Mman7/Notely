@@ -87,6 +87,7 @@ class FolderListView extends StatelessWidget {
   }
 
   Container addNewFolderView(BuildContext context) {
+    bool isDark = context.watch<AppStatus>().isDarkMode;
     return Container(
       margin: EdgeInsets.all(20.sp),
       decoration: BoxDecoration(
@@ -123,10 +124,12 @@ class FolderListView extends StatelessWidget {
                         fillColor:
                             Theme.of(context).colorScheme.surfaceContainer,
                         border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
+                          borderSide: BorderSide(
+                              color: isDark ? Colors.white : Colors.black),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
+                          borderSide: BorderSide(
+                              color: isDark ? Colors.white : Colors.black),
                         ),
                       ),
                     ),

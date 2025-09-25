@@ -26,8 +26,6 @@ Whether you’re jotting down thoughts, drafting plans, or keeping personal jour
 ✅ Android  
 ✅ Windows  
 
-(More platforms coming soon!)  
-
 <br/>
 
 ## 📸 App Showcase  

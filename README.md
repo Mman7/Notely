@@ -30,7 +30,7 @@ Whether you’re jotting down thoughts, drafting plans, or keeping personal jour
 
 ## 📸 App Showcase  
  
-<img width="720" height="1024" alt="app-showcase" src="https://github.com/user-attachments/assets/3cc51485-fc7e-4356-b1cc-2395197d49ca" />
+<img width="640" height="1024" alt="app-showcase" src="https://github.com/user-attachments/assets/3cc51485-fc7e-4356-b1cc-2395197d49ca" />
 
 <br/>
 

@@ -29,8 +29,8 @@ Whether you’re jotting down thoughts, drafting plans, or keeping personal jour
 <br/>
 
 ## 📸 App Showcase  
-
-<img width="720" height="1024" alt="app-showcase" src="https://github.com/user-attachments/assets/5df9939b-9750-4c63-a34b-0f4df162efac" />  
+ 
+<img width="720" height="1024" alt="app-showcase" src="https://github.com/user-attachments/assets/3cc51485-fc7e-4356-b1cc-2395197d49ca" />
 
 <br/>
 

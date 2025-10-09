@@ -8,7 +8,6 @@ import 'package:notely/src/model/folder_model.dart';
 import 'package:notely/src/model/note_model.dart';
 import 'package:notely/src/modules/encrypt.dart';
 import 'package:notely/src/modules/local_database.dart';
-import 'package:network_info_plus/network_info_plus.dart';
 import 'package:notely/src/modules/web_socket.dart';
 import 'package:notely/src/provider/app_data.dart';
 import 'package:provider/provider.dart';
@@ -179,27 +178,31 @@ class SocketServer {
         handleData(data, context);
         client.send(AES256GCM.encrypt(plaintext: await getLocalData()));
         if (callback != null) callback();
-        // client.close();
-        // server.close();
       });
     });
   }
 }
 
-Future<InternetAddress> getBroadcastAddress() async {
-  final info = NetworkInfo();
-  final localIp = await info.getWifiIP();
-  final subnetMask = await info.getWifiSubmask();
-  if (localIp == null || subnetMask == null) {
-    throw Exception('Could not get local IP or subnet mask');
+Future<String> getLocalIp() async {
+  final interfaces = await NetworkInterface.list(
+    includeLoopback: false,
+    type: InternetAddressType.IPv4,
+  );
+  for (var interface in interfaces) {
+    for (var addr in interface.addresses) {
+      if (!addr.address.startsWith('192')) continue;
+      return addr.address;
+    }
   }
+  return '';
+}
 
-  final ipParts = localIp.split('.').map(int.parse).toList();
-  final maskParts = subnetMask.split('.').map(int.parse).toList();
+Future<InternetAddress> getBroadcastAddress() async {
+  String ip = await getLocalIp();
+  if (ip == '') throw Exception('No valid IP found');
+  final ipParts = ip.split('.').map(int.parse).toList();
 
-  final broadcastParts =
-      List.generate(4, (i) => ipParts[i] | (~maskParts[i] & 0xFF));
+  final broadcastParts = List.generate(4, (i) => ipParts[i] | 255);
   final broadcastIp = broadcastParts.join('.');
-
   return InternetAddress(broadcastIp);
 }

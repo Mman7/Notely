@@ -129,7 +129,6 @@ class _EditorState extends State<Editor> {
     editorFocusNode.addListener(() {
       if (editorFocusNode.hasFocus) setState(() => isEditing = true);
     });
-
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -199,8 +198,10 @@ class _EditorState extends State<Editor> {
             children: [
               Column(
                 children: [
-                  if (deviceType == DeviceType.windows)
-                    Toolbar(controller: _controller, deviceType: deviceType),
+                  Toolbar(
+                    controller: _controller,
+                    deviceType: deviceType,
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
@@ -227,9 +228,6 @@ class _EditorState extends State<Editor> {
                   ),
                 ],
               ),
-              Align(
-                  alignment: Alignment.bottomCenter,
-                  child: mobileToolbar(deviceType))
             ],
           ),
         ));
@@ -455,21 +453,6 @@ class _EditorState extends State<Editor> {
             )
           : Container(),
     );
-  }
-
-  Widget mobileToolbar(DeviceType deviceType) {
-    if (deviceType == DeviceType.windows) return Container();
-    return isEditing
-        ? Column(
-            children: [
-              Spacer(),
-              Toolbar(
-                controller: _controller,
-                deviceType: deviceType,
-              ),
-            ],
-          )
-        : Container();
   }
 }
 

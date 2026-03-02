@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notely/src/model/note_model.dart';
-import 'package:notely/src/section/editor.dart';
+import 'package:notely/src/section/editor/editor.dart';
 
 class NotePreview extends StatelessWidget {
   const NotePreview({

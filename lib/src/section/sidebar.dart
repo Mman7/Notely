@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:notely/src/model/note_model.dart';
 import 'package:notely/src/provider/app_status.dart';
-import 'package:notely/src/section/editor.dart';
+import 'package:notely/src/section/editor/editor.dart';
 import 'package:notely/src/section/note_list.dart';
 import 'package:provider/provider.dart';
 

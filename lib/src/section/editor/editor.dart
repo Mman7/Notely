@@ -1,10 +1,11 @@
 import 'dart:convert';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/quill_delta.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:notely/src/provider/app_data.dart';
+import 'package:notely/src/section/editor/title_widget.dart';
+import 'package:notely/src/section/editor/toolbar.dart';
 import 'package:provider/provider.dart';
 import 'package:notely/src/model/folder_model.dart';
 import 'package:notely/src/model/note_model.dart';
@@ -40,86 +41,86 @@ class _EditorState extends State<Editor> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    _titleController.text = widget.note.title;
-    String originalContent = widget.note.content;
-    isNew = widget.isNew;
-    _note = widget.note;
+  // @override
+  // void initState() {
+  //   _titleController.text = widget.note.title;
+  //   String originalContent = widget.note.content;
+  //   isNew = widget.isNew;
+  //   _note = widget.note;
 
-    if (!widget.isNew) {
-      // load content
-      if (originalContent.isEmpty) {
-        originalContent = r'[{"insert":"\n"}]';
-      } else {
-        List json = jsonDecode(originalContent);
-        _controller.document = Document.fromJson(json);
-      }
-    }
+  //   if (!widget.isNew) {
+  //     // load content
+  //     if (originalContent.isEmpty) {
+  //       originalContent = r'[{"insert":"\n"}]';
+  //     } else {
+  //       List json = jsonDecode(originalContent);
+  //       _controller.document = Document.fromJson(json);
+  //     }
+  //   }
 
-    // Check if title has changed
-    _titleController.addListener(() {
-      if (isChanged.value == true) return;
-      if (_titleController.text != widget.note.title) isChanged.value = true;
-      if (_titleController.text == widget.note.title) isChanged.value = false;
-    });
-    // Check if the content has changed
-    _controller.document.changes.listen((event) {
-      final change = event.change;
-      if (change.isNotEmpty) isChanged.value = true;
-      if (change.isEmpty) isChanged.value = false;
-    });
-    super.initState();
-  }
+  //   // Check if title has changed
+  //   _titleController.addListener(() {
+  //     if (isChanged.value == true) return;
+  //     if (_titleController.text != widget.note.title) isChanged.value = true;
+  //     if (_titleController.text == widget.note.title) isChanged.value = false;
+  //   });
+  //   // Check if the content has changed
+  //   _controller.document.changes.listen((event) {
+  //     final change = event.change;
+  //     if (change.isNotEmpty) isChanged.value = true;
+  //     if (change.isEmpty) isChanged.value = false;
+  //   });
+  //   super.initState();
+  // }
 
-  void showToaster({required String text}) {
-    toastification.show(
-      style: ToastificationStyle.minimal,
-      primaryColor: Colors.lightGreen,
-      icon: Icon(Icons.done),
-      context: context, // optional if you use ToastificationWrapper
-      title: Text(text),
-      pauseOnHover: false,
-      autoCloseDuration: const Duration(seconds: 2),
-    );
-  }
+  // void showToaster({required String text}) {
+  //   toastification.show(
+  //     style: ToastificationStyle.minimal,
+  //     primaryColor: Colors.lightGreen,
+  //     icon: Icon(Icons.done),
+  //     context: context, // optional if you use ToastificationWrapper
+  //     title: Text(text),
+  //     pauseOnHover: false,
+  //     autoCloseDuration: const Duration(seconds: 2),
+  //   );
+  // }
 
-  void saveContent() {
-    String title = _titleController.text;
-    Delta content = _controller.document.toDelta();
-    String preview = _controller.document.toPlainText();
-    preview = preview.length > 70
-        ? preview.substring(0, 70)
-        : preview; // Limit preview to 70 characters
+  // void saveContent() {
+  //   String title = _titleController.text;
+  //   Delta content = _controller.document.toDelta();
+  //   String preview = _controller.document.toPlainText();
+  //   preview = preview.length > 70
+  //       ? preview.substring(0, 70)
+  //       : preview; // Limit preview to 70 characters
 
-    String json = jsonEncode(content);
-    Database.addNote(
-      note: Note(
-          id: _note.id,
-          title: title,
-          content: json,
-          dateCreated: DateTime.now(),
-          uuid: widget.note.uuid,
-          previewContent: preview,
-          lastestModified: DateTime.now()),
-    );
-    setState(() => isChanged.value = false);
-    editorFocusNode.unfocus();
-    context.read<AppData>().refreshAll();
-  }
+  //   String json = jsonEncode(content);
+  //   Database.addNote(
+  //     note: Note(
+  //         id: _note.id,
+  //         title: title,
+  //         content: json,
+  //         dateCreated: DateTime.now(),
+  //         uuid: widget.note.uuid,
+  //         previewContent: preview,
+  //         lastestModified: DateTime.now()),
+  //   );
+  //   setState(() => isChanged.value = false);
+  //   editorFocusNode.unfocus();
+  //   context.read<AppData>().refreshAll();
+  // }
 
-  /// Updates the widget's properties with the latest note data from the provider.
-  void bindLastestNote() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Note lastestNote = context.read<AppData>().noteList.last;
-      setState(() {
-        _note = lastestNote;
-        isEditing = false;
-        isNew = false;
-        isChanged.value = false;
-      });
-    });
-  }
+  // /// Updates the widget's properties with the latest note data from the provider.
+  // void bindLastestNote() {
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     Note lastestNote = context.read<AppData>().noteList.last;
+  //     setState(() {
+  //       _note = lastestNote;
+  //       isEditing = false;
+  //       isNew = false;
+  //       isChanged.value = false;
+  //     });
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -161,10 +162,10 @@ class _EditorState extends State<Editor> {
                               Theme.of(context).textTheme.bodyLarge?.color),
                         ),
                         onPressed: () {
-                          saveContent();
-                          if (isNew) bindLastestNote();
+                          // saveContent();
+                          // if (isNew) bindLastestNote();
                           setState(() => isEditing = false);
-                          showToaster(text: 'Your note has been saved');
+                          // showToaster(text: 'Your note has been saved');
                           Navigator.of(context).pop();
                           Navigator.of(context).pop(); // Close editor
                         },
@@ -272,9 +273,9 @@ class _EditorState extends State<Editor> {
                                         // Prevent id contained
                                         if (noteInFolder
                                             .contains(widget.note.id)) {
-                                          showToaster(
-                                              text:
-                                                  'Your note has been added to ${folder.title}');
+                                          // showToaster(
+                                          //     text:
+                                          //         'Your note has been added to ${folder.title}');
                                           Navigator.of(context).pop();
                                           return;
                                         } else {
@@ -282,9 +283,9 @@ class _EditorState extends State<Editor> {
                                           context
                                               .read<AppData>()
                                               .intializeFolder();
-                                          showToaster(
-                                              text:
-                                                  'Your note has been added ${folder.title}');
+                                          // showToaster(
+                                          //     text:
+                                          //         'Your note has been added ${folder.title}');
                                           Navigator.of(context).pop();
                                         }
                                         //else update folder's note included
@@ -343,9 +344,9 @@ class _EditorState extends State<Editor> {
                                           folder.removeNote(
                                               noteId: widget.note.id);
 
-                                          showToaster(
-                                              text:
-                                                  'Your note has been removed from ${folder.title}');
+                                          // showToaster(
+                                          //     text:
+                                          //         'Your note has been removed from ${folder.title}');
                                           context.read<AppData>().refreshAll();
                                           Navigator.of(context).pop();
                                           Navigator.of(context).pop();
@@ -399,7 +400,7 @@ class _EditorState extends State<Editor> {
                                 Database.deleteNote(note: widget.note);
                                 context.read<AppData>().refreshAll();
 
-                                showToaster(text: 'Your note has been deleted');
+                                // showToaster(text: 'Your note has been deleted');
                                 // Close dialog and leave editor
                                 Navigator.of(context).pop();
                                 Navigator.of(context).pop();
@@ -440,11 +441,11 @@ class _EditorState extends State<Editor> {
           ? IconButton(
               onPressed: () {
                 // Save the content
-                saveContent();
-                if (isNew) {
-                  bindLastestNote();
-                }
-                showToaster(text: 'Your note has been saved');
+                //   saveContent();
+                //   if (isNew) {
+                //     bindLastestNote();
+                //   }
+                //   showToaster(text: 'Your note has been saved');
               },
               icon: Icon(
                 Icons.done,
@@ -452,105 +453,6 @@ class _EditorState extends State<Editor> {
               ),
             )
           : Container(),
-    );
-  }
-}
-
-class Toolbar extends StatelessWidget {
-  Toolbar(
-      {super.key,
-      required QuillController controller,
-      required this.deviceType})
-      : _controller = controller;
-
-  final QuillController _controller;
-  DeviceType deviceType;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.tertiary,
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withAlpha(25),
-                blurRadius: 15,
-                offset: Offset(0, 2),
-                spreadRadius: 1),
-          ],
-        ),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          physics: ScrollPhysics(),
-          controller: ScrollController(),
-          child: ScrollConfiguration(
-            behavior: ScrollConfiguration.of(context).copyWith(
-              dragDevices: {
-                PointerDeviceKind.touch,
-                PointerDeviceKind.mouse, // 👈 allow mouse scroll wheel
-                PointerDeviceKind.trackpad,
-              },
-            ),
-            child: Theme(
-              data: ThemeData(
-                  colorScheme: Theme.of(context).colorScheme.copyWith(
-                        onSurface: context.watch<AppStatus>().isDarkMode
-                            ? Colors.white
-                            : Colors.black, // text/icons in that menu
-                        primary: Colors
-                            .blue, // (optional) keep your main brand color
-                      )),
-              child: QuillSimpleToolbar(
-                  controller: _controller,
-                  config: QuillSimpleToolbarConfig(
-                    color: Colors.red,
-                    axis: Axis.horizontal,
-                    buttonOptions: QuillSimpleToolbarButtonOptions(
-                        backgroundColor: QuillToolbarColorButtonOptions(),
-                        base: QuillToolbarBaseButtonOptions(
-                            iconTheme: QuillIconTheme(
-                                iconButtonUnselectedData: IconButtonData(
-                                    color: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge
-                                        ?.color),
-                                iconButtonSelectedData:
-                                    IconButtonData(style: ButtonStyle())))),
-                  )),
-            ),
-          ),
-        ));
-  }
-}
-
-class TitleWidget extends StatelessWidget {
-  const TitleWidget({
-    super.key,
-    required TextEditingController titleController,
-  }) : _titleController = titleController;
-
-  final TextEditingController _titleController;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      style: TextStyle(
-          color: Theme.of(context).textTheme.bodyLarge?.color,
-          fontSize: 30,
-          fontWeight: FontWeight.w700),
-      controller: _titleController,
-      decoration: InputDecoration(
-        hintStyle: TextStyle(color: Colors.grey),
-        contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-        border: InputBorder.none,
-        fillColor: Colors.transparent,
-        hintText: 'Title',
-        hoverColor: Colors.transparent,
-        enabledBorder: InputBorder.none,
-        focusedBorder: InputBorder.none,
-        disabledBorder: InputBorder.none,
-      ),
     );
   }
 }

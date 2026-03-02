@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notely/src/model/note_model.dart';
 import 'package:notely/src/provider/app_status.dart';
-import 'package:notely/src/section/editor.dart';
+import 'package:notely/src/section/editor/editor.dart';
 import 'package:notely/src/section/folder_list_view.dart';
 import 'package:notely/src/section/note_list.dart';
 import 'package:notely/src/section/settings_page.dart';

@@ -16,7 +16,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_native_splash: ^2.4.6
-  flutter_quill: ^11.4.2
+  flutter_quill: ^11.5.0
   flutter_screenutil: ^5.9.1
   flutter_svg: ^2.1.0
   gap: ^3.0.1
@@ -46,27 +46,27 @@ dev_dependencies:
 
 flutter_native_splash:
   color: "#FFFFFF"
-  image: ./assets/images/logo.png
+  image: ./assets/images/logo.svg
   color_dark: "#1a1a1a"
-  image_dark: ./assets/images/logo.png
+  image_dark: ./assets/images/logo.svg
 
   # add this
   android_12:
     icon_background_color: "#FFFFFF"
-    image: ./assets/images/logo.png
+    image: ./assets/images/logo.svg
     icon_background_color_dark: "#1a1a1a"
-    image_dark: ./assets/images/logo.png
+    image_dark: ./assets/images/logo.svg
 
   web: false
 
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "./assets/images/logo.png"
+  image_path: "./assets/images/logo.svg"
   min_sdk_android: 21 # android min sdk min:16, default 21
   windows:
     generate: true
-    image_path: "./assets/images/logo.png"
+    image_path: "./assets/images/logo.svg"
     icon_size: 48 # min:48, max:256, default: 48
 
 flutter:

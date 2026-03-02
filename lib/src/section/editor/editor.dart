@@ -41,86 +41,86 @@ class _EditorState extends State<Editor> {
     super.dispose();
   }
 
-  // @override
-  // void initState() {
-  //   _titleController.text = widget.note.title;
-  //   String originalContent = widget.note.content;
-  //   isNew = widget.isNew;
-  //   _note = widget.note;
+  @override
+  void initState() {
+    _titleController.text = widget.note.title;
+    String originalContent = widget.note.content;
+    isNew = widget.isNew;
+    _note = widget.note;
 
-  //   if (!widget.isNew) {
-  //     // load content
-  //     if (originalContent.isEmpty) {
-  //       originalContent = r'[{"insert":"\n"}]';
-  //     } else {
-  //       List json = jsonDecode(originalContent);
-  //       _controller.document = Document.fromJson(json);
-  //     }
-  //   }
+    if (!widget.isNew) {
+      // load content
+      if (originalContent.isEmpty) {
+        originalContent = r'[{"insert":"\n"}]';
+      } else {
+        List json = jsonDecode(originalContent);
+        _controller.document = Document.fromJson(json);
+      }
+    }
 
-  //   // Check if title has changed
-  //   _titleController.addListener(() {
-  //     if (isChanged.value == true) return;
-  //     if (_titleController.text != widget.note.title) isChanged.value = true;
-  //     if (_titleController.text == widget.note.title) isChanged.value = false;
-  //   });
-  //   // Check if the content has changed
-  //   _controller.document.changes.listen((event) {
-  //     final change = event.change;
-  //     if (change.isNotEmpty) isChanged.value = true;
-  //     if (change.isEmpty) isChanged.value = false;
-  //   });
-  //   super.initState();
-  // }
+    // Check if title has changed
+    _titleController.addListener(() {
+      if (isChanged.value == true) return;
+      if (_titleController.text != widget.note.title) isChanged.value = true;
+      if (_titleController.text == widget.note.title) isChanged.value = false;
+    });
+    // Check if the content has changed
+    _controller.document.changes.listen((event) {
+      final change = event.change;
+      if (change.isNotEmpty) isChanged.value = true;
+      if (change.isEmpty) isChanged.value = false;
+    });
+    super.initState();
+  }
 
-  // void showToaster({required String text}) {
-  //   toastification.show(
-  //     style: ToastificationStyle.minimal,
-  //     primaryColor: Colors.lightGreen,
-  //     icon: Icon(Icons.done),
-  //     context: context, // optional if you use ToastificationWrapper
-  //     title: Text(text),
-  //     pauseOnHover: false,
-  //     autoCloseDuration: const Duration(seconds: 2),
-  //   );
-  // }
+  void showToaster({required String text}) {
+    toastification.show(
+      style: ToastificationStyle.minimal,
+      primaryColor: Colors.lightGreen,
+      icon: Icon(Icons.done),
+      context: context, // optional if you use ToastificationWrapper
+      title: Text(text),
+      pauseOnHover: false,
+      autoCloseDuration: const Duration(seconds: 2),
+    );
+  }
 
-  // void saveContent() {
-  //   String title = _titleController.text;
-  //   Delta content = _controller.document.toDelta();
-  //   String preview = _controller.document.toPlainText();
-  //   preview = preview.length > 70
-  //       ? preview.substring(0, 70)
-  //       : preview; // Limit preview to 70 characters
+  void saveContent() {
+    String title = _titleController.text;
+    Delta content = _controller.document.toDelta();
+    String preview = _controller.document.toPlainText();
+    preview = preview.length > 70
+        ? preview.substring(0, 70)
+        : preview; // Limit preview to 70 characters
 
-  //   String json = jsonEncode(content);
-  //   Database.addNote(
-  //     note: Note(
-  //         id: _note.id,
-  //         title: title,
-  //         content: json,
-  //         dateCreated: DateTime.now(),
-  //         uuid: widget.note.uuid,
-  //         previewContent: preview,
-  //         lastestModified: DateTime.now()),
-  //   );
-  //   setState(() => isChanged.value = false);
-  //   editorFocusNode.unfocus();
-  //   context.read<AppData>().refreshAll();
-  // }
+    String json = jsonEncode(content);
+    Database.addNote(
+      note: Note(
+          id: _note.id,
+          title: title,
+          content: json,
+          dateCreated: DateTime.now(),
+          uuid: widget.note.uuid,
+          previewContent: preview,
+          lastestModified: DateTime.now()),
+    );
+    setState(() => isChanged.value = false);
+    editorFocusNode.unfocus();
+    context.read<AppData>().refreshAll();
+  }
 
-  // /// Updates the widget's properties with the latest note data from the provider.
-  // void bindLastestNote() {
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     Note lastestNote = context.read<AppData>().noteList.last;
-  //     setState(() {
-  //       _note = lastestNote;
-  //       isEditing = false;
-  //       isNew = false;
-  //       isChanged.value = false;
-  //     });
-  //   });
-  // }
+  /// Updates the widget's properties with the latest note data from the provider.
+  void bindLastestNote() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Note lastestNote = context.read<AppData>().noteList.last;
+      setState(() {
+        _note = lastestNote;
+        isEditing = false;
+        isNew = false;
+        isChanged.value = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -441,11 +441,11 @@ class _EditorState extends State<Editor> {
           ? IconButton(
               onPressed: () {
                 // Save the content
-                //   saveContent();
-                //   if (isNew) {
-                //     bindLastestNote();
-                //   }
-                //   showToaster(text: 'Your note has been saved');
+                saveContent();
+                if (isNew) {
+                  bindLastestNote();
+                }
+                showToaster(text: 'Your note has been saved');
               },
               icon: Icon(
                 Icons.done,
